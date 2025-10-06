@@ -1,4 +1,4 @@
-﻿public class AccountModel
+﻿public class UserModel
 {
 
     public Int64 Id { get; set; }
@@ -8,7 +8,7 @@
 
     public string FullName { get; set; }
 
-    public AccountModel(Int64 id, string email, string password, string fullname)
+    public UserModel(Int64 id, string email, string password, string fullname)
     {
         Id = id;
         EmailAddress = email;
