@@ -5,6 +5,11 @@ public class ScreeningModel
     public long HallId { get; set; }
     public DateTime ScreeningStartingTime { get; set; }
 
-    // public MovieModel Movie { get; set; }
-    // public HallModel Hall { get; set; }
+    public ScreeningModel(long screeningId, long movieId, long hallId, DateTime screeningStartingTime)
+    {
+        ScreeningId = screeningId;
+        MovieId = movieId;
+        HallId = hallId;
+        ScreeningStartingTime = screeningStartingTime;
+    }
 }
