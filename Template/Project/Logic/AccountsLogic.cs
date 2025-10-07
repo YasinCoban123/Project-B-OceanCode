@@ -17,33 +17,41 @@ public class AccountsLogic
     }
 
     public UserAccountModel CheckLogin(string email, string password)
-{
-    if (!CheckPassword(password)) // method to be made by Arjun
     {
+        if (!CheckEmailCorrect(email))
+        {
+            return null;
+        }
+        if (!CheckPassword(password)) // method to be made by Arjun
+        {
+            return null;
+        }
+        // haalt dictionary op van de database
+        Dictionary<string, string> accounts = EmailPasswordDict(); // method to be made by Amine
+
+        // loopt door accounts
+        foreach (var account in accounts)
+        {
+            string storedEmail = account.Key;
+            string storedPassword = account.Value;
+
+            if (email.ToLower() == storedEmail.ToLower() && password == storedPassword)
+            {
+                UserAccountModel acc = _access.GetByEmail(email);
+                if (acc != null)
+                {
+                    CurrentAccount = acc;
+                    return acc;
+                }
+            }
+        }
         return null;
     }
 
-    // haalt dictionary op van de database
-    Dictionary<string, string> accounts = EmailPasswordDict(); // method to be made by Amine
-
-    // loopt door accounts
-    foreach (var account in accounts)
-    {
-        string storedEmail = account.Key;
-        string storedPassword = account.Value;
-
-        if (email.ToLower() == storedEmail.ToLower() && password == storedPassword)
+    private bool CheckEmailCorrect(string email)
         {
-            UserAccountModel acc = _access.GetByEmail(email);
-            if (acc != null)
-            {
-                CurrentAccount = acc;
-                return acc;
-            }
+            return email.Contains("@");
         }
-    }
-    return null;
-}
 }
 
 
