@@ -3,11 +3,11 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 
 
-public class AccountsAccess
+public class UserAccountsAccess
 {
     private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
 
-    private string Table = "Accounts";
+    private string Table = "UserAccount";
 
     public void Write(UserAccountModel account)
     {
@@ -32,6 +32,24 @@ public class AccountsAccess
         string sql = $"DELETE FROM {Table} WHERE id = @Id";
         _connection.Execute(sql, new { Id = account.Id });
     }
+
+    public Dictionary<string, string> EmailPasswordDict()
+{
+    Dictionary<string, string> accounts = new();
+
+    string sql = $"SELECT email, password FROM {Table}";
+    var result = _connection.Query(sql);
+
+    foreach (var row in result)
+    {
+        string email = row.email;
+        string password = row.password;
+
+        accounts[email] = password;
+    }
+
+    return accounts;
+}
 
 
 

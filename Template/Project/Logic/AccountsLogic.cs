@@ -26,8 +26,9 @@ public class AccountsLogic
         {
             return null;
         }
-        // haalt dictionary op van de database
-        Dictionary<string, string> accounts = EmailPasswordDict(); // method to be made by Amine
+
+        UserAccountsAccess access = new UserAccountsAccess();
+        Dictionary<string, string> accounts = access.EmailPasswordDict(); // method to be made by Amine
 
         // loopt door accounts
         foreach (var account in accounts)
