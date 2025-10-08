@@ -8,7 +8,7 @@ public class AccountsLogic
     //This can be used to get the current logged in account from anywhere in the program
     //private set, so this can only be set by the class itself
     public static UserAccountModel? CurrentAccount { get; private set; }
-    private AccountsAccess _access = new();
+    private UserAccountsAccess _access = new();
 
     public AccountsLogic()
     {
