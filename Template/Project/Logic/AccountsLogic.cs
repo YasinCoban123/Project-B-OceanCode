@@ -48,10 +48,27 @@ public class AccountsLogic
         return null;
     }
 
-    private bool CheckEmailCorrect(string email)
+    private bool CheckPassword(string password)
+    {
+        if (password.Length < 6)
         {
-            return email.Contains("@");
+            return false;
         }
+        if (!password.Any(ch => char.IsUpper(ch)))
+        {
+            return false;
+        }
+        if (password.Any(ch => !char.IsLetterOrDigit(ch)))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private bool CheckEmailCorrect(string email)
+    {
+        return email.Contains("@");
+    }
 }
 
 
