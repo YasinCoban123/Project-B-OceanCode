@@ -34,23 +34,36 @@ public class UserAccountsAccess
     }
 
     public Dictionary<string, string> EmailPasswordDict()
-{
-    Dictionary<string, string> accounts = new();
-
-    string sql = $"SELECT email, password FROM {Table}";
-    var result = _connection.Query(sql);
-
-    foreach (var row in result)
     {
-        string email = row.email;
-        string password = row.password;
+        Dictionary<string, string> accounts = new();
 
-        accounts[email] = password;
+        string sql = $"SELECT email, password FROM {Table}";
+        var result = _connection.Query(sql);
+
+        foreach (var row in result)
+        {
+            string email = row.email;
+            string password = row.password;
+
+            accounts[email] = password;
+        }
+
+        return accounts;
     }
 
-    return accounts;
-}
+    public List<string> GetAllEmails()
+    {
+        List<string> emails = new();
 
+        string sql = $"SELECT email FROM {Table}";
+        var result = _connection.Query(sql);
 
+        foreach (var row in result)
+        {
+            string email = row.email;
+            emails.Add(email);
+        }
 
+        return emails;
+    }
 }
