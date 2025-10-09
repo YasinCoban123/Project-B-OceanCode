@@ -70,6 +70,19 @@ public class AccountsLogic
     {
         return email.Contains("@");
     }
+
+    private bool CheckIfEmailExist(string email)
+    {
+        List<string> emails = _access.GetAllEmails();
+        foreach (string existingEmail in emails)
+        {
+            if (email.ToLower() == existingEmail.ToLower())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 
