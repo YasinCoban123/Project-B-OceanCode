@@ -10,9 +10,8 @@
 
     public string DateOfBirth { get; set; }
 
-    public UserAccountModel(Int64 id, string email, string password, string fullname, string dateofbirth)
+    public UserAccountModel(string email, string password, string fullname, string dateofbirth)
     {
-        Id = id;
         EmailAddress = email;
         Password = password;
         FullName = fullname;
