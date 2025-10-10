@@ -49,6 +49,44 @@ public class AccountsLogic
         return null;
     }
 
+    public UserAccountModel MakeAccount(
+    string email,
+    string password,
+    string fullName,
+    string dobString)
+    {
+        if (!CheckEmailCorrect(email))
+        {
+            return null;
+        }
+    
+        if (!CheckPassword(password))
+        {
+            return null;
+        }
+    
+        // checkt of de dob in format DD-MM-YYYY
+        if (!CheckDob(dobString))
+        {
+            return null;
+        }
+    
+        // check of de email al bestaat in de database
+        if (CheckIfEmailExist(email))
+        {
+            return null;
+        }
+    
+        // na alle checks, maak de object aan met de info van de user
+        UserAccountModel newAccount = new UserAccountModel(email, password, fullName, dobString);
+
+        _access.Write(newAccount); // voeg de object aan de DB toe
+
+        CurrentAccount = newAccount; // assignt de CurrentAccount als de nieuwe account, dus automatisch ingelogt
+        return newAccount;
+    }
+
+
     private bool CheckPassword(string password)
     {
         if (password.Length < 6)
