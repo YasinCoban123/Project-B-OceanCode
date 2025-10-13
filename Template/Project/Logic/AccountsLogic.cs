@@ -16,7 +16,7 @@ public class AccountsLogic
 
     }
 
-    public bool CheckLogin(string email, string password)
+    public UserAccountModel CheckLogin(string email, string password)
     {
         UserAccountsAccess access = new UserAccountsAccess();
         Dictionary<string, string> accounts = access.EmailPasswordDict(); // method to be made by Amine
@@ -30,27 +30,19 @@ public class AccountsLogic
 
             if (email.ToLower() == storedEmail.ToLower() && password == storedPassword)
             {
-                foreach (string Existingemail in emails)
+                UserAccountModel acc = _access.GetByEmail(email);
+                if (acc != null)
                 {
-                    if (email == Existingemail)
-                    {
-                        return false;
-                    }
-                    return true;
+                    CurrentAccount = acc;
+                    return acc;
                 }
-                // UserAccountModel acc = _access.GetByEmail(email);
-                // if (acc != null)
-                // {
-                //     CurrentAccount = acc;
-                //     return acc;
-                // }
             }
         }
-        return false;
+        return null;
     }
 
 
-    public UserAccountModel MakeAccount(string email, string password, string fullName, string dobString)
+    public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
     {
         if (!CheckEmailCorrect(email))
         {
@@ -61,7 +53,7 @@ public class AccountsLogic
             return null;
         }
 
-        if (!CheckDob(dobString))
+        if (!CheckDob(dateOfBirth))
         {
             return null;
         }
@@ -70,7 +62,7 @@ public class AccountsLogic
         {
             return null;
         }
-        UserAccountModel newAccount = new UserAccountModel(email, password, fullName, dobString);
+        UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password);
         _access.Write(newAccount);
 
         CurrentAccount = newAccount;
@@ -89,7 +81,7 @@ public class AccountsLogic
         {
             return false;
         }
-        if (password.Any(ch => !char.IsLetterOrDigit(ch)))
+        if (!password.Any(ch => char.IsDigit(ch)))
         {
             return false;
         }
@@ -111,11 +103,6 @@ public class AccountsLogic
     private bool CheckIfEmailExist(string email)
     {
         List<string> emails = _access.GetAllEmails();
-
-        if (emails == null)
-        {
-            return true; // laat account doorgaan, voorkomt crash
-        }
 
         foreach (string existingEmail in emails)
         {
