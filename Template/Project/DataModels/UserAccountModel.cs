@@ -1,25 +1,18 @@
 ﻿public class UserAccountModel
 {
-
-    public Int64 Id { get; set; }
-    public string EmailAddress { get; set; }
-
+    public long AccountId { get; set; }
+    public string FullName { get; set; }
+    public string Email { get; set; }
+    public string DateOfBirth { get; set; }
     public string Password { get; set; }
 
-    public string FullName { get; set; }
+    public UserAccountModel() { }
 
-    public string DateOfBirth { get; set; }
-
-    public UserAccountModel(string email, string password, string fullname, string dateofbirth)
+    public UserAccountModel(string fullName, string email, string dateOfBirth, string password)
     {
-        EmailAddress = email;
+        FullName = fullName;
+        Email = email;
+        DateOfBirth = dateOfBirth;
         Password = password;
-        FullName = fullname;
-        DateOfBirth = dateofbirth;
     }
-
-
 }
-
-
-

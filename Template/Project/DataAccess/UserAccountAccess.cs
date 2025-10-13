@@ -11,7 +11,7 @@ public class UserAccountsAccess
 
     public void Write(UserAccountModel account)
     {
-        string sql = $"INSERT INTO {Table} (email, password, fullname) VALUES (@EmailAddress, @Password, @FullName)";
+        string sql = $"INSERT INTO {Table} (email, password, fullname, dateofbirth) VALUES (@Email, @Password, @FullName, @DateOfBirth)";
         _connection.Execute(sql, account);
     }
 
@@ -30,7 +30,7 @@ public class UserAccountsAccess
     public void Delete(UserAccountModel account)
     {
         string sql = $"DELETE FROM {Table} WHERE id = @Id";
-        _connection.Execute(sql, new { Id = account.Id });
+        _connection.Execute(sql, new { Id = account.AccountId });
     }
 
     public Dictionary<string, string> EmailPasswordDict()
@@ -42,14 +42,12 @@ public class UserAccountsAccess
 
         foreach (var row in result)
         {
-            string email = row.email;
-            string password = row.password;
-
-            accounts[email] = password;
+            accounts[row.Email] = row.Password;
         }
-
+        
         return accounts;
     }
+
 
     public List<string> GetAllEmails()
     {
@@ -60,10 +58,11 @@ public class UserAccountsAccess
 
         foreach (var row in result)
         {
-            string email = row.email;
-            emails.Add(email);
+            string email = row.Email;
+            if (email != null)
+                emails.Add(email);
         }
-
         return emails;
     }
+
 }

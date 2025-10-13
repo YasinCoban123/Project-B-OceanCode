@@ -18,17 +18,9 @@ public class AccountsLogic
 
     public UserAccountModel CheckLogin(string email, string password)
     {
-        if (!CheckEmailCorrect(email))
-        {
-            return null;
-        }
-        if (!CheckPassword(password)) // method to be made by Arjun
-        {
-            return null;
-        }
-
         UserAccountsAccess access = new UserAccountsAccess();
         Dictionary<string, string> accounts = access.EmailPasswordDict(); // method to be made by Amine
+        List<string> emails = access.GetAllEmails();
 
         // loopt door accounts
         foreach (var account in accounts)
@@ -49,42 +41,34 @@ public class AccountsLogic
         return null;
     }
 
-    public UserAccountModel MakeAccount(
-    string email,
-    string password,
-    string fullName,
-    string dobString)
+
+    public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
     {
         if (!CheckEmailCorrect(email))
         {
             return null;
         }
-    
         if (!CheckPassword(password))
         {
             return null;
         }
-    
-        // checkt of de dob in format DD-MM-YYYY
-        if (!CheckDob(dobString))
+
+        if (!CheckDob(dateOfBirth))
         {
             return null;
         }
-    
-        // check of de email al bestaat in de database
-        if (CheckIfEmailExist(email))
+
+        if (!CheckIfEmailExist(email))
         {
             return null;
         }
-    
-        // na alle checks, maak de object aan met de info van de user
-        UserAccountModel newAccount = new UserAccountModel(email, password, fullName, dobString);
+        UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password);
+        _access.Write(newAccount);
 
-        _access.Write(newAccount); // voeg de object aan de DB toe
-
-        CurrentAccount = newAccount; // assignt de CurrentAccount als de nieuwe account, dus automatisch ingelogt
+        CurrentAccount = newAccount;
         return newAccount;
     }
+
 
 
     private bool CheckPassword(string password)
@@ -97,7 +81,7 @@ public class AccountsLogic
         {
             return false;
         }
-        if (password.Any(ch => !char.IsLetterOrDigit(ch)))
+        if (!password.Any(ch => char.IsDigit(ch)))
         {
             return false;
         }
@@ -109,9 +93,17 @@ public class AccountsLogic
         return email.Contains("@");
     }
 
+    private bool CheckDob(string dobString)
+    {
+        return dobString.Length == 10 && dobString[2] == '-' && dobString[5] == '-';
+    }
+
+
+
     private bool CheckIfEmailExist(string email)
     {
         List<string> emails = _access.GetAllEmails();
+
         foreach (string existingEmail in emails)
         {
             if (email.ToLower() == existingEmail.ToLower())
@@ -121,8 +113,5 @@ public class AccountsLogic
         }
         return true;
     }
+
 }
-
-
-
-

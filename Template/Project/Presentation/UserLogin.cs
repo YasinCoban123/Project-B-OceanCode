@@ -18,19 +18,20 @@ static class UserLogin
                 Console.WriteLine("Please enter your password");
                 string password = Console.ReadLine();
                 UserAccountModel acc = accountsLogic.CheckLogin(email, password);
-                if (acc != null)
+
+                if (acc == null)
+                {
+                    Console.WriteLine("Login failed");
+                }
+                else
                 {
                     Console.WriteLine("Welcome back " + acc.FullName);
-                    Console.WriteLine("Your email number is " + acc.EmailAddress);
+                    Console.WriteLine("Your email number is " + acc.Email);
 
                     //Write some code to go back to the menu
                     //Menu.Start();
                     break;
-                }
-                else
-                {
-                    Console.WriteLine("No account found with that email and password");
-                }
+                }             
             }
         }
 
