@@ -19,27 +19,20 @@ public class AccountsLogic
     public UserAccountModel CheckLogin(string email, string password)
     {
         UserAccountsAccess access = new UserAccountsAccess();
-        Dictionary<string, string> accounts = access.EmailPasswordDict(); // method to be made by Amine
-        List<string> emails = access.GetAllEmails();
+        UserAccountModel accountinfo = access.GetByEmail(email);
 
-        // loopt door accounts
-        foreach (var account in accounts)
+        if (password == accountinfo.Password)
         {
-            string storedEmail = account.Key;
-            string storedPassword = account.Value;
-
-            if (email.ToLower() == storedEmail.ToLower() && password == storedPassword)
+            UserAccountModel acc = _access.GetByEmail(email);
+            if (acc != null)
             {
-                UserAccountModel acc = _access.GetByEmail(email);
-                if (acc != null)
-                {
-                    CurrentAccount = acc;
-                    return acc;
-                }
+                CurrentAccount = acc;
+                return acc;
             }
         }
         return null;
     }
+
 
 
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
@@ -102,14 +95,17 @@ public class AccountsLogic
 
     private bool CheckIfEmailExist(string email)
     {
-        List<string> emails = _access.GetAllEmails();
+        UserAccountsAccess access = new UserAccountsAccess();
+        UserAccountModel accountinfo = access.GetByEmail(email);
 
-        foreach (string existingEmail in emails)
+        if (accountinfo is null)
         {
-            if (email.ToLower() == existingEmail.ToLower())
-            {
-                return false;
-            }
+            return true;
+        }
+        
+        if (email == accountinfo.Email)
+        {
+            return false;
         }
         return true;
     }
