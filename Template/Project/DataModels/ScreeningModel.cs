@@ -3,9 +3,9 @@ public class ScreeningModel
     public long ScreeningId { get; set; }
     public long MovieId { get; set; }
     public long HallId { get; set; }
-    public DateTime ScreeningStartingTime { get; set; }
+    public string ScreeningStartingTime { get; set; }
 
-    public ScreeningModel(long screeningId, long movieId, long hallId, DateTime screeningStartingTime)
+    public ScreeningModel(long screeningId, long movieId, long hallId, string screeningStartingTime)
     {
         ScreeningId = screeningId;
         MovieId = movieId;

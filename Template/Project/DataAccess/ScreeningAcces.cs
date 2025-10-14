@@ -35,4 +35,13 @@ public class ScreeningAcces
         string sql = $"DELETE FROM {Table} WHERE ScreeningId = @ScreeningId";
         _connection.Execute(sql, new { ScreeningId = screeningId });
     }
+
+    public List<string> GetScreenings()
+    {
+        string sql = $"SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre, PGRating FROM {Table} JOIN Movie ON Screening.MovieId = Movie.MovieId;";
+
+        return _connection.Query(sql)
+            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId} StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}")
+            .ToList();
+    }
 }
