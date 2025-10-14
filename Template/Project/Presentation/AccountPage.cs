@@ -2,8 +2,9 @@ using System;
 
 public static class AccountPage
 {
-    public static void Start(UserAccountModel user, UserAccountsAccess db)
+    public static void Start(UserAccountModel user)
     {
+        UserAccountsAccess acces = new();
         Console.WriteLine();
         Console.WriteLine("[1] See info");
         Console.WriteLine("[2] Edit Account");
@@ -19,7 +20,7 @@ public static class AccountPage
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
-            Menu.Start(user.Email);
+            Menu.Start();
         }
         else if (choice == "2")
         {
@@ -43,13 +44,13 @@ public static class AccountPage
             if (!string.IsNullOrWhiteSpace(newDob))
                 user.DateOfBirth = newDob;
 
-            db.Update(user);
+            acces.Update(user);
             Console.WriteLine("Account updated successfully!");
-            Menu.Start(user.Email);
+            Menu.Start();
         }
         else if (choice == "3")
         {
-            db.Delete(user);
+            acces.Delete(user);
             Console.WriteLine("Account deleted successfully!");
             UserLogin.Start();
         }

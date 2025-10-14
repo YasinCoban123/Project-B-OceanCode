@@ -30,7 +30,7 @@ static class UserLogin
                     Console.WriteLine("Your email number is " + acc.Email);
 
                     //Write some code to go back to the menu
-                    Menu.Start(email);
+                    Menu.Start();
                     break;
                 }
             }
@@ -85,7 +85,7 @@ static class UserLogin
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Account successfully created! Welcome, {newAccount.FullName}");
-                    Menu.Start(email);
+                    Menu.Start();
                     break;
                 }
                 else
