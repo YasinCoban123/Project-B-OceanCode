@@ -18,8 +18,7 @@ public class AccountsLogic
 
     public UserAccountModel CheckLogin(string email, string password)
     {
-        UserAccountsAccess access = new UserAccountsAccess();
-        UserAccountModel accountinfo = access.GetByEmail(email);
+        UserAccountModel accountinfo = _access.GetByEmail(email);
 
         if (password == accountinfo.Password)
         {
@@ -62,6 +61,11 @@ public class AccountsLogic
         return newAccount;
     }
 
+    // public string DeleteAccount()
+    // {
+        
+    // }
+
 
 
     private bool CheckPassword(string password)
@@ -102,7 +106,7 @@ public class AccountsLogic
         {
             return true;
         }
-        
+
         if (email == accountinfo.Email)
         {
             return false;

@@ -23,13 +23,14 @@ public class UserAccountsAccess
 
     public void Update(UserAccountModel account)
     {
-        string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, fullname = @FullName WHERE id = @Id";
+        string sql = $"UPDATE {Table} SET email = @Email, password = @Password, fullname = @FullName, dateofbirth = @DateOfBirth WHERE AccountId = @AccountId";
         _connection.Execute(sql, account);
     }
 
     public void Delete(UserAccountModel account)
     {
-        string sql = $"DELETE FROM {Table} WHERE id = @Id";
-        _connection.Execute(sql, new { Id = account.AccountId });
+        string sql = $"DELETE FROM {Table} WHERE AccountId = @AccountId";
+        _connection.Execute(sql, account);
     }
+
 }

@@ -29,7 +29,7 @@ static class UserLogin
                     Console.WriteLine("Your email number is " + acc.Email);
 
                     //Write some code to go back to the menu
-                    //Menu.Start();
+                    Menu.Start(email);
                     break;
                 }             
             }
@@ -51,16 +51,16 @@ static class UserLogin
                 string password = Console.ReadLine();
 
                 Console.Write("Enter your date of birth (DD-MM-YYYY): ");
-                string dobString = Console.ReadLine();
+                string dateOfBirth = Console.ReadLine();
 
                 // roept de make account method aan in de logic file
-                UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dobString);
+                UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth);
 
                 if (newAccount != null)
                 {
                     Console.WriteLine($"Account successfully created! Welcome, {newAccount.FullName}");
                     // Menu word aangezet nadat alle files compleet zijn ervoor
-                    // Menu.Start();
+                    Menu.Start(email);
                     break; // exit de loop zodra het account is aangemaakt
                 }
                 else
