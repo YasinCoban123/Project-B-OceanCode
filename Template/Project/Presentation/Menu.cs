@@ -6,6 +6,7 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start(string email)
     {
+        Console.WriteLine();
         Console.WriteLine("[1] Screenings");
         Console.WriteLine("[2] View reservations");
         Console.WriteLine("[3] Account");

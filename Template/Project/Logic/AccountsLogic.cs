@@ -36,24 +36,6 @@ public class AccountsLogic
 
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
     {
-        if (!CheckEmailCorrect(email))
-        {
-            return null;
-        }
-        if (!CheckPassword(password))
-        {
-            return null;
-        }
-
-        if (!CheckDob(dateOfBirth))
-        {
-            return null;
-        }
-
-        if (!CheckIfEmailExist(email))
-        {
-            return null;
-        }
         UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password);
         _access.Write(newAccount);
 
@@ -61,14 +43,9 @@ public class AccountsLogic
         return newAccount;
     }
 
-    // public string DeleteAccount()
-    // {
-        
-    // }
 
 
-
-    private bool CheckPassword(string password)
+    public bool CheckPassword(string password)
     {
         if (password.Length < 6)
         {
@@ -85,19 +62,19 @@ public class AccountsLogic
         return true;
     }
 
-    private bool CheckEmailCorrect(string email)
+    public bool CheckEmailCorrect(string email)
     {
         return email.Contains("@");
     }
 
-    private bool CheckDob(string dobString)
+    public bool CheckDob(string dobString)
     {
         return dobString.Length == 10 && dobString[2] == '-' && dobString[5] == '-';
     }
 
 
 
-    private bool CheckIfEmailExist(string email)
+    public bool CheckIfEmailExist(string email)
     {
         UserAccountsAccess access = new UserAccountsAccess();
         UserAccountModel accountinfo = access.GetByEmail(email);
