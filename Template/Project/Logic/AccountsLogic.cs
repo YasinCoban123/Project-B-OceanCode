@@ -18,50 +18,24 @@ public class AccountsLogic
 
     public UserAccountModel CheckLogin(string email, string password)
     {
-        UserAccountsAccess access = new UserAccountsAccess();
-        Dictionary<string, string> accounts = access.EmailPasswordDict(); // method to be made by Amine
-        List<string> emails = access.GetAllEmails();
+        UserAccountModel accountinfo = _access.GetByEmail(email);
 
-        // loopt door accounts
-        foreach (var account in accounts)
+        if (password == accountinfo.Password)
         {
-            string storedEmail = account.Key;
-            string storedPassword = account.Value;
-
-            if (email.ToLower() == storedEmail.ToLower() && password == storedPassword)
+            UserAccountModel acc = _access.GetByEmail(email);
+            if (acc != null)
             {
-                UserAccountModel acc = _access.GetByEmail(email);
-                if (acc != null)
-                {
-                    CurrentAccount = acc;
-                    return acc;
-                }
+                CurrentAccount = acc;
+                return acc;
             }
         }
         return null;
     }
 
 
+
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
     {
-        if (!CheckEmailCorrect(email))
-        {
-            return null;
-        }
-        if (!CheckPassword(password))
-        {
-            return null;
-        }
-
-        if (!CheckDob(dateOfBirth))
-        {
-            return null;
-        }
-
-        if (!CheckIfEmailExist(email))
-        {
-            return null;
-        }
         UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password);
         _access.Write(newAccount);
 
@@ -71,7 +45,7 @@ public class AccountsLogic
 
 
 
-    private bool CheckPassword(string password)
+    public bool CheckPassword(string password)
     {
         if (password.Length < 6)
         {
@@ -88,28 +62,31 @@ public class AccountsLogic
         return true;
     }
 
-    private bool CheckEmailCorrect(string email)
+    public bool CheckEmailCorrect(string email)
     {
         return email.Contains("@");
     }
 
-    private bool CheckDob(string dobString)
+    public bool CheckDob(string dobString)
     {
         return dobString.Length == 10 && dobString[2] == '-' && dobString[5] == '-';
     }
 
 
 
-    private bool CheckIfEmailExist(string email)
+    public bool CheckIfEmailExist(string email)
     {
-        List<string> emails = _access.GetAllEmails();
+        UserAccountsAccess access = new UserAccountsAccess();
+        UserAccountModel accountinfo = access.GetByEmail(email);
 
-        foreach (string existingEmail in emails)
+        if (accountinfo is null)
         {
-            if (email.ToLower() == existingEmail.ToLower())
-            {
-                return false;
-            }
+            return true;
+        }
+
+        if (email == accountinfo.Email)
+        {
+            return false;
         }
         return true;
     }

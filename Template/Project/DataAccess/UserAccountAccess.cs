@@ -23,46 +23,14 @@ public class UserAccountsAccess
 
     public void Update(UserAccountModel account)
     {
-        string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, fullname = @FullName WHERE id = @Id";
+        string sql = $"UPDATE {Table} SET email = @Email, password = @Password, fullname = @FullName, dateofbirth = @DateOfBirth WHERE AccountId = @AccountId";
         _connection.Execute(sql, account);
     }
 
     public void Delete(UserAccountModel account)
     {
-        string sql = $"DELETE FROM {Table} WHERE id = @Id";
-        _connection.Execute(sql, new { Id = account.AccountId });
-    }
-
-    public Dictionary<string, string> EmailPasswordDict()
-    {
-        Dictionary<string, string> accounts = new();
-
-        string sql = $"SELECT email, password FROM {Table}";
-        var result = _connection.Query(sql);
-
-        foreach (var row in result)
-        {
-            accounts[row.Email] = row.Password;
-        }
-        
-        return accounts;
-    }
-
-
-    public List<string> GetAllEmails()
-    {
-        List<string> emails = new();
-
-        string sql = $"SELECT email FROM {Table}";
-        var result = _connection.Query(sql);
-
-        foreach (var row in result)
-        {
-            string email = row.Email;
-            if (email != null)
-                emails.Add(email);
-        }
-        return emails;
+        string sql = $"DELETE FROM {Table} WHERE AccountId = @AccountId";
+        _connection.Execute(sql, account);
     }
 
 }

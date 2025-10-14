@@ -17,11 +17,11 @@ static class Menu
 
             if (answer == "account")
             {
-                // Account();
+                AccountPage.Start(currentUser);
             }
             else if (answer == "view screenings")
             {
-                Screenings.Start();
+                // Screenings.Start();
             }
             else if (answer == "reservations")
             {

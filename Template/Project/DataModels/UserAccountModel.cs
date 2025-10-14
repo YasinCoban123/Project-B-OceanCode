@@ -6,7 +6,7 @@
     public string DateOfBirth { get; set; }
     public string Password { get; set; }
 
-    public UserAccountModel() { }
+    public UserAccountModel() { }  // empty overload for dapper because constructor below doesnt contain accoundId which dapper needs to create object
 
     public UserAccountModel(string fullName, string email, string dateOfBirth, string password)
     {
@@ -15,4 +15,5 @@
         DateOfBirth = dateOfBirth;
         Password = password;
     }
+    
 }
