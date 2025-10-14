@@ -21,7 +21,7 @@ static class Menu
             }
             else if (answer == "view screenings")
             {
-                // Screenings.Start();
+                Screenings.Start();
             }
             else if (answer == "reservations")
             {
