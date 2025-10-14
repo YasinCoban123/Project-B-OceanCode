@@ -29,7 +29,7 @@ static class UserLogin
                     Console.WriteLine("Your email number is " + acc.Email);
 
                     //Write some code to go back to the menu
-                    //Menu.Start();
+                    Menu.Start();
                     break;
                 }             
             }

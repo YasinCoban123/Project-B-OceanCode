@@ -6,23 +6,27 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
-        Console.WriteLine("Enter 1 to login");
-        Console.WriteLine("Enter 2 to do something else in the future");
+        UserAccountModel ?currentUser = AccountsLogic.CurrentAccount;
+        while (true)
+        {
+            Console.WriteLine($"Welcome to the Main Menu {currentUser.FullName}");
+            Console.WriteLine($"Account");
+            Console.WriteLine($"View Screenings");
+            Console.WriteLine($"Reservations");
+            string answer = Console.ReadLine().ToLower();
 
-        string input = Console.ReadLine();
-        if (input == "1")
-        {
-            UserLogin.Start();
+            if (answer == "account")
+            {
+                // Account();
+            }
+            else if (answer == "view screenings")
+            {
+                Screenings.Start();
+            }
+            else if (answer == "reservations")
+            {
+                // Reservation();
+            }
         }
-        else if (input == "2")
-        {
-            Console.WriteLine("This feature is not yet implemented");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input");
-            Start();
-        }
-
     }
 }
