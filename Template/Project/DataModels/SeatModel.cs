@@ -4,6 +4,10 @@ public class SeatModel
     public long HallId { get; set; }
     public bool IsReserved { get; set; }
 
+    public SeatModel()
+    {
+
+    }
     public SeatModel(long seatId, long hallId, bool isReserved)
     {
         SeatId = seatId;
