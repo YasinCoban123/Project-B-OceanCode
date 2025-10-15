@@ -25,7 +25,7 @@ static class Menu
             }
             else if (answer == "reservations")
             {
-                // Reservation();
+                Reservations.Start();
             }
         }
     }
