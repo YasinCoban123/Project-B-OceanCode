@@ -25,13 +25,15 @@ public class ReservationAcces
     public bool Exists(long reservationId)
     {
         string sql = $"SELECT COUNT(1) FROM {Table} WHERE ReservationId = @ReservationId";
-        int count = _connection.ExecuteScalar<int>(sql, new { ReservationId = reservationId });
-        return count > 0;
+        return _connection.ExecuteScalar<int>(sql, new { ReservationId = reservationId }) > 0;
     }
 
     public void Delete(long reservationId)
     {
-        string sql = $"DELETE FROM {Table} WHERE ReservationId = @ReservationId";
-        _connection.Execute(sql, new { ReservationId = reservationId });
+        string deleteSeats = "DELETE FROM ReservedSeat WHERE ReservationId = @ReservationId";
+        _connection.Execute(deleteSeats, new { ReservationId = reservationId });
+
+        string deleteReservation = "DELETE FROM Reservation WHERE ReservationId = @ReservationId";
+        _connection.Execute(deleteReservation, new { ReservationId = reservationId });
     }
 }
