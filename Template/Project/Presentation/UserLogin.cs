@@ -84,9 +84,8 @@ static class UserLogin
                 if (newAccount != null)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"Account successfully created! Welcome, {newAccount.FullName}");
-                    Menu.Start();
-                    break;
+                    Console.WriteLine($"Account successfully created! Please login with your new account");
+                    Start();
                 }
                 else
                 {

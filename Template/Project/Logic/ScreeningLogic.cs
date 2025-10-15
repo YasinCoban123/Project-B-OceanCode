@@ -19,7 +19,6 @@ public class ScreeningLogic
         ScreeningModel screening = _screeningAccess.GetById(screeningId);
         if (screening == null)
         {
-            Console.WriteLine("Screening not found.");
             return false;
         }
 
@@ -27,7 +26,6 @@ public class ScreeningLogic
         SeatModel seat = _seatAccess.GetFirstEmptySeat(screening.HallId);
         if (seat == null)
         {
-            Console.WriteLine("No available seats in this hall.");
             return false;
         }
 
