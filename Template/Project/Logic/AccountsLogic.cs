@@ -67,9 +67,32 @@ public class AccountsLogic
         return email.Contains("@");
     }
 
-    public bool CheckDob(string dobString)
+
+        public bool CheckDob(string dobString)
     {
-        return dobString.Length == 10 && dobString[2] == '-' && dobString[5] == '-';
+        // checkt of de dob in format DD-MM-YYYY is
+        if (dobString.Length != 10)
+        {
+            return false;
+        }
+        if (dobString[2] != '-' || dobString[5] != '-')
+        {
+            return false;
+        }
+        string dayString = dobString.Substring(0, 2);
+        string monthString = dobString.Substring(3, 2);
+        string yearString = dobString.Substring(6, 4);
+        if (!int.TryParse(dayString, out int day) ||
+            !int.TryParse(monthString, out int month) ||
+            !int.TryParse(yearString, out int year))
+        {
+            return false;
+        }
+        if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > DateTime.Now.Year)
+        {
+            return false;
+        }
+        return true;
     }
 
 
