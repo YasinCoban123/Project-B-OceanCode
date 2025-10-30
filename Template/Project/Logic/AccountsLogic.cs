@@ -36,7 +36,8 @@ public class AccountsLogic
 
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
     {
-        UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password);
+        bool notAdmin = false;
+        UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password, notAdmin);
         _access.Write(newAccount);
 
         CurrentAccount = newAccount;
