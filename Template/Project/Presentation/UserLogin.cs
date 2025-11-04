@@ -40,13 +40,16 @@ static class UserLogin
             Console.WriteLine();
             Console.WriteLine("Welcome to the registration page");
 
+            // Ask full name (no extra validation per request)
+            Console.Write("Enter your full name: ");
+            string fullName = Console.ReadLine();
+
+            // Email loop
+            string email;
             while (true)
             {
-                Console.Write("Enter your full name: ");
-                string fullName = Console.ReadLine();
-
                 Console.Write("Enter your email address: ");
-                string email = Console.ReadLine();
+                email = Console.ReadLine();
 
                 if (!accountsLogic.CheckEmailCorrect(email))
                 {
@@ -59,38 +62,51 @@ static class UserLogin
                     Console.WriteLine("This email already exists. Please use another one.");
                     continue;
                 }
+                break;
+            }
 
+            // Password loop
+            string password;
+            while (true)
+            {
                 Console.Write("Enter your password: ");
-                string password = Console.ReadLine();
+                password = Console.ReadLine();
 
                 if (!accountsLogic.CheckPassword(password))
                 {
                     Console.WriteLine("Password does not meet the requirements. Try again.");
                     continue;
                 }
+                break;
+            }
 
+            // Date of birth loop
+            string dateOfBirth;
+            while (true)
+            {
                 Console.Write("Enter your date of birth (DD-MM-YYYY): ");
-                string dateOfBirth = Console.ReadLine();
+                dateOfBirth = Console.ReadLine();
 
                 if (!accountsLogic.CheckDob(dateOfBirth))
                 {
                     Console.WriteLine("Invalid date of birth format or not allowed. Try again.");
                     continue;
                 }
+                break;
+            }
 
-                // Als alles klopt -> maak account
-                UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth);
+            // All fields valid -> create account
+            UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth);
 
-                if (newAccount != null)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"Account successfully created! Please login with your new account");
-                    Start();
-                }
-                else
-                {
-                    Console.WriteLine("Account could not be made, please check your input and try again.");
-                }
+            if (newAccount != null)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Account successfully created! Please login with your new account");
+                Start();
+            }
+            else
+            {
+                Console.WriteLine("Account could not be made, please check your input and try again.");
             }
         }
         else
