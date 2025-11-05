@@ -9,6 +9,7 @@ public static class AccountPage
         Console.WriteLine("[1] See info");
         Console.WriteLine("[2] Edit Account");
         Console.WriteLine("[3] Delete Account");
+        Console.WriteLine("[4] Go Back");
         Console.Write("Choose an option: ");
         string choice = Console.ReadLine();
 
@@ -20,7 +21,7 @@ public static class AccountPage
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
-            Menu.Start();
+            Start(user);
         }
         else if (choice == "2")
         {
@@ -46,13 +47,17 @@ public static class AccountPage
 
             acces.Update(user);
             Console.WriteLine("Account updated successfully!");
-            Menu.Start();
+            Start(user);
         }
         else if (choice == "3")
         {
             acces.Delete(user);
             Console.WriteLine("Account deleted successfully!");
             UserLogin.Start();
+        }
+        else if (choice == "4")
+        {
+            Menu.Start();
         }
         else
         {
