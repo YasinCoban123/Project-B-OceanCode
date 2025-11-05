@@ -19,8 +19,12 @@ public class AccountsLogic
     public UserAccountModel CheckLogin(string email, string password)
     {
         UserAccountModel accountinfo = _access.GetByEmail(email);
+        if (accountinfo == null)
+        {
+            return null;
+        }
 
-        if (password == accountinfo.Password)
+        else if (password == accountinfo.Password)
         {
             UserAccountModel acc = _access.GetByEmail(email);
             if (acc != null)

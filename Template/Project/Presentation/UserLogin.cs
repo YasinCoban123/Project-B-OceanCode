@@ -19,6 +19,11 @@ static class UserLogin
                 Console.WriteLine("Please enter your password");
                 string password = Console.ReadLine();
                 UserAccountModel acc = accountsLogic.CheckLogin(email, password);
+                if (acc == null)
+                {
+                    Console.WriteLine("The email does not have an existing account");
+                    Start();
+                }
 
                 if (acc == null)
                 {
