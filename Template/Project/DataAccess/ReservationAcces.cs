@@ -36,4 +36,17 @@ public class ReservationAcces
         string deleteReservation = "DELETE FROM Reservation WHERE ReservationId = @ReservationId";
         _connection.Execute(deleteReservation, new { ReservationId = reservationId });
     }
+
+
+    public int GetSeatCountForUserScreening(long accountId, int screeningId)
+    {
+        string sql = @"
+        SELECT COUNT(*)
+        FROM Reservation r
+        JOIN ReservedSeat rs ON r.ReservationId = rs.ReservationId
+        WHERE r.AccountId = @AccountId
+        AND r.ScreeningId = @ScreeningId;
+        ";
+        return _connection.ExecuteScalar<int>(sql, new { AccountId = accountId, ScreeningId = screeningId });
+    }
 }
