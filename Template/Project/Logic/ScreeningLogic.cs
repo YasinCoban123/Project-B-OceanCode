@@ -67,12 +67,7 @@ public class ScreeningLogic
                 continue;
             }
         
-            var reservation = new ReservationModel
-            {
-                AccountId = accountId,
-                ScreeningId = screeningId,
-                ReservationTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            };
+            var reservation = new ReservationModel(accountId, screeningId, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         
             long reservationId = _reservationAccess.AddReservation(reservation);
             _reservedSeatAccess.AddReservedSeat(reservationId, seatId, screeningId);

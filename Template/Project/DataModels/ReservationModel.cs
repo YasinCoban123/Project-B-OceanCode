@@ -5,10 +5,10 @@ public class ReservationModel
     public long ScreeningId { get; set; }
     public string ReservationTime { get; set; }
 
-    public ReservationModel()
-    {
-
-    }
+    public string? MovieTitle { get; set; }
+    public string? ScreeningStartingTime { get; set; }
+    public int RowNumber { get; set; }
+    public int SeatNumber { get; set; }
 
     public ReservationModel(long accountid, long screeningid, string reservationtime)
     {
