@@ -46,10 +46,24 @@ public class UserAccountsAccess
         _connection.Execute(sql, account);
     }
 
-    public void Delete(UserAccountModel account)
+    public bool Delete(UserAccountModel account)
     {
         string sql = $"DELETE FROM {Table} WHERE AccountId = @AccountId";
-        _connection.Execute(sql, account);
+
+        try
+        {
+            _connection.Execute(sql, account);
+            return true;
+        }
+        catch (Microsoft.Data.Sqlite.SqliteException ex)
+        {
+            if (ex.SqliteErrorCode == 19)
+            {
+                return false;
+            }
+        }
+        return false;
     }
+
 
 }

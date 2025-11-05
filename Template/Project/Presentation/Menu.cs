@@ -7,6 +7,7 @@ static class Menu
     static public void Start()
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
+
         while (true)
         {
             Console.WriteLine();
@@ -38,14 +39,15 @@ static class Menu
     
         static public void AdminStart()
     {
-        UserAccountModel ?currentUser = AccountsLogic.CurrentAccount;
+        UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
+        ReservationAdmin radmin = new();
         while (true)
         {
             Console.WriteLine();
             Console.WriteLine($"Welcome to the Main Menu");
             Console.WriteLine($"[1] Account");
             Console.WriteLine($"[2] View Screenings");
-            Console.WriteLine($"[3] View All Reservations");
+            Console.WriteLine($"[3] Reservations");
             Console.WriteLine("[4] Quit Program");
             string answer = Console.ReadLine().ToLower();
 
@@ -59,7 +61,7 @@ static class Menu
             }
             else if (answer == "3")
             {
-                Console.WriteLine("No option for now </3");
+                radmin.Start();
             }
 
             else if (answer == "4")

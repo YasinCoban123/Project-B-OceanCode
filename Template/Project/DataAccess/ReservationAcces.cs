@@ -73,4 +73,10 @@ public class ReservationAcces
         ";
         return _connection.ExecuteScalar<int>(sql, new { AccountId = accountId, ScreeningId = screeningId });
     }
+
+    public List<ReservationModel> GetAllReservations()
+    {
+        string sql = $"SELECT * FROM {Table}";
+        return _connection.Query<ReservationModel>(sql).ToList();
+    }
 }

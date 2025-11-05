@@ -152,11 +152,16 @@ public static class AdminAccountPage
                 {
                     Console.WriteLine("Admin account cannot be deleted!");
                 }
+                if (acces.Delete(chosenuser) == false)
+                {
+                    Console.WriteLine("Account cannot be deleted, User must remove reservation on the account first");
+                    Start(user);
+                }
                 else
                 {
-                  acces.Delete(chosenuser);
+                    acces.Delete(chosenuser);
                     Console.WriteLine("Account deleted successfully!");
-                    Start(user);  
+                    Start(user);
                 }
                 
             }

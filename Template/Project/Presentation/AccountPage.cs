@@ -51,9 +51,17 @@ public static class AccountPage
         }
         else if (choice == "3")
         {
-            acces.Delete(user);
-            Console.WriteLine("Account deleted successfully!");
-            UserLogin.Start();
+
+            if (acces.Delete(user) == false)
+            {
+                Console.WriteLine("Account cannot be deleted, remove reservation on the account first");
+                Menu.Start();
+            }
+            else
+            {
+                Console.WriteLine("Account deleted successfully!");
+                UserLogin.Start();
+            }            
         }
         else if (choice == "4")
         {

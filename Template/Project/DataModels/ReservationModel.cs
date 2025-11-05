@@ -17,4 +17,6 @@ public class ReservationModel
         ReservationTime = reservationtime;
     }
 
+    public ReservationModel () {}
+
 }
