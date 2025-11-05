@@ -24,6 +24,11 @@ static class UserLogin
                 {
                     Console.WriteLine("Login failed");
                 }
+                if (acc.IsAdmin == true)
+                {
+                    Console.WriteLine("Welcome back Admin " + acc.FullName);
+                    Menu.AdminStart();
+                }
                 else
                 {
                     Console.WriteLine("Welcome back " + acc.FullName);
@@ -38,6 +43,9 @@ static class UserLogin
         else if (accountchoice.ToLower() == "register")
         {
             Console.WriteLine();
+            Console.WriteLine("Do you want to create an user account or admin account");
+            string UofAkeuze = Console.ReadLine();
+
             Console.WriteLine("Welcome to the registration page");
 
             while (true)
@@ -78,8 +86,17 @@ static class UserLogin
                     continue;
                 }
 
-                // Als alles klopt -> maak account
-                UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth);
+                UserAccountModel newAccount;
+
+                if (UofAkeuze.ToLower() == "admin")
+                {
+                    newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, true);
+                }
+
+                else
+                {
+                    newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, false);
+                }
 
                 if (newAccount != null)
                 {

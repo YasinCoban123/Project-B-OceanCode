@@ -34,14 +34,19 @@ public class AccountsLogic
 
 
 
-    public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth)
+    public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth, bool notAdmin)
     {
-        bool notAdmin = false;
         UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password, notAdmin);
         _access.Write(newAccount);
 
         CurrentAccount = newAccount;
         return newAccount;
+    }
+
+    public List<UserAccountModel> GetAllUserAccounts()
+    {
+        List<UserAccountModel> AllUserAccounts = _access.GetAllUserAccounts();
+        return AllUserAccounts;
     }
 
 
@@ -113,6 +118,19 @@ public class AccountsLogic
             return false;
         }
         return true;
+    }
+
+    public UserAccountModel GetUserAccount(int id)
+    {
+        UserAccountModel account = _access.GetAccountByID(id);
+        if (account.IsAdmin == true)
+        {
+            return null;
+        }
+        else
+        {
+            return account;
+        }
     }
 
 }

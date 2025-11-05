@@ -11,7 +11,7 @@ public class UserAccountsAccess
 
     public void Write(UserAccountModel account)
     {
-        string sql = $"INSERT INTO {Table} (email, password, fullname, dateofbirth) VALUES (@Email, @Password, @FullName, @DateOfBirth)";
+        string sql = $"INSERT INTO {Table} (email, password, fullname, dateofbirth, isadmin) VALUES (@Email, @Password, @FullName, @DateOfBirth, @IsAdmin)";
         _connection.Execute(sql, account);
     }
 
@@ -20,6 +20,25 @@ public class UserAccountsAccess
         string sql = $"SELECT * FROM {Table} WHERE email = @Email";
         return _connection.QueryFirstOrDefault<UserAccountModel>(sql, new { Email = email });
     }
+
+    public List<UserAccountModel> GetAllUserAccounts()
+    {
+        string sql = $"SELECT * FROM {Table} WHERE IsAdmin = 0";
+        return _connection.Query<UserAccountModel>(sql).ToList();
+    }
+
+    public void UpdateByID(int id)
+    {
+        string sql = $"UPDATE {Table} SET email = @Email, password = @Password, fullname = @FullName, dateofbirth = @DateOfBirth WHERE AccountId = @AccountId";
+        _connection.Execute(sql, id);
+    }
+
+    public UserAccountModel GetAccountByID(int id)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE AccountId = @AccountId";
+        return _connection.QueryFirstOrDefault<UserAccountModel>(sql, new { AccountId = id });     
+    }
+
 
     public void Update(UserAccountModel account)
     {
