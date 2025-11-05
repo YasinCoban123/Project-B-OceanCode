@@ -1,12 +1,11 @@
-using System;
-using System.Linq;
-
 static class Reservations
 {
     static private UserLogic userLogic = new();
 
     public static void Start()
     {
+        Console.Clear();
+
         var currentUser = AccountsLogic.CurrentAccount;
         if (currentUser == null)
         {
@@ -24,28 +23,44 @@ static class Reservations
             return;
         }
 
-        Console.WriteLine("Your reservations:");
-        Console.WriteLine("ID\tScreeningId\tTime");
-        foreach (var r in reservations)
-        {
-            Console.WriteLine($"{r.ReservationId}\t{r.ScreeningId}\t{r.ReservationTime}");
-        }
+
+    Console.Clear();
+    Console.WriteLine("Your reservations:");
+    Console.WriteLine("ID\tMovie Title\t\tScreening Time\t\tSeat");
+    
+    foreach (var r in reservations)
+    {
+        string movieTitle = r.MovieTitle ?? "Unknown";
+        string screeningTime = r.ScreeningStartingTime ?? "N/A"; // laat gewoon als string
+        string seat = $"{r.RowNumber}-{r.SeatNumber}";
+    
+        Console.WriteLine($"{r.ReservationId}\t{movieTitle,-20}\t{screeningTime,-20}\t{seat}");
+    }
+
+
 
         Console.WriteLine();
-        Console.WriteLine("Type a reservation ID to delete it, or type 'exit' to return to the main menu.");
+        Console.WriteLine("Type a reservation ID to delete it, or type 'exit' or '0' to return to the main menu.");
         while (true)
         {
             Console.Write("Choice: ");
             string input = Console.ReadLine();
-            if (input != null && input.ToLower() == "exit")
+            if (input != null && (input.ToLower() == "exit" || input == "0"))
             {
+                Console.Clear();
                 Menu.Start();
                 return;
             }
 
             if (!long.TryParse(input, out long reservationId))
             {
-                Console.WriteLine("Invalid ID. Please enter a numeric reservation ID or 'exit'.");
+                Console.WriteLine("Invalid ID. Please enter a numeric reservation ID or 'exit' or '0' to return to the main menu.");
+                continue;
+            }
+
+            if (!reservations.Any(r => r.ReservationId == reservationId))
+            {
+                Console.WriteLine("You may only delete your own reservations. Please enter a valid reservation ID from the list or type 'exit'.");
                 continue;
             }
 
@@ -53,12 +68,15 @@ static class Reservations
             if (deleted)
             {
                 Console.WriteLine("Reservation deleted.");
+                Console.WriteLine("Returning to main menu...");
+                System.Threading.Thread.Sleep(4000);
+                Console.Clear();
                 Menu.Start();
                 return;
             }
             else
             {
-                Console.WriteLine("Reservation ID not found. Please retry or type 'exit'.");
+                Console.WriteLine("Reservation ID not found. Please retry or type 'exit' or '0' to return to the main menu.");
             }
         }
     }

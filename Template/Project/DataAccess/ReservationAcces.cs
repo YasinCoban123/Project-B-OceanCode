@@ -16,11 +16,28 @@ public class ReservationAcces
         return _connection.QuerySingle<long>("SELECT last_insert_rowid()");
     }
 
-    public IEnumerable<ReservationModel> GetByAccountId(long accountId)
+
+    public IEnumerable<dynamic> GetByAccountId(long accountId)
     {
-        string sql = $"SELECT * FROM {Table} WHERE AccountId = @AccountId";
-        return _connection.Query<ReservationModel>(sql, new { AccountId = accountId });
+        string sql = @"
+        SELECT 
+            r.ReservationId,
+            m.Title AS MovieTitle,
+            s.ScreeningStartingTime,
+            st.RowNumber,
+            st.SeatNumber
+        FROM Reservation r
+        JOIN Screening s       ON r.ScreeningId = s.ScreeningId
+        JOIN Movie m           ON s.MovieId = m.MovieId
+        JOIN ReservedSeat rs   ON r.ReservationId = rs.ReservationId
+        JOIN Seat st           ON rs.SeatId = st.SeatId
+        WHERE r.AccountId = @AccountId
+        ORDER BY s.ScreeningStartingTime DESC;
+    ";
+
+        return _connection.Query(sql, new { AccountId = accountId });
     }
+
 
     public bool Exists(long reservationId)
     {
@@ -31,10 +48,17 @@ public class ReservationAcces
     public void Delete(long reservationId)
     {
         string deleteSeats = "DELETE FROM ReservedSeat WHERE ReservationId = @ReservationId";
-        _connection.Execute(deleteSeats, new { ReservationId = reservationId });
+        int seatsDeleted = _connection.Execute(deleteSeats, new { ReservationId = reservationId });
+        // Console.WriteLine($"[ReservationAcces.Delete] Deleted {seatsDeleted} rows from ReservedSeat for ReservationId={reservationId}");
 
         string deleteReservation = "DELETE FROM Reservation WHERE ReservationId = @ReservationId";
-        _connection.Execute(deleteReservation, new { ReservationId = reservationId });
+        int reservationsDeleted = _connection.Execute(deleteReservation, new { ReservationId = reservationId });
+        // Console.WriteLine($"[ReservationAcces.Delete] Deleted {reservationsDeleted} rows from Reservation for ReservationId={reservationId}");
+
+        if (seatsDeleted == 0 && reservationsDeleted == 0)
+        {
+            Console.WriteLine($"[ReservationAcces.Delete] No rows matched ReservationId={reservationId} - check DB file & schema.");
+        }
     }
 
 
