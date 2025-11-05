@@ -90,7 +90,8 @@ static class UserLogin
                 string password;
                 while (true)
                 {
-                    Console.Write("Enter your password: ");
+                    Console.WriteLine("Enter your password: ");
+                    Console.WriteLine("Password must be long than 6 characters, Must contain an Uppercase and a Digit");
                     password = Console.ReadLine();
 
                     if (!accountsLogic.CheckPassword(password))
