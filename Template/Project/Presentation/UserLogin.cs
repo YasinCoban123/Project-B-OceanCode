@@ -21,7 +21,7 @@ static class UserLogin
                 UserAccountModel acc = accountsLogic.CheckLogin(email, password);
                 if (acc == null)
                 {
-                    Console.WriteLine("The email does not have an existing account");
+                    Console.WriteLine("The email and password combination is not correct");
                     Start();
                 }
 
@@ -50,15 +50,6 @@ static class UserLogin
             while (true)
             {
                 Console.WriteLine();
-                Console.WriteLine("Do you want to create an [1] user account or [2] admin account");
-                string UofAkeuze = Console.ReadLine();
-
-                if (UofAkeuze.ToLower() != "1" && UofAkeuze.ToLower() != "2")
-                {
-                    Console.WriteLine("Invalid Choice");
-                    continue;
-                }
-
                 Console.WriteLine("Welcome to the registration page");
 
                 // Ask full name (no extra validation per request)
@@ -91,7 +82,7 @@ static class UserLogin
                 while (true)
                 {
                     Console.WriteLine("Enter your password: ");
-                    Console.WriteLine("Password must be long than 6 characters, Must contain an Uppercase and a Digit");
+                    Console.WriteLine("Password must be longer than 6 characters, Must contain an Uppercase and a Digit");
                     password = Console.ReadLine();
 
                     if (!accountsLogic.CheckPassword(password))
@@ -117,17 +108,8 @@ static class UserLogin
                     break;
                 }
 
-                UserAccountModel newAccount = null;
 
-                if (UofAkeuze.ToLower() == "2")
-                {
-                    newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, true);
-                }
-
-                if (UofAkeuze.ToLower() == "1")
-                {
-                    newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, false);
-                }
+                UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, false);
 
                 if (newAccount != null)
                 {
