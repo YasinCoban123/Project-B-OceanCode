@@ -5,6 +5,7 @@ public static class AccountPage
     public static void Start(UserAccountModel user)
     {
         UserAccountsAccess acces = new();
+        AccountsLogic accountsLogic = new AccountsLogic();
         Console.WriteLine();
         Console.WriteLine("[1] See info");
         Console.WriteLine("[2] Edit Account");
@@ -30,25 +31,76 @@ public static class AccountPage
             if (!string.IsNullOrWhiteSpace(newName))
                 user.FullName = newName;
 
-            Console.Write("Enter new email (leave blank to keep current): ");
-            string newEmail = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(newEmail))
+            while (true)
+            {
+                Console.Write("Enter new email (leave blank to keep current): ");
+                string newEmail = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(newEmail))
+                {
+                    break;
+                }
+
+                if (!accountsLogic.CheckEmailCorrect(newEmail))
+                {
+                    Console.WriteLine("The email is not in the correct format. Try again.");
+                    continue;
+                }
+
+                if (!accountsLogic.CheckIfEmailExist(newEmail))
+                {
+                    Console.WriteLine("This email already exists. Please use another one.");
+                    continue;
+                }
+
                 user.Email = newEmail;
+                break;
+            }
 
-            Console.Write("Enter new password (leave blank to keep current): ");
-            string newPassword = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(newPassword))
+            while (true)
+            {
+                Console.Write("Enter new password (leave blank to keep current): ");
+                string newPassword = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newPassword))
+                {
+                    break;
+                }
+
+                if (!accountsLogic.CheckPassword(newPassword))
+                {
+                    Console.WriteLine("Password does not meet the requirements. Try again.");
+                    continue;
+                }
+
                 user.Password = newPassword;
+                break;
+            }
 
-            Console.Write("Enter new date of birth (leave blank to keep current): ");
-            string newDob = Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(newDob))
+            while (true)
+            {
+                Console.Write("Enter new date of birth (leave blank to keep current): ");
+                string newDob = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newDob))
+                {
+                    break;
+                }
+
+                if (!accountsLogic.CheckDob(newDob))
+                {
+                    Console.WriteLine("Invalid date of birth format or not allowed. Try again.");
+                    continue;
+                }
+
                 user.DateOfBirth = newDob;
+                break;
+            }
 
             acces.Update(user);
             Console.WriteLine("Account updated successfully!");
             Start(user);
         }
+
         else if (choice == "3")
         {
 
@@ -61,7 +113,7 @@ public static class AccountPage
             {
                 Console.WriteLine("Account deleted successfully!");
                 UserLogin.Start();
-            }            
+            }
         }
         else if (choice == "4")
         {
