@@ -43,6 +43,13 @@ static class Screenings
         Console.WriteLine("\nSeat layout for this hall (for this screening):");
         var seatStatus = screeningLogic.GetSeatStatus(screeningId);
 
+        if (seatStatus.Count == 0)
+        {
+            Console.WriteLine("No seats found for this screening.");
+            Menu.Start();
+            return;
+        }
+
         foreach (var s in seatStatus)
         {
             string status = s.IsTaken ? "[TAKEN]" : "[FREE]";
@@ -89,8 +96,44 @@ static class Screenings
             selectedSeatIds.Add(seatId);
         }
 
-        bool success = screeningLogic.MakeReservation(currentUser.AccountId, screeningId, selectedSeatIds);
-        Console.WriteLine(success ? "\nReservation successful!" : "\nFailed to make reservation.");
+        var (valid, failedSeats) = screeningLogic.ValidateSeatsBeforeReservation(currentUser, screeningId, selectedSeatIds);
+        
+        if (failedSeats.Count == selectedSeatIds.Count)
+        {
+            Console.WriteLine("\nAll selected seats are unavailable. Please try again.");
+            Start();
+            return;
+        }
+
+
+        if (failedSeats.Count > 0)
+        {
+            Console.WriteLine("\nSome seats could not be reserved:");
+            foreach (var fs in failedSeats)
+                Console.WriteLine($" - Seat {fs} (either does not exist or is already taken)");
+
+            Console.Write("\nDo you want to continue with the remaining available seats? (yes/no): ");
+            string? choice = Console.ReadLine()?.ToLower();
+
+            if (choice != "yes")
+            {
+                Console.WriteLine("Returning to the screenings page...");
+                Start();
+                return;
+            }
+
+            selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
+        }
+
+        if (selectedSeatIds.Count == 0)
+        {
+            Console.WriteLine("\nNo valid seats selected. Returning to menu...");
+            Menu.Start();
+            return;
+        }
+
+        screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
+        Console.WriteLine("\nReservation successful!");
 
         Menu.Start();
     }
