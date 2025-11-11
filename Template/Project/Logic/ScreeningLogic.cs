@@ -14,81 +14,60 @@ public class ScreeningLogic
     {
         var screening = _screeningAccess.GetById(screeningId);
         if (screening == null)
-    {
-        Console.WriteLine("Screening not found.");
-        return new List<(long, int, int, string, decimal, bool)>();
-    }
-    
+        {
+            return new List<(long, int, int, string, decimal, bool)>();
+        }
+
         return _seatAccess.GetSeatStatusByScreening(screening.HallId, screeningId);
     }
 
-
-    public bool MakeReservation(long accountId, int screeningId, List<int> seatIds)
+    public (bool Valid, List<int> FailedSeats) ValidateSeatsBeforeReservation(UserAccountModel user, int screeningId, List<int> seatIds)
     {
         if (seatIds == null || seatIds.Count == 0)
-        {
-            Console.WriteLine("You must select at least one seat.");
-            return false;
-        }
+            return (false, seatIds);
 
         if (seatIds.Count > 20)
-        {
-            Console.WriteLine("You can reserve a maximum of 20 seats at once.");
-            return false;
-        }
+            return (false, seatIds);
 
         var screening = _screeningAccess.GetById(screeningId);
         if (screening == null)
-        {
-            Console.WriteLine("Screening not found.");
-            return false;
-        }
+            return (false, seatIds);
 
-        int totalReservedForUser = _reservationAccess.GetSeatCountForUserScreening(accountId, screeningId);
+        int totalReservedForUser = _reservationAccess.GetSeatCountForUserScreening(user.AccountId, screeningId);
         if (totalReservedForUser + seatIds.Count > 20)
-        {
-            Console.WriteLine($"You already have {totalReservedForUser} seats reserved. You can only reserve {20 - totalReservedForUser} more.");
-            return false;
-        }
+            return (false, seatIds);
 
-        bool anySeatReserved = false;
+        List<int> failedSeats = new();
 
         foreach (int seatId in seatIds)
         {
-            if (_seatAccess.GetSeatById(seatId) == null)
+            var seat = _seatAccess.GetSeatById(seatId);
+            if (seat == null || _reservedSeatAccess.IsSeatReserved(seatId, screeningId))
             {
-                Console.WriteLine($"SeatId {seatId} does not exist. Please enter a valid seat id.");
-                continue;
+                failedSeats.Add(seatId);
             }
+        }
 
-            if (_reservedSeatAccess.IsSeatReserved(seatId, screeningId))
-            {
-                Console.WriteLine($"Seat {seatId} could not be reserved (already taken).");
+        bool valid = failedSeats.Count < seatIds.Count;
+        return (valid, failedSeats);
+    }
+
+    public void ConfirmReservation(UserAccountModel user, int screeningId, List<int> seatIds)
+    {
+        foreach (int seatId in seatIds)
+        {
+            var seat = _seatAccess.GetSeatById(seatId);
+            if (seat == null || _reservedSeatAccess.IsSeatReserved(seatId, screeningId))
                 continue;
-            }
 
-            var reservation = new ReservationModel(accountId, screeningId, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
+            var reservation = new ReservationModel(user.AccountId, screeningId, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             long reservationId = _reservationAccess.AddReservation(reservation);
             _reservedSeatAccess.AddReservedSeat(reservationId, seatId, screeningId);
-
-            Console.WriteLine($"Seat {seatId} reserved successfully (Reservation ID: {reservationId}).");
-            anySeatReserved = true;
         }
-
-
-        if (!anySeatReserved)
-        {
-            Console.WriteLine("No seats could be reserved.");
-            return false;
-        }
-
-        return true;
     }
 
     public List<ReservationModel> GetAllReservations()
     {
         return _reservationAccess.GetAllReservations();
     }
-
 }
