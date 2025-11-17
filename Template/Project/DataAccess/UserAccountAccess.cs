@@ -27,12 +27,6 @@ public class UserAccountsAccess
         return _connection.Query<UserAccountModel>(sql).ToList();
     }
 
-    public void UpdateByID(int id)
-    {
-        string sql = $"UPDATE {Table} SET email = @Email, password = @Password, fullname = @FullName, dateofbirth = @DateOfBirth WHERE AccountId = @AccountId";
-        _connection.Execute(sql, id);
-    }
-
     public UserAccountModel GetAccountByID(int id)
     {
         string sql = $"SELECT * FROM {Table} WHERE AccountId = @AccountId";

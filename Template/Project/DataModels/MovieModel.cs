@@ -9,9 +9,12 @@ public class MovieModel
 
     public long PGRating { get; set; }
 
-    public MovieModel(long movieid, string title, string genre, long pgrating)
+    public MovieModel()
     {
-        MovieId = movieid;
+        
+    }
+    public MovieModel(string title, string genre, long pgrating)
+    {
         Title = title;
         Genre = genre;
         PGRating = pgrating;
