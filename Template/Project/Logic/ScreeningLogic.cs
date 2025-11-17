@@ -1,3 +1,18 @@
+public enum Genres
+{
+    Action,
+    Action_Comedy,
+    Comedy,
+    Drama,
+    Horror,
+    Romance,
+    Sci_Fi,
+    Documentary,
+    Animation,
+    Thriller,
+    Fantasy
+}
+
 public class ScreeningLogic
 {
     private ScreeningAcces _screeningAccess = new();
@@ -10,15 +25,25 @@ public class ScreeningLogic
         return _screeningAccess.GetScreenings();
     }
 
-    public List<(long SeatId, int RowNumber, int SeatNumber, string TypeName, decimal Price, bool IsTaken)> GetSeatStatus(int screeningId)
+    public List<string> ShowScreeningsByGenre(string genre)
+    {
+        return _screeningAccess.GetScreeningsByGenre(genre);
+    }
+
+    public List<string> ShowScreeningsByDate()
+    {
+        return _screeningAccess.GetScreeningsByDate();
+    }
+
+    public List<SeatRowLogic> GetSeatStatus(int screeningId)
     {
         var screening = _screeningAccess.GetById(screeningId);
         if (screening == null)
         {
-            return new List<(long, int, int, string, decimal, bool)>();
+            return new List<SeatRowLogic>();
         }
 
-        return _seatAccess.GetSeatStatusByScreening(screening.HallId, screeningId);
+        return _seatAccess.GetSeatRowsByScreening(screening.HallId, screeningId);
     }
 
     public (bool Valid, List<int> FailedSeats) ValidateSeatsBeforeReservation(UserAccountModel user, int screeningId, List<int> seatIds)
