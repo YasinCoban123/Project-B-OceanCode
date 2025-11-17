@@ -244,6 +244,7 @@ public static class AdminAccountPage
 
             else if (accountchoice == "3")
             {
+                Console.WriteLine();
                 Console.WriteLine("Give the ID of the account you want to delete");
                 string chosenID = Console.ReadLine();
                 int ChosenID = Convert.ToInt32(chosenID);
@@ -331,7 +332,7 @@ public static class AdminAccountPage
             }
 
 
-            UserAccountModel newAccount = logic.MakeAccount(email, password, fullName, dateOfBirth, true);
+            UserAccountModel newAccount = logic.MakeAdminAccount(email, password, fullName, dateOfBirth);
 
             if (newAccount != null)
             {

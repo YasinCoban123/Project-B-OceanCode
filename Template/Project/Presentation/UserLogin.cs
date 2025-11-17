@@ -110,6 +110,7 @@ static class UserLogin
 
 
                 UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, false);
+                
 
                 if (newAccount != null)
                 {
