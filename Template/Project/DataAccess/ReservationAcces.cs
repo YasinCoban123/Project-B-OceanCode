@@ -17,25 +17,25 @@ public class ReservationAcces
     }
 
 
-    public IEnumerable<dynamic> GetByAccountId(long accountId)
+    public List<ReservationModel> GetByAccountId(long accountId)
     {
         string sql = @"
         SELECT 
-            r.ReservationId,
-            m.Title AS MovieTitle,
-            s.ScreeningStartingTime,
-            st.RowNumber,
-            st.SeatNumber
-        FROM Reservation r
-        JOIN Screening s       ON r.ScreeningId = s.ScreeningId
-        JOIN Movie m           ON s.MovieId = m.MovieId
-        JOIN ReservedSeat rs   ON r.ReservationId = rs.ReservationId
-        JOIN Seat st           ON rs.SeatId = st.SeatId
-        WHERE r.AccountId = @AccountId
-        ORDER BY s.ScreeningStartingTime DESC;
-    ";
+            reservation.ReservationId AS ReservationId,
+            movie.Title AS MovieTitle,
+            screening.ScreeningStartingTime AS ScreeningStartingTime,
+            seat.RowNumber AS RowNumber,
+            seat.SeatNumber AS SeatNumber
+        FROM Reservation reservation
+        JOIN Screening screening       ON reservation.ScreeningId = screening.ScreeningId
+        JOIN Movie movie               ON screening.MovieId = movie.MovieId
+        JOIN ReservedSeat reservedSeat ON reservation.ReservationId = reservedSeat.ReservationId
+        JOIN Seat seat                 ON reservedSeat.SeatId = seat.SeatId
+        WHERE reservation.AccountId = @AccountId
+        ORDER BY screening.ScreeningStartingTime DESC;
+        ";
 
-        return _connection.Query(sql, new { AccountId = accountId });
+        return _connection.Query<ReservationModel>(sql, new { AccountId = accountId }).ToList();
     }
 
 

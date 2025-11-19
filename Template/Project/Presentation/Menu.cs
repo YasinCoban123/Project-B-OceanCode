@@ -1,36 +1,64 @@
 static class Menu
 {
-
-    //This shows the menu. You can call back to this method to show the menu again
-    //after another presentation method is completed.
-    //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
 
+        string[] options = new[] { "Account", "View Screenings", "Reservations", "Quit Program" };
+        int selected = 0;
+
         while (true)
         {
+            Console.Clear();
             Console.WriteLine();
             Console.WriteLine("Welcome to the Main Menu");
-            Console.WriteLine("[1] Account");
-            Console.WriteLine("[2] View Screenings");
-            Console.WriteLine("[3] Reservations");
-            Console.WriteLine("[4] Quit Program");
-            string answer = Console.ReadLine().ToLower();
+            Console.WriteLine("Use Arrow keys to navigate, Enter to select. Press 0 or Esc to quit.");
+            Console.WriteLine();
 
-            if (answer == "1")
+            for (int i = 0; i < options.Length; i++)
             {
-                AccountPage.Start(currentUser);
+                if (i == selected)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"> {options[i]}");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine($"  {options[i]}");
+                }
             }
-            else if (answer == "2")
+
+            var key = Console.ReadKey(true);
+
+            if (key.Key == ConsoleKey.UpArrow)
             {
-                Screenings.Start();
+                selected = (selected - 1 + options.Length) % options.Length;
             }
-            else if (answer == "3")
+            else if (key.Key == ConsoleKey.DownArrow)
             {
-                Reservations.Start();
+                selected = (selected + 1) % options.Length;
             }
-            else if (answer == "4")
+            else if (key.Key == ConsoleKey.Enter)
+            {
+                if (selected == 0)
+                {
+                    AccountPage.Start(currentUser);
+                }
+                else if (selected == 1)
+                {
+                    Screenings.Start();
+                }
+                else if (selected == 2)
+                {
+                    Reservations.Start();
+                }
+                else if (selected == 3)
+                {
+                    Environment.Exit(0);
+                }
+            }
+            else if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.D0 || key.Key == ConsoleKey.NumPad0)
             {
                 Environment.Exit(0);
             }
@@ -41,36 +69,68 @@ static class Menu
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
         ReservationAdmin radmin = new();
+
+        string[] options = new[] { "Account", "View Screenings", "Reservations", "Movies", "Quit Program" };
+        int selected = 0;
+
         while (true)
         {
+            Console.Clear();
             Console.WriteLine();
-            Console.WriteLine($"Welcome to the Main Menu");
-            Console.WriteLine($"[1] Account");
-            Console.WriteLine($"[2] View Screenings");
-            Console.WriteLine($"[3] Reservations");
-            Console.WriteLine("[4] Movies");
-            Console.WriteLine("[5] Quit Program");
-            string answer = Console.ReadLine().ToLower();
+            Console.WriteLine("Welcome to the Main Menu");
+            Console.WriteLine("Use Arrow keys to navigate, Enter to select. Press 0 or Esc to quit.");
+            Console.WriteLine();
 
-            if (answer == "1")
+            for (int i = 0; i < options.Length; i++)
             {
-                AdminAccountPage.Start(currentUser);
-            }
-            else if (answer == "2")
-            {
-                Console.WriteLine("No option for now </3");
-            }
-            else if (answer == "3")
-            {
-                radmin.Start();
+                if (i == selected)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"> {options[i]}");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine($"  {options[i]}");
+                }
             }
 
-            else if (answer == "4")
-            {
-                Movie.Start();
-            }   
+            var key = Console.ReadKey(true);
 
-            else if (answer == "5")
+            if (key.Key == ConsoleKey.UpArrow)
+            {
+                selected = (selected - 1 + options.Length) % options.Length;
+            }
+            else if (key.Key == ConsoleKey.DownArrow)
+            {
+                selected = (selected + 1) % options.Length;
+            }
+            else if (key.Key == ConsoleKey.Enter)
+            {
+                if (selected == 0)
+                {
+                    AdminAccountPage.Start(currentUser);
+                }
+                else if (selected == 1)
+                {
+                    Console.WriteLine("No option for now </3");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey(true);
+                }
+                else if (selected == 2)
+                {
+                    radmin.Start();
+                }
+                else if (selected == 3)
+                {
+                    Movie.Start();
+                }
+                else if (selected == 4)
+                {
+                    Environment.Exit(0);
+                }
+            }
+            else if (key.Key == ConsoleKey.Escape || key.Key == ConsoleKey.D0 || key.Key == ConsoleKey.NumPad0)
             {
                 Environment.Exit(0);
             }
