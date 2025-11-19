@@ -30,6 +30,17 @@ public class ScreeningLogic
         return _screeningAccess.GetScreeningsByGenre(genre);
     }
 
+    public void AddScreening(long movieid, long hallid, string datetime)
+    {
+        ScreeningModel newscreening = new(movieid, hallid, datetime);
+        _screeningAccess.Add(newscreening);
+    }
+
+    public void DeleteScreening(long id)
+    {
+        _screeningAccess.Delete(id);
+    }
+
     public List<string> ShowScreeningsByDate()
     {
         return _screeningAccess.GetScreeningsByDate();
