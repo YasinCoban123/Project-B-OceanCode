@@ -24,7 +24,7 @@ static class Menu
             }
             else if (answer == "2")
             {
-                Screenings.Start();
+                Screenings.MakeReservation();
             }
             else if (answer == "3")
             {
@@ -46,7 +46,7 @@ static class Menu
             Console.WriteLine();
             Console.WriteLine($"Welcome to the Main Menu");
             Console.WriteLine($"[1] Account");
-            Console.WriteLine($"[2] View Screenings");
+            Console.WriteLine($"[2] Screenings");
             Console.WriteLine($"[3] Reservations");
             Console.WriteLine("[4] Movies");
             Console.WriteLine("[5] Quit Program");
@@ -58,7 +58,7 @@ static class Menu
             }
             else if (answer == "2")
             {
-                Console.WriteLine("No option for now </3");
+                Screenings.Start();
             }
             else if (answer == "3")
             {

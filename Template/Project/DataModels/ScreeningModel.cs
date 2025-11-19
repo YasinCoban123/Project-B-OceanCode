@@ -12,4 +12,11 @@ public class ScreeningModel
         HallId = hallId;
         ScreeningStartingTime = screeningStartingTime;
     }
+
+    public ScreeningModel(long movieId, long hallId, string screeningStartingTime)
+    {
+        MovieId = movieId;
+        HallId = hallId;
+        ScreeningStartingTime = screeningStartingTime;
+    }
 }

@@ -6,11 +6,11 @@ public class ScreeningAcces
     private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
     private string Table = "Screening";
 
-    // public void Add(ScreeningModel screening)
-    // {
-    //     string sql = $"INSERT INTO {Table} (MovieId, HallId, ScreeningStartingTime) VALUES (@MovieId, @HallId, @StartTime)";
-    //     _connection.Execute(sql, new { screening.MovieId, screening.HallId, StartTime = screening.ScreeningStartingTime });
-    // }
+    public void Add(ScreeningModel screening)
+    {
+        string sql = $"INSERT INTO {Table} (MovieId, HallId, ScreeningStartingTime) VALUES (@MovieId, @HallId, @StartTime)";
+        _connection.Execute(sql, new { screening.MovieId, screening.HallId, StartTime = screening.ScreeningStartingTime });
+    }
 
     public ScreeningModel? GetById(long screeningId)
     {
