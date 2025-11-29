@@ -52,4 +52,14 @@ public class SeatAcces
         string sql = $"SELECT * FROM {Table} WHERE SeatId = @SeatId";
         return _connection.QueryFirstOrDefault<SeatModel>(sql, new { SeatId = seatId });
     }
+
+    public decimal GetSeatPrice(long seatId)
+    {
+        string sql = @"
+        SELECT st.Price
+        FROM Seat s
+        JOIN SeatType st ON s.SeatTypeId = st.SeatTypeId
+        WHERE s.SeatId = @SeatId";
+        return _connection.ExecuteScalar<decimal>(sql, new { SeatId = seatId });
+    }
 }

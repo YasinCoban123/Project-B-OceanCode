@@ -2,7 +2,7 @@ static class Screenings
 {
     static private ScreeningLogic screeningLogic = new ScreeningLogic();
     static private MovieLogic movielogic = new();
-    static private HallLogic hallLogic =  new();
+    static private HallLogic hallLogic = new();
 
     public static void Start()
     {
@@ -15,77 +15,116 @@ static class Screenings
         {
             AddScreening();
         }
-
         else if (choice == "2")
         {
             DeleteScreening();
         }
-
         else
         {
             Console.WriteLine("Invalid choice");
         }
     }
+
     public static void MakeReservation()
     {
         var currentUser = AccountsLogic.CurrentAccount;
         Console.WriteLine($"Welcome to the screenings page, {currentUser.FullName}");
 
         var screenings = screeningLogic.ShowScreenings();
-        foreach (var s in screenings)
-            Console.WriteLine(s);
+        List<string> shown = screenings;
+
+        bool filtering = true;
+
+        while (filtering)
+        {
+            Console.WriteLine("\nCurrent screenings:");
+            foreach (var s in shown)
+                Console.WriteLine(s);
+
+            Console.WriteLine("\nFilter options:");
+            Console.WriteLine("[G] Filter by Genre");
+            Console.WriteLine("[Y] Filter by Day");
+            Console.WriteLine("[N] No filter");
+            Console.WriteLine("[C] Continue");
+
+            Console.Write("\nChoose: ");
+            string filterChoice = Console.ReadLine()!.Trim().ToUpper();
+
+            if (filterChoice == "G")
+            {
+                Console.WriteLine("\nAvailable genres: ");
+                string[] values = Enum.GetNames(typeof(Genres));
+                foreach (string word in values)
+                    Console.WriteLine(word);
+
+                Console.Write("\nEnter genre to filter by: ");
+                string genre = Console.ReadLine()!;
+                shown = screeningLogic.ShowScreeningsByGenre(genre);
+
+                if (shown.Count == 0)
+                {
+                    Console.WriteLine("No screenings found for this genre.");
+                    shown = screenings;
+                }
+            }
+            else if (filterChoice == "Y")
+            {
+                Console.WriteLine("\nAvailable days:");
+                string[] values = Enum.GetNames(typeof(Days));
+                foreach (string word in values)
+                    Console.WriteLine(word);
+
+                Console.Write("\nEnter day: ");
+                string d = Console.ReadLine();
+
+                Days chosen = Days.Monday;
+                bool match = false;
+                string[] names = Enum.GetNames(typeof(Days));
+
+                for (int i = 0; i < names.Length; i++)
+                {
+                    if (names[i].ToLower() == d.ToLower())
+                    {
+                        chosen = (Days)i;
+                        match = true;
+                        break;
+                    }
+                }
+
+                if (!match)
+                {
+                    Console.WriteLine("Invalid day.");
+                    continue;
+                }
+
+                shown = screeningLogic.ShowScreeningsByDay(chosen);
+
+                if (shown.Count == 0)
+                {
+                    Console.WriteLine("No screenings found on this day.");
+                    shown = screenings;
+                }
+            }
+            else if (filterChoice == "N")
+            {
+                shown = screenings;
+            }
+            else if (filterChoice == "C")
+            {
+                filtering = false;
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice.");
+            }
+        }
 
         List<int> validScreeningIds = new List<int>();
-        foreach (string scr in screenings)
+        foreach (string scr in shown)
         {
             string idPart = scr.Split(',')[0];
             int id = Convert.ToInt32(idPart.Replace("ScreeningId:", "").Trim());
             validScreeningIds.Add(id);
-        }
-
-        Console.WriteLine("\nType 'G' to filter by Genre, 'D' to sort by Date, or press Enter to continue normally.");
-        string filterChoice = Console.ReadLine()!.Trim().ToUpper();
-
-        if (filterChoice == "G")
-        {
-            Console.Write("\nEnter genre to filter by: ");
-            Console.WriteLine("\nAvailable genres: ");
-            string[] values = Enum.GetNames(typeof(Genres));
-            foreach (string word in values)
-                Console.WriteLine(word);
-
-            string genre = Console.ReadLine()!;
-            List<string> filtered = screeningLogic.ShowScreeningsByGenre(genre);
-
-            if (filtered.Count == 0)
-            {
-                Console.WriteLine("\nNo screenings found for this genre. Returning to screenings...");
-                MakeReservation();
-                return;
-            }
-
-            validScreeningIds.Clear();
-            foreach (string s in filtered)
-            {
-                Console.WriteLine(s);
-                string idPart = s.Split(',')[0];
-                int id = Convert.ToInt32(idPart.Replace("ScreeningId:", ""));
-                validScreeningIds.Add(id);
-            }
-        }
-        else if (filterChoice == "D")
-        {
-            List<string> sorted = screeningLogic.ShowScreeningsByDate();
-            Console.WriteLine("\nScreenings sorted by date:");  // ← oude WriteLine toegevoegd
-
-            validScreeningIds.Clear();
-            foreach (string s in sorted)
-            {
-                Console.WriteLine(s);
-                string idPart = s.Split(',')[0];
-                int id = Convert.ToInt32(idPart.Replace("ScreeningId:", ""));
-                validScreeningIds.Add(id);
-            }
         }
 
         int screeningId = 0;
@@ -96,12 +135,8 @@ static class Screenings
             Console.Write("\nEnter the ScreeningId you want to reserve (or type 'exit' to go back): ");
             string input = Console.ReadLine();
 
-            if (input == null)
-                continue;
-
             if (input.ToLower() == "exit")
             {
-                Console.WriteLine("\nReturning to menu...");
                 Menu.Start();
                 return;
             }
@@ -121,7 +156,7 @@ static class Screenings
             }
             catch
             {
-                Console.WriteLine("Invalid input. Please enter a number or 'exit'.");
+                Console.WriteLine("Invalid input.");
             }
         }
 
@@ -138,13 +173,29 @@ static class Screenings
 
         Console.WriteLine("\nSeat Layout:\n");
         Console.ForegroundColor = ConsoleColor.DarkBlue;
-        Console.WriteLine("         ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        Console.WriteLine("                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
         Console.ResetColor();
 
         foreach (var row in seatRows)
         {
-            Console.Write($"Row {row.RowNumber}: ");
-
+            string rowLabel = $"Row {row.RowNumber}: ";
+            int totalWidth = Console.WindowWidth;
+        
+            string seatTextPreview = "";
+            foreach (var seat in row.Seats)
+            {
+                seatTextPreview += "[XXX]"; 
+            }
+        
+            int seatWidth = seatTextPreview.Length;
+            int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
+            if (leftPadding < 0)
+            {
+              leftPadding = 0;
+            }
+            Console.Write(rowLabel);
+            Console.Write(new string(' ', leftPadding));
+        
             foreach (var seat in row.Seats)
             {
                 if (seat.IsTaken)
@@ -164,7 +215,7 @@ static class Screenings
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write($"[{seat.SeatId}]");
                     }
-                    else 
+                    else
                     {
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.Write($"[{seat.SeatId}]");
@@ -172,7 +223,6 @@ static class Screenings
                 }
                 Console.ResetColor();
             }
-
             Console.WriteLine();
         }
 
@@ -185,8 +235,10 @@ static class Screenings
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine("VIP");
         Console.ResetColor();
+
         int seatCount = 0;
         validInput = false;
+
         while (!validInput)
         {
             Console.Write("\nHow many seats do you want to reserve (max 20)? ");
@@ -200,7 +252,7 @@ static class Screenings
             }
             catch
             {
-                Console.WriteLine("Invalid input. Please enter a number.");
+                Console.WriteLine("Invalid input.");
             }
         }
 
@@ -219,7 +271,7 @@ static class Screenings
                 }
                 catch
                 {
-                    Console.WriteLine("Invalid input. Please enter a number.");
+                    Console.WriteLine("Invalid input.");
                 }
             }
             selectedSeatIds.Add(seatId);
@@ -238,25 +290,53 @@ static class Screenings
         {
             Console.WriteLine("\nSome seats could not be reserved:");
             foreach (var fs in failedSeats)
-                Console.WriteLine($" - Seat {fs} (either does not exist or is already taken)");
+                Console.WriteLine($" - Seat {fs}");
 
-            Console.Write("\nDo you want to continue with the remaining available seats? (yes/no): ");
-            string? choice = Console.ReadLine()?.ToLower();
+            Console.WriteLine("\nChoose:");
+            Console.WriteLine("[1] Continue with remaining seats");
+            Console.WriteLine("[2] Cancel");
+            Console.WriteLine("[3] Re-select failed seats");
 
-            if (choice != "yes")
+            string choice = Console.ReadLine();
+
+            if (choice == "2")
             {
-                Console.WriteLine("Returning to the screenings page...");
                 MakeReservation();
                 return;
             }
 
-            selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
+            if (choice == "3")
+            {
+                List<int> replacements = new List<int>();
+                foreach (int fs in failedSeats)
+                {
+                    Console.Write($"Replace seat {fs} with: ");
+                    replacements.Add(Convert.ToInt32(Console.ReadLine()));
+                }
+
+                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
+                selectedSeatIds.AddRange(replacements);
+            }
+            else if (choice == "1")
+            {
+                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
+            }
+            else
+            {
+                MakeReservation();
+                return;
+            }
         }
 
-        if (selectedSeatIds.Count == 0)
+        decimal total = screeningLogic.CalculateTotalPrice(selectedSeatIds);
+        Console.WriteLine($"\nTotal price: €{total:F2}");
+
+        Console.Write("Confirm? (yes/no): ");
+        string confirm = Console.ReadLine().ToLower();
+
+        if (confirm != "yes")
         {
-            Console.WriteLine("\nNo valid seats selected. Returning to menu...");
-            Menu.Start();
+            MakeReservation();
             return;
         }
 
@@ -303,7 +383,7 @@ static class Screenings
             }
             Console.WriteLine("Invalid Date");
         }
-        
+
         bool Timebool = true;
         while(Timebool)
         {
@@ -319,7 +399,7 @@ static class Screenings
         string DateTime = $"{Date} {Time}";
         screeningLogic.AddScreening(MovieID, HallID, DateTime);
         Console.WriteLine();
-        Console.WriteLine("Screening Succesvolly added!");
+        Console.WriteLine("Screening Succesfully added!");
     }
 
     public static void DeleteScreening()
@@ -334,7 +414,5 @@ static class Screenings
         string choice = Console.ReadLine();
         long choiceint = Convert.ToInt64(choice);
         screeningLogic.DeleteScreening(choiceint);
-
-
     }
 }

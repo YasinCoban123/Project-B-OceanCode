@@ -1,16 +1,27 @@
 public enum Genres
 {
     Action,
-    Action_Comedy,
+    ActionComedy,
     Comedy,
     Drama,
     Horror,
     Romance,
-    Sci_Fi,
+    SciFi,
     Documentary,
     Animation,
     Thriller,
     Fantasy
+}
+
+public enum Days
+{
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
 }
 
 public class ScreeningLogic
@@ -46,13 +57,19 @@ public class ScreeningLogic
         return _screeningAccess.GetScreeningsByDate();
     }
 
+    public List<string> ShowScreeningsByDay(Days day)
+    {
+        int number = (int)day;
+        if (day == Days.Sunday)
+            number = 0;
+        return _screeningAccess.GetScreeningsByDay(number.ToString());
+    }
+
     public List<SeatRowLogic> GetSeatStatus(int screeningId)
     {
         var screening = _screeningAccess.GetById(screeningId);
         if (screening == null)
-        {
             return new List<SeatRowLogic>();
-        }
 
         return _seatAccess.GetSeatRowsByScreening(screening.HallId, screeningId);
     }
@@ -79,9 +96,7 @@ public class ScreeningLogic
         {
             var seat = _seatAccess.GetSeatById(seatId);
             if (seat == null || _reservedSeatAccess.IsSeatReserved(seatId, screeningId))
-            {
                 failedSeats.Add(seatId);
-            }
         }
 
         bool valid = failedSeats.Count < seatIds.Count;
@@ -101,6 +116,20 @@ public class ScreeningLogic
             _reservedSeatAccess.AddReservedSeat(reservationId, seatId, screeningId);
         }
     }
+
+    public decimal CalculateTotalPrice(List<int> seatIds)
+    {
+    decimal total = 0;
+
+    foreach (int id in seatIds)
+    {
+        decimal price = _seatAccess.GetSeatPrice(id);
+        total += price;
+    }
+
+    return total;
+}
+
 
     public List<ReservationModel> GetAllReservations()
     {
