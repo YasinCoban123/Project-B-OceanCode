@@ -272,13 +272,13 @@ static class Screenings
         List<HallModel> allhalls = hallLogic.GetAllHalls();
         Console.WriteLine();
         Console.WriteLine("Welcome to the add screening page");
-        Console.WriteLine("Choose below which movie you want to add to the screening");
         foreach(MovieModel movie in allmovies)
         {
             Console.WriteLine();
             Console.WriteLine($"Movie ID: {movie.MovieId}");
             Console.WriteLine($"Movie Title: {movie.Title}");
         }
+        Console.WriteLine("Choose above which movie ID you want to add to the screening");
         string chosenMovieid = Console.ReadLine();
         int chosenMovieID = Convert.ToInt32(chosenMovieid);
         MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
