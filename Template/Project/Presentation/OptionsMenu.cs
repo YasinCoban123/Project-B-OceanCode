@@ -62,5 +62,7 @@ public class OptionsMenu
 
         Selected = selectedOption;
         SelectedText = _options[Selected];
+
+        Console.Clear();
     }
 }

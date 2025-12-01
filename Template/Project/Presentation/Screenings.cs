@@ -6,16 +6,15 @@ static class Screenings
 
     public static void Start()
     {
-        Console.WriteLine();
-        Console.WriteLine("[1] Add a screening");
-        Console.WriteLine("[2] Delete a screening");
-        string choice = Console.ReadLine();
+        OptionsMenu optionsMenu = new OptionsMenu(new() {
+            "Add a screening",
+            "Delete a screening"});
 
-        if (choice == "1")
+        if (optionsMenu.Selected == 0)
         {
             AddScreening();
         }
-        else if (choice == "2")
+        else if (optionsMenu.Selected == 1)
         {
             DeleteScreening();
         }
