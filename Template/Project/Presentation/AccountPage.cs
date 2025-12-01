@@ -6,13 +6,15 @@ public static class AccountPage
     {
         UserAccountsAccess acces = new();
         AccountsLogic accountsLogic = new AccountsLogic();
-        Console.WriteLine();
-        Console.WriteLine("[1] See info");
-        Console.WriteLine("[2] Edit Account");
-        Console.WriteLine("[3] Delete Account");
-        Console.WriteLine("[4] Go Back");
-        Console.Write("Choose an option: ");
-        string choice = Console.ReadLine();
+
+        OptionsMenu optionsMenu = new OptionsMenu(new() {
+            "See info",
+            "Edit Account",
+            "Delete Account",
+            "Go Back"});
+
+        string choice = optionsMenu.Selected + 1.ToString();
+        Console.Clear();
 
         if (choice == "1")
         {
@@ -22,6 +24,10 @@ public static class AccountPage
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
+
+            Console.WriteLine();
+            Console.WriteLine("Press ENTER to go back.");
+            Console.ReadLine();
             Start(user);
         }
         else if (choice == "2")
