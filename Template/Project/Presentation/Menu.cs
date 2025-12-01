@@ -32,7 +32,7 @@ static class Menu
                     Reservations.Start();
                     break;
                 case 3:
-                    //Log out
+                    UserLogin.Start();
                     break;
                 case 4:
                     Environment.Exit(0);
@@ -74,7 +74,7 @@ static class Menu
                     radmin.Start();
                     break;
                 case 4:
-                    //Log out
+                    UserLogin.Start();
                     break;
                 case 5:
                     Environment.Exit(0);

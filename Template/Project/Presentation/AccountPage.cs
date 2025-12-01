@@ -24,6 +24,10 @@ public static class AccountPage
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
+
+            Console.WriteLine();
+            Console.WriteLine("Press ENTER to go back.");
+            Console.ReadLine();
             Start(user);
         }
         else if (choice == "2")
