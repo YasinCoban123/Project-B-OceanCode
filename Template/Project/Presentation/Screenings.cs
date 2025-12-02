@@ -136,8 +136,10 @@ static class Screenings
 
             if (input.ToLower() == "exit")
             {
+                Console.WriteLine("Press ENTER to go back");
+                Console.ReadLine();
+                Console.Clear();
                 Menu.Start();
-                return;
             }
 
             try
@@ -371,8 +373,10 @@ static class Screenings
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
-        Console.WriteLine("\nReservation successful!");
+        Console.WriteLine("Press ENTER to return to menu...");
+        Console.ReadLine();
 
+        Console.Clear();
         Menu.Start();
     }
 

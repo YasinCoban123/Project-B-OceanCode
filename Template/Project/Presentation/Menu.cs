@@ -8,19 +8,22 @@ static class Menu
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
 
-        OptionsMenu optionsMenu;
+        MenuHelper menu;
 
         while (true)
         {
-            optionsMenu = new OptionsMenu(new() {
+            menu = new MenuHelper(new[] {
                 "Account",
                 "View Screenings",
                 "Reservations",
                 "Log out",
-                "Quit"}
-                , "Welcome to the Main Menu");
+                "Quit"
+            },
+            "Welcome to the Main Menu");
 
-            switch (optionsMenu.Selected)
+            menu.Show();
+
+            switch (menu.SelectedIndex)
             {
                 case 0:
                     AccountPage.Start(currentUser);
@@ -41,25 +44,28 @@ static class Menu
         }
     }
     
-        static public void AdminStart()
+    static public void AdminStart()
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
         ReservationAdmin radmin = new();
 
-        OptionsMenu optionsMenu;
+        MenuHelper menu;
 
         while (true)
         {
-            optionsMenu = new OptionsMenu(new() {
+            menu = new MenuHelper(new[] {
                 "Account",
                 "Screenings",
                 "Reservations",
                 "Movies",
                 "Log out",
-                "Quit"}
-                , "Welcome to the Admin menu");
+                "Quit"
+            },
+            "Welcome to the Admin menu");
 
-            switch (optionsMenu.Selected)
+            menu.Show();
+
+            switch (menu.SelectedIndex)
             {
                 case 0:
                     AdminAccountPage.Start(currentUser);

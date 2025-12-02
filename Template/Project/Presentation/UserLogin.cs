@@ -4,11 +4,14 @@ static class UserLogin
 
     public static void Start()
     {
-        OptionsMenu optionsMenu = new OptionsMenu
-            (new() {"Login", "Register"}
-            , "Do you want to login or register a new account?");
+        MenuHelper menu = new MenuHelper(
+            new[]{"Login", "Register"},
+            "Do you want to login or register a new account?"
+        );
 
-        if (optionsMenu.Selected == 0)
+        menu.Show();
+
+        if (menu.SelectedIndex == 0)
         {
             while (true)
             {
@@ -22,12 +25,17 @@ static class UserLogin
                 if (acc == null)
                 {
                     Console.WriteLine("The email and password combination is not correct");
+                    Console.WriteLine("Press ENTER to continue...");
+                    Console.ReadLine();
+                    Console.Clear();
                     Start();
                 }
 
                 if (acc == null)
                 {
                     Console.WriteLine("Login failed");
+                    Console.WriteLine("Press ENTER to continue...");
+                    Console.ReadLine();
                 }
                 if (acc.IsAdmin == true)
                 {
@@ -45,7 +53,7 @@ static class UserLogin
                 }
             }
         }
-        else if (optionsMenu.Selected == 1)
+        else if (menu.SelectedIndex == 1)
         {
             while (true)
             {
