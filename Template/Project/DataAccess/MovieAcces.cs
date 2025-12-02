@@ -22,4 +22,10 @@ public class MovieAcces
         string sql = $"DELETE FROM {Table} WHERE MovieId = @MovieId";
         _connection.Execute(sql, movie);
     }
+
+    public bool ExistsByTitle(string title)
+    {
+        string sql = "SELECT COUNT(1) FROM Movie WHERE LOWER(Title) = LOWER(@Title)";
+       return _connection.ExecuteScalar<int>(sql, new { Title = title }) > 0;
+    }
 }

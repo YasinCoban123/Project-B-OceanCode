@@ -179,22 +179,22 @@ static class Screenings
         {
             string rowLabel = $"Row {row.RowNumber}: ";
             int totalWidth = Console.WindowWidth;
-        
+
             string seatTextPreview = "";
             foreach (var seat in row.Seats)
             {
-                seatTextPreview += "[XXX]"; 
+                seatTextPreview += "[XXX]";
             }
-        
+
             int seatWidth = seatTextPreview.Length;
             int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
             if (leftPadding < 0)
             {
-              leftPadding = 0;
+                leftPadding = 0;
             }
             Console.Write(rowLabel);
             Console.Write(new string(' ', leftPadding));
-        
+
             foreach (var seat in row.Seats)
             {
                 if (seat.IsTaken)
@@ -256,16 +256,32 @@ static class Screenings
         }
 
         List<int> selectedSeatIds = new();
+        var validSeatIds = seatRows.SelectMany(r => r.Seats).Select(s => (int)s.SeatId).ToList();
+
         for (int i = 0; i < seatCount; i++)
         {
             int seatId = 0;
             bool seatValid = false;
+
             while (!seatValid)
             {
                 Console.Write($"Enter SeatId #{i + 1}: ");
                 try
                 {
                     seatId = Convert.ToInt32(Console.ReadLine());
+
+                    if (!validSeatIds.Contains(seatId))
+                    {
+                        Console.WriteLine("That seat does not exist in this hall. Try again.");
+                        continue;
+                    }
+
+                    if (selectedSeatIds.Contains(seatId))
+                    {
+                        Console.WriteLine("You already selected this seat. Choose another one.");
+                        continue;
+                    }
+
                     seatValid = true;
                 }
                 catch
@@ -273,6 +289,7 @@ static class Screenings
                     Console.WriteLine("Invalid input.");
                 }
             }
+
             selectedSeatIds.Add(seatId);
         }
 
@@ -330,13 +347,27 @@ static class Screenings
         decimal total = screeningLogic.CalculateTotalPrice(selectedSeatIds);
         Console.WriteLine($"\nTotal price: €{total:F2}");
 
-        Console.Write("Confirm? (yes/no): ");
-        string confirm = Console.ReadLine().ToLower();
+        string confirm = "";
+        bool answered = false;
 
-        if (confirm != "yes")
+        while (!answered)
         {
-            MakeReservation();
-            return;
+            Console.Write("Confirm? (yes/no): ");
+            confirm = Console.ReadLine().Trim().ToLower();
+
+            if (confirm == "yes")
+            {
+                answered = true;
+            }
+            else if (confirm == "no")
+            {
+                MakeReservation();
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Type yes or no.");
+            }
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
@@ -351,7 +382,7 @@ static class Screenings
         List<HallModel> allhalls = hallLogic.GetAllHalls();
         Console.WriteLine();
         Console.WriteLine("Welcome to the add screening page");
-        foreach(MovieModel movie in allmovies)
+        foreach (MovieModel movie in allmovies)
         {
             Console.WriteLine();
             Console.WriteLine($"Movie ID: {movie.MovieId}");
@@ -371,7 +402,7 @@ static class Screenings
         string Date = "";
         string Time = "";
         bool Datebool = true;
-        while(Datebool)
+        while (Datebool)
         {
             Console.WriteLine();
             Console.Write("Give a Date when the screening should be played: ");
@@ -384,7 +415,7 @@ static class Screenings
         }
 
         bool Timebool = true;
-        while(Timebool)
+        while (Timebool)
         {
             Console.WriteLine();
             Console.Write("Give a Time when the screening should be played: ");

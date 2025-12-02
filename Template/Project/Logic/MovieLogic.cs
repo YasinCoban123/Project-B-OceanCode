@@ -8,11 +8,17 @@ public class MovieLogic
         return _movieacces.GetAllMovie();
     }
 
-    public void CreateMovie(string title, string genre, long pgrating)
+
+    public bool CreateMovie(string title, string genre, long pgrating)
     {
+        if (string.IsNullOrWhiteSpace(title)) return false;
+        if (_movieacces.ExistsByTitle(title)) return false;
+
         MovieModel movie = new(title, genre, pgrating);
         _movieacces.Write(movie);
+        return true;
     }
+
 
     public void DeleteMovie(MovieModel movie)
     {
