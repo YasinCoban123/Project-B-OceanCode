@@ -7,16 +7,20 @@ public static class AccountPage
         UserAccountsAccess acces = new();
         AccountsLogic accountsLogic = new AccountsLogic();
 
-        OptionsMenu optionsMenu = new OptionsMenu(new() {
+        MenuHelper menu = new MenuHelper(new[]{
             "See info",
             "Edit Account",
             "Delete Account",
-            "Go Back"});
+            "Go Back"
+        },
+        "Account Menu");
 
-        string choice = optionsMenu.Selected + 1.ToString();
+        menu.Show();
+
+        int choice = menu.SelectedIndex;
         Console.Clear();
 
-        if (choice == "1")
+        if (choice == 0)
         {
             Console.WriteLine();
             Console.WriteLine($"ID: {user.AccountId}");
@@ -30,7 +34,7 @@ public static class AccountPage
             Console.ReadLine();
             Start(user);
         }
-        else if (choice == "2")
+        else if (choice == 1)
         {
             Console.Write("Enter new full name (leave blank to keep current): ");
             string newName = Console.ReadLine();
@@ -107,7 +111,7 @@ public static class AccountPage
             Start(user);
         }
 
-        else if (choice == "3")
+        else if (choice == 2)
         {
 
             if (acces.Delete(user) == false)
@@ -121,7 +125,7 @@ public static class AccountPage
                 UserLogin.Start();
             }
         }
-        else if (choice == "4")
+        else if (choice == 3)
         {
             Menu.Start();
         }

@@ -6,25 +6,32 @@ public static class AdminAccountPage
     {
         UserAccountsAccess acces = new();
         AccountsLogic logic = new();
-        Console.WriteLine();
-        Console.WriteLine("[1] See own Account");
-        Console.WriteLine("[2] See users Account");
-        Console.WriteLine("[3] Create Admin account");
-        Console.WriteLine("[4] Go Back");
-        Console.Write("Choose an option: ");
-        string choice = Console.ReadLine();
 
-        if (choice == "1")
+        MenuHelper menu = new MenuHelper(new[]{
+            "See own Account",
+            "See users Account",
+            "Create Admin account",
+            "Go Back"
+        },
+        "Admin Options");
+
+        menu.Show();
+        int choiceIndex = menu.SelectedIndex;
+
+        if (choiceIndex == 0)
         {
-            Console.WriteLine();
-            Console.WriteLine("[1] See info");
-            Console.WriteLine("[2] Edit Account");
-            Console.WriteLine("[3] Delete Account");
-            Console.WriteLine("[4] Go Back");
-            Console.Write("Choose an option: ");
-            string accountchoice = Console.ReadLine();
+            MenuHelper ownMenu = new MenuHelper(new[]{
+                "See info",
+                "Edit Account",
+                "Delete Account",
+                "Go Back"
+            },
+            "Account Options");
 
-            if (accountchoice == "1")
+            ownMenu.Show();
+            int accountchoice = ownMenu.SelectedIndex;
+
+            if (accountchoice == 0)
             {
                 Console.WriteLine();
                 Console.WriteLine($"ID: {user.AccountId}");
@@ -32,9 +39,12 @@ public static class AdminAccountPage
                 Console.WriteLine($"Email: {user.Email}");
                 Console.WriteLine($"Password: {user.Password}");
                 Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
+                Console.WriteLine(" ");
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
                 Menu.AdminStart();
             }
-            else if (accountchoice == "2")
+            else if (accountchoice == 1)
             {
                 Console.Write("Enter new full name (leave blank to keep current): ");
                 string newName = Console.ReadLine();
@@ -45,7 +55,7 @@ public static class AdminAccountPage
                 {
                     Console.Write("Enter new email (leave blank to keep current): ");
                     string newEmail = Console.ReadLine();
-                    
+
                     if (string.IsNullOrWhiteSpace(newEmail))
                     {
                         break;
@@ -109,37 +119,43 @@ public static class AdminAccountPage
 
                 acces.Update(user);
                 Console.WriteLine("Account updated successfully!");
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
                 Start(user);
             }
-            else if (accountchoice == "3")
+            else if (accountchoice == 2)
             {
                 acces.Delete(user);
                 Console.WriteLine("Account deleted successfully!");
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
                 UserLogin.Start();
             }
-
-            else if (accountchoice == "4")
+            else if (accountchoice == 3)
             {
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
                 Menu.AdminStart();
             }
-            else
-            {
-                Console.WriteLine("Invalid choice.");
-            }
-    
         }
 
-        if (choice == "2")
+        if (choiceIndex == 1)
         {
-            Console.WriteLine();
-            Console.WriteLine("[1] See all users info");
-            Console.WriteLine("[2] Edit user Account");
-            Console.WriteLine("[3] Delete user Account");
-            Console.WriteLine("[4] Go Back");
-            Console.Write("Choose an option: ");
-            string accountchoice = Console.ReadLine();
+            MenuHelper userMenu = new MenuHelper(new[]{
+                "See all users info",
+                "Edit user Account",
+                "Delete user Account",
+                "Go Back"
+            },
+            "User Management");
 
-            if (accountchoice == "1")
+            userMenu.Show();
+            int accountchoice = userMenu.SelectedIndex;
+
+            if (accountchoice == 0)
             {
                 List<UserAccountModel> AllUserAccounts = logic.GetAllUserAccounts();
                 foreach (UserAccountModel account in AllUserAccounts)
@@ -150,10 +166,12 @@ public static class AdminAccountPage
                     Console.WriteLine($"Email: {account.Email}");
                     Console.WriteLine($"Date of Birth: {account.DateOfBirth}");
                 }
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
                 Start(user);
             }
-
-            else if (accountchoice == "2")
+            else if (accountchoice == 1)
             {
                 Console.WriteLine("Give the ID of the account you want to edit");
                 string chosenID = Console.ReadLine();
@@ -163,7 +181,6 @@ public static class AdminAccountPage
                 {
                     Console.WriteLine("Admin account cannot be edited!");
                 }
-
                 else
                 {
                     Console.Write("Enter new full name (leave blank to keep current): ");
@@ -238,13 +255,14 @@ public static class AdminAccountPage
 
                     acces.Update(chosenuser);
                     Console.WriteLine("Account updated successfully!");
+                    Console.WriteLine("Press ENTER to continue");
+                    Console.ReadLine();
+                    Console.Clear();
                     Start(user);
                 }
             }
-
-            else if (accountchoice == "3")
+            else if (accountchoice == 2)
             {
-                Console.WriteLine();
                 Console.WriteLine("Give the ID of the account you want to delete");
                 string chosenID = Console.ReadLine();
                 int ChosenID = Convert.ToInt32(chosenID);
@@ -256,31 +274,32 @@ public static class AdminAccountPage
                 if (acces.Delete(chosenuser) == false)
                 {
                     Console.WriteLine("Account cannot be deleted, User must remove reservation on the account first");
+                    Console.WriteLine("Press ENTER to continue");
+                    Console.ReadLine();
+                    Console.Clear();
                     Start(user);
                 }
                 else
                 {
                     acces.Delete(chosenuser);
                     Console.WriteLine("Account deleted successfully!");
+                    Console.Clear();
                     Start(user);
                 }
-
             }
-
-            else if (accountchoice == "4")
+            else if (accountchoice == 3)
             {
+                Console.Clear();
                 Start(user);
             }
         }
-        
-        if (choice == "3")
-        {
 
+        if (choiceIndex == 2)
+        {
             Console.WriteLine();
             Console.Write("Name: ");
             string fullName = Console.ReadLine();
 
-            // Email loop
             string email;
             while (true)
             {
@@ -301,7 +320,6 @@ public static class AdminAccountPage
                 break;
             }
 
-            // Password loop
             string password;
             while (true)
             {
@@ -316,7 +334,6 @@ public static class AdminAccountPage
                 break;
             }
 
-            // Date of birth loop
             string dateOfBirth;
             while (true)
             {
@@ -331,7 +348,6 @@ public static class AdminAccountPage
                 break;
             }
 
-
             UserAccountModel newAccount = logic.MakeAdminAccount(email, password, fullName, dateOfBirth);
 
             if (newAccount != null)
@@ -339,13 +355,15 @@ public static class AdminAccountPage
                 Console.WriteLine();
                 Console.WriteLine($"Admin account successfully created!");
             }
+            Console.WriteLine($"Press Enter to continue");
+            Console.Clear();
             Menu.AdminStart();
         }
 
-        if (choice == "4")
+        if (choiceIndex == 3)
         {
+            Console.Clear();
             Menu.AdminStart();
         }
-
     }
 }
