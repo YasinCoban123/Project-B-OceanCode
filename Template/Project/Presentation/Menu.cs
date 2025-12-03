@@ -8,77 +8,83 @@ static class Menu
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
 
+        MenuHelper menu;
+
         while (true)
         {
-            Console.WriteLine();
-            Console.WriteLine("Welcome to the Main Menu");
-            Console.WriteLine("[1] Account");
-            Console.WriteLine("[2] View Screenings");
-            Console.WriteLine("[3] Reservations");
-            Console.WriteLine("[4] Quit Program");
-            string answer = Console.ReadLine().ToLower();
+            menu = new MenuHelper(new[] {
+                "Account",
+                "View Screenings",
+                "Reservations",
+                "Log out",
+                "Quit"
+            },
+            "Welcome to the Main Menu");
 
-            if (answer == "1")
+            menu.Show();
+
+            switch (menu.SelectedIndex)
             {
-                AccountPage.Start(currentUser);
-            }
-            else if (answer == "2")
-            {
-                Screenings.MakeReservation();
-            }
-            else if (answer == "3")
-            {
-                Reservations.Start();
-            }
-            else if (answer == "4")
-            {
-                Environment.Exit(0);
+                case 0:
+                    AccountPage.Start(currentUser);
+                    break;
+                case 1:
+                    Screenings.MakeReservation();
+                    break;
+                case 2:
+                    Reservations.Start();
+                    break;
+                case 3:
+                    UserLogin.Start();
+                    break;
+                case 4:
+                    Environment.Exit(0);
+                    break;
             }
         }
     }
     
-        static public void AdminStart()
+    static public void AdminStart()
     {
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
         ReservationAdmin radmin = new();
+
+        MenuHelper menu;
+
         while (true)
         {
-            Console.WriteLine();
-            Console.WriteLine($"Welcome to the Main Menu");
-            Console.WriteLine($"[1] Account");
-            Console.WriteLine($"[2] Screenings");
-            Console.WriteLine($"[3] Reservations");
-            Console.WriteLine("[4] Movies");
-            Console.WriteLine("[6] Hall");
-            Console.WriteLine("[5] Quit Program");
-            string answer = Console.ReadLine().ToLower();
+            menu = new MenuHelper(new[] {
+                "Account",
+                "Screenings",
+                "Reservations",
+                "Movies",
+                "Log out",
+                "Quit"
+            },
+            "Welcome to the Admin menu");
 
-            if (answer == "1")
-            {
-                AdminAccountPage.Start(currentUser);
-            }
-            else if (answer == "2")
-            {
-                ScreeningsAdmin.Start();
-            }
-            else if (answer == "3")
-            {
-                radmin.Start();
-            }
+            menu.Show();
 
-            else if (answer == "4")
+            switch (menu.SelectedIndex)
             {
-                Movie.Start();
-            }   
-            
-            else if (answer == "6")
-            {
-                Hall.Start();
-            }   
-
-            else if (answer == "5")
-            {
-                Environment.Exit(0);
+                case 0:
+                    AdminAccountPage.Start(currentUser);
+                    break;
+                case 1:
+                    Screenings.Start();
+                    break;
+                case 2:
+                    Reservations.Start();
+                    break;
+                case 3:
+                    radmin.Start();
+                    break;
+                case 4:
+                    UserLogin.Start();
+                    break;
+                case 5:
+                    Environment.Exit(0);
+                    break;
             }
         }
     }

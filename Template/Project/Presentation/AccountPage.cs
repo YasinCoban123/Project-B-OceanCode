@@ -6,15 +6,21 @@ public static class AccountPage
     {
         UserAccountsAccess acces = new();
         AccountsLogic accountsLogic = new AccountsLogic();
-        Console.WriteLine();
-        Console.WriteLine("[1] See info");
-        Console.WriteLine("[2] Edit Account");
-        Console.WriteLine("[3] Delete Account");
-        Console.WriteLine("[4] Go Back");
-        Console.Write("Choose an option: ");
-        string choice = Console.ReadLine();
 
-        if (choice == "1")
+        MenuHelper menu = new MenuHelper(new[]{
+            "See info",
+            "Edit Account",
+            "Delete Account",
+            "Go Back"
+        },
+        "Account Menu");
+
+        menu.Show();
+
+        int choice = menu.SelectedIndex;
+        Console.Clear();
+
+        if (choice == 0)
         {
             Console.WriteLine();
             Console.WriteLine($"ID: {user.AccountId}");
@@ -22,9 +28,13 @@ public static class AccountPage
             Console.WriteLine($"Email: {user.Email}");
             Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
+
+            Console.WriteLine();
+            Console.WriteLine("Press ENTER to go back.");
+            Console.ReadLine();
             Start(user);
         }
-        else if (choice == "2")
+        else if (choice == 1)
         {
             Console.Write("Enter new full name (leave blank to keep current): ");
             string newName = Console.ReadLine();
@@ -101,7 +111,7 @@ public static class AccountPage
             Start(user);
         }
 
-        else if (choice == "3")
+        else if (choice == 2)
         {
 
             if (acces.Delete(user) == false)
@@ -115,7 +125,7 @@ public static class AccountPage
                 UserLogin.Start();
             }
         }
-        else if (choice == "4")
+        else if (choice == 3)
         {
             Menu.Start();
         }

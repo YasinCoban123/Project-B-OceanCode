@@ -13,14 +13,14 @@ public sealed class Test1
     {
         // arrange
         AccountsLogic l = new();
-        AccountsAccess access = new();
+        UserAccountsAccess access = new();
 
         // act 
-        AccountModel result = l.CheckLogin(m, p);
+        UserAccountModel result = l.CheckLogin(m, p);
 
         // assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(m, result.EmailAddress);
+        Assert.AreEqual(m, result.Email);
         Assert.AreEqual(p, result.Password);
     }
 
@@ -36,7 +36,7 @@ public sealed class Test1
         AccountsLogic l = new();
 
         // act 
-        AccountModel result = l.CheckLogin(m, p);
+        UserAccountModel result = l.CheckLogin(m, p);
 
         // assert
         Assert.IsNull(result);

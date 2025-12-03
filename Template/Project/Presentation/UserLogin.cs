@@ -4,15 +4,18 @@ static class UserLogin
 
     public static void Start()
     {
-        Console.WriteLine();
-        Console.WriteLine("Do you want to login or register a new account?");
-        string accountchoice = Console.ReadLine();
+        MenuHelper menu = new MenuHelper(
+            new[]{"Login", "Register"},
+            "Do you want to login or register a new account?"
+        );
 
-        if (accountchoice.ToLower() == "login")
+        menu.Show();
+
+        if (menu.SelectedIndex == 0)
         {
             while (true)
             {
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine("Welcome to the login page");
                 Console.WriteLine("Please enter your email address");
                 string email = Console.ReadLine();
@@ -22,12 +25,17 @@ static class UserLogin
                 if (acc == null)
                 {
                     Console.WriteLine("The email and password combination is not correct");
+                    Console.WriteLine("Press ENTER to continue...");
+                    Console.ReadLine();
+                    Console.Clear();
                     Start();
                 }
 
                 if (acc == null)
                 {
                     Console.WriteLine("Login failed");
+                    Console.WriteLine("Press ENTER to continue...");
+                    Console.ReadLine();
                 }
                 if (acc.IsAdmin == true)
                 {
@@ -45,11 +53,11 @@ static class UserLogin
                 }
             }
         }
-        else if (accountchoice.ToLower() == "register")
+        else if (menu.SelectedIndex == 1)
         {
             while (true)
             {
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine("Welcome to the registration page");
 
                 // Ask full name (no extra validation per request)
