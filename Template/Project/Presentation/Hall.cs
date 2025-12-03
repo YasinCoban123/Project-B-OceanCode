@@ -50,6 +50,9 @@ public class Hall
         seatLogic.DuplicateSeatsByHall(ChosenHallBlueprint, Hall.HallId);
 
         Console.WriteLine($"Successfully created Hall {Hall.HallId}");
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
 
     }
 
@@ -66,6 +69,9 @@ public class Hall
         logic.DeleteHallAndSeats(ChosenHallBlue);
         Console.WriteLine();
         Console.WriteLine("Succedfully deleted all the seats and the hall!");
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
 
     }
 
