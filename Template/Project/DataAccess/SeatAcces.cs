@@ -62,4 +62,27 @@ public class SeatAcces
         WHERE s.SeatId = @SeatId";
         return _connection.ExecuteScalar<decimal>(sql, new { SeatId = seatId });
     }
+
+    public List<SeatModel> GetAllSeatsByHallId(long hallid)
+    {
+        string sql = $"SELECT SeatTypeId, RowNumber, SeatNumber FROM {Table} WHERE HallId = @HallId";
+        return _connection.Query<SeatModel>(sql, new { AccountId = hallid }).ToList();   
+    }
+    
+    public void DuplicateSeatsByHall(HallModel hall, long newHallid)
+    {
+       string sql = @$"INSERT INTO {Table} (HallId, SeatTypeId, RowNumber, SeatNumber) 
+       SELECT @NewHallid, SeatTypeId, RowNumber, SeatNumber 
+       FROM {Table} 
+       WHERE HallId = @HallId;
+       ";
+       _connection.Execute(sql, new { NewHallid = newHallid, HallId = hall.HallId });
+    }
+
+    public void Delete(HallModel Hall)
+    {
+        string sql = $"DELETE FROM {Table} WHERE HallId = @HallId";
+        _connection.Execute(sql, Hall);
+    }
+
 }
