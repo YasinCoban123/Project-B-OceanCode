@@ -74,10 +74,10 @@ static class Menu
                     ScreeningsAdmin.Start();
                     break;
                 case 2:
-                    Reservations.Start();
+                    radmin.Start();
                     break;
                 case 3:
-                    radmin.Start();
+                    Movie.Start();
                     break;
                 case 4:
                     UserLogin.Start();

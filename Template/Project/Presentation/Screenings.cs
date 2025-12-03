@@ -368,9 +368,4 @@ static class Screenings
         Console.Clear();
         Menu.Start();
     }
-
-    internal static void Start()
-    {
-        throw new NotImplementedException();
-    }
 }

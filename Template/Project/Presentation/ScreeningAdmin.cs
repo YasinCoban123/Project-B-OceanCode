@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 static class ScreeningsAdmin
 {
     static private ScreeningLogic screeningLogic = new ScreeningLogic();
@@ -9,197 +13,209 @@ static class ScreeningsAdmin
 
     public static void Start()
     {
-        Console.WriteLine();
-        Console.WriteLine("[1] Show all screenings");
-        Console.WriteLine("[2] Add a screening");
-        Console.WriteLine("[3] Edit a screening");
-        Console.WriteLine("[4] Delete a screening");
-        string choice = Console.ReadLine();
+        Console.Clear();
 
-        if (choice == "1")
+        MenuHelper menu = new MenuHelper(new[]
+        {
+            "Show all screenings",
+            "Add a screening",
+            "Edit a screening",
+            "Delete a screening",
+            "Go Back"
+        },
+        "Screenings Admin");
+
+        menu.Show();
+
+        int choice = menu.SelectedIndex;
+
+        Console.Clear();
+
+        if (choice == 0)
         {
             ShowAllScreenings();
+            PauseReturn();
         }
-
-        if (choice == "2")
+        else if (choice == 1)
         {
             AddScreening();
+            PauseReturn();
         }
-
-        else if (choice == "3")
+        else if (choice == 2)
         {
             EditScreening();
+            PauseReturn();
         }
-
-        else if (choice == "4")
+        else if (choice == 3)
         {
             DeleteScreening();
+            PauseReturn();
         }
-        else
+        else if (choice == 4)
         {
-            Console.WriteLine("Invalid choice");
+            Console.WriteLine("Returning...");
+            Console.ReadLine();
+            Console.Clear();
+            Menu.AdminStart();
         }
     }
 
     public static void AddScreening()
     {
-        Console.WriteLine();
+        Console.Clear();
         Console.WriteLine("Welcome to the add screening page");
-        foreach(MovieModel movie in allmovies)
+
+        foreach (MovieModel movie in allmovies)
         {
             Console.WriteLine();
             Console.WriteLine($"Movie ID: {movie.MovieId}");
             Console.WriteLine($"Movie Title: {movie.Title}");
         }
-        Console.WriteLine("Choose above which movie ID you want to add to the screening");
-        string chosenMovieid = Console.ReadLine();
-        int chosenMovieID = Convert.ToInt32(chosenMovieid);
-        MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
-        long MovieID = ChosenMovie.MovieId;
-        Console.WriteLine();
-        foreach(HallModel Hall in allhalls)
+
+        int chosenMovieID = 0;
+        while (true)
         {
-            Console.WriteLine($"Hall {Hall.HallId}\n");
-        }
-        Console.WriteLine("Which Hall do you want the screening to be in");
-        string chosenHallid = Console.ReadLine();
-        long ChosenHallID = Convert.ToInt64(chosenHallid);
-        HallModel ChosenHall = allhalls.Find(Hall => ChosenHallID == Hall.HallId);
-        long HallID = ChosenHall.HallId;
-        string Date = "";
-        string Time = "";
-        bool Datebool = true;
-        while(Datebool)
-        {
-            Console.WriteLine();
-            Console.Write("Give a Date when the screening should be played: ");
-            Date = Console.ReadLine();
-            if (hallLogic.CheckDate(Date))
+            Console.WriteLine("Choose Movie ID:");
+            if (int.TryParse(Console.ReadLine(), out chosenMovieID) &&
+                allmovies.Any(m => m.MovieId == chosenMovieID))
             {
                 break;
             }
-            Console.WriteLine("Invalid Date, use format(dd-MM-yyyy)");
+            Console.WriteLine("Invalid Movie ID.");
         }
 
-        bool Timebool = true;
-        while(Timebool)
+        MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
+
+        foreach (HallModel hall in allhalls)
         {
-            Console.WriteLine();
-            Console.Write("Give a Time when the screening should be played: ");
-            Time = Console.ReadLine();
-            if (hallLogic.CheckTime(Time))
+            Console.WriteLine($"Hall {hall.HallId}");
+        }
+
+        long chosenHallID = 0;
+        while (true)
+        {
+            Console.WriteLine("Choose Hall ID:");
+            if (long.TryParse(Console.ReadLine(), out chosenHallID) &&
+                allhalls.Any(h => h.HallId == chosenHallID))
             {
                 break;
             }
-            Console.WriteLine("Invalid Time,  use format(HH-mm)");
+            Console.WriteLine("Invalid Hall ID.");
         }
+
+        HallModel ChosenHall = allhalls.Find(Hall => chosenHallID == Hall.HallId);
+
+        string Date = "";
+        while (true)
+        {
+            Console.Write("Enter date (dd-MM-yyyy): ");
+            Date = Console.ReadLine();
+            if (hallLogic.CheckDate(Date)) break;
+            Console.WriteLine("Invalid date.");
+        }
+
+        string Time = "";
+        while (true)
+        {
+            Console.Write("Enter time (HH-mm): ");
+            Time = Console.ReadLine();
+            if (hallLogic.CheckTime(Time)) break;
+            Console.WriteLine("Invalid time.");
+        }
+
         string DateTime = $"{Date} {Time}";
-        screeningLogic.AddScreening(MovieID, HallID, DateTime);
-        Console.WriteLine();
-        Console.WriteLine("Screening Sucessfully added!\nPress ENTER to continue");
-        Console.ReadLine();
-        Console.Clear();
+        screeningLogic.AddScreening(ChosenMovie.MovieId, ChosenHall.HallId, DateTime);
+
+        Console.WriteLine("Screening added!");
     }
 
     public static void EditScreening()
     {
-
-        Console.WriteLine();
+        Console.Clear();
         ShowAllScreenings();
-        Console.WriteLine();
-        Console.WriteLine("Choose the ID of the screening you want to edit");
-        string choice = Console.ReadLine();
-        int ChosenScreeningId = Convert.ToInt32(choice);
 
-        List<ScreeningModel> AllScreenings = screeningLogic.GetAll();
-        ScreeningModel ChosenScreening = AllScreenings.Find(x => ChosenScreeningId == x.ScreeningId);
-
-        if (ChosenScreening is null)
+        int chosenScreeningId = 0;
+        while (true)
         {
-            Console.WriteLine("There is no screening with that ID");
-            EditScreening();
+            Console.WriteLine("Enter Screening ID to edit:");
+            if (int.TryParse(Console.ReadLine(), out chosenScreeningId))
+                break;
+
+            Console.WriteLine("Invalid input.");
         }
 
+        List<ScreeningModel> AllScreenings = screeningLogic.GetAll();
+        ScreeningModel ChosenScreening = AllScreenings.Find(x => chosenScreeningId == x.ScreeningId);
 
+        if (ChosenScreening == null)
+        {
+            Console.WriteLine("No screening found.");
+            return;
+        }
 
-        bool MovieDoesExist = true;
-        while (MovieDoesExist == true)
+        int chosenMovieID = 0;
+        while (true)
         {
             Console.WriteLine();
-            foreach(MovieModel movie in allmovies)
+            foreach (MovieModel movie in allmovies)
             {
                 Console.WriteLine();
                 Console.WriteLine($"Movie ID: {movie.MovieId}");
                 Console.WriteLine($"Movie Title: {movie.Title}");
             }
-            Console.WriteLine("Choose above which movie ID you want to add to the screening");
-            string chosenMovieid = Console.ReadLine();
-            int chosenMovieID = Convert.ToInt32(chosenMovieid);
-            MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
-
-            if (ChosenMovie is null)
+            Console.Write("Enter new Movie ID: ");
+            if (int.TryParse(Console.ReadLine(), out chosenMovieID) &&
+                allmovies.Any(m => m.MovieId == chosenMovieID))
             {
-                Console.WriteLine("There is no Movie with that ID");
-                continue;
-            }
-            else
-            {
-                ChosenScreening.MovieId = ChosenMovie.MovieId;
                 break;
             }
-
+            Console.WriteLine("Invalid Movie ID.");
         }
-        
+
+        ChosenScreening.MovieId = chosenMovieID;
+
         string Date = "";
-        string Time = "";
-        bool Datebool = true;
-        while(Datebool)
+        while (true)
         {
-            Console.WriteLine();
-            Console.Write("Give a Date when the screening should be played: ");
+            Console.Write("Enter date (dd-MM-yyyy): ");
             Date = Console.ReadLine();
-            if (hallLogic.CheckDate(Date))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Date, use format(dd-MM-yyyy)");
+            if (hallLogic.CheckDate(Date)) break;
+            Console.WriteLine("Invalid date.");
         }
 
-        bool Timebool = true;
-        while(Timebool)
+        string Time = "";
+        while (true)
         {
-            Console.WriteLine();
-            Console.Write("Give a Time when the screening should be played: ");
+            Console.Write("Enter time (HH-mm): ");
             Time = Console.ReadLine();
-            if (hallLogic.CheckTime(Time))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Time,  use format(HH-mm)");
+            if (hallLogic.CheckTime(Time)) break;
+            Console.WriteLine("Invalid time.");
         }
+
         string DateTime = $"{Date} {Time}";
         ChosenScreening.ScreeningStartingTime = DateTime;
 
         screeningLogic.Update(ChosenScreening);
-        Console.WriteLine("Screening Sucessfully updated!\nPress ENTER to continue");
-        Console.ReadLine();
-        Console.Clear();
-
+        Console.WriteLine("Screening updated!");
     }
 
     public static void DeleteScreening()
     {
-        Console.WriteLine();
+        Console.Clear();
         ShowAllScreenings();
 
-        Console.WriteLine("Choose a screening to delete");
-        string choice = Console.ReadLine();
-        long choiceint = Convert.ToInt64(choice);
-        screeningLogic.DeleteScreening(choiceint);
-        Console.WriteLine("Screening Sucessfully deleted!\nPress ENTER to continue");
-        Console.ReadLine();
-        Console.Clear();
+        long id = 0;
+        while (true)
+        {
+            Console.WriteLine("Enter Screening ID to delete:");
+            if (long.TryParse(Console.ReadLine(), out id))
+                break;
 
+            Console.WriteLine("Invalid ID.");
+        }
+
+        screeningLogic.DeleteScreening(id);
+        Console.WriteLine("Screening removed.");
     }
 
     public static void ShowAllScreenings()
@@ -209,5 +225,13 @@ static class ScreeningsAdmin
         {
             Console.WriteLine(s);
         }
+    }
+
+    private static void PauseReturn()
+    {
+        Console.WriteLine("\nPress ENTER to return...");
+        Console.ReadLine();
+        Console.Clear();
+        Menu.AdminStart();
     }
 }

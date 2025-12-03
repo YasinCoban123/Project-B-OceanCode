@@ -42,6 +42,7 @@ public static class AdminAccountPage
                 Console.WriteLine(" ");
                 Console.WriteLine("Press ENTER to continue");
                 Console.ReadLine();
+                Console.Clear();
                 Menu.AdminStart();
             }
             else if (accountchoice == 1)
