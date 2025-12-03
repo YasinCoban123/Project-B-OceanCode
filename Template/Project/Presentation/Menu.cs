@@ -49,6 +49,7 @@ static class Menu
             Console.WriteLine($"[2] Screenings");
             Console.WriteLine($"[3] Reservations");
             Console.WriteLine("[4] Movies");
+            Console.WriteLine("[6] Hall");
             Console.WriteLine("[5] Quit Program");
             string answer = Console.ReadLine().ToLower();
 
@@ -58,7 +59,7 @@ static class Menu
             }
             else if (answer == "2")
             {
-                Screenings.Start();
+                ScreeningsAdmin.Start();
             }
             else if (answer == "3")
             {
@@ -68,6 +69,11 @@ static class Menu
             else if (answer == "4")
             {
                 Movie.Start();
+            }   
+            
+            else if (answer == "6")
+            {
+                Hall.Start();
             }   
 
             else if (answer == "5")

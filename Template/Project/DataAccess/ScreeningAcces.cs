@@ -18,10 +18,10 @@ public class ScreeningAcces
         return _connection.QueryFirstOrDefault<ScreeningModel>(sql, new { ScreeningId = screeningId });
     }
 
-    public IEnumerable<ScreeningModel> GetAll()
+    public List<ScreeningModel> GetAll()
     {
         string sql = $"SELECT * FROM {Table}";
-        return _connection.Query<ScreeningModel>(sql);
+        return _connection.Query<ScreeningModel>(sql).ToList();
     }
 
     public void Update(ScreeningModel screening)
