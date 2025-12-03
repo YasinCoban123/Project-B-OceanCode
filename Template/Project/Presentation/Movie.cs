@@ -30,6 +30,9 @@ public class Movie
 
         else if (choice == "4")
         {
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
             Menu.AdminStart();
         }
     }
@@ -44,7 +47,6 @@ public class Movie
                 Console.WriteLine($"Genre: {movie.Genre}");
                 Console.WriteLine($"PGrating: {movie.PGRating}");
             }
-            Start();
     }
 
     public static void CreateAMovie()
@@ -60,6 +62,9 @@ public class Movie
 
         logic.CreateMovie(MovieTitle, MovieGenre, MoviePGrating);
         Console.WriteLine("Movie successfully created");
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
             
     }
 
@@ -74,6 +79,8 @@ public class Movie
         MovieModel Deletedmovie = Allmovies.Find(movie => KeuzeID == movie.MovieId);
         logic.DeleteMovie(Deletedmovie);
         Console.WriteLine("Movie successfully deleted");
-    }
-    
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
+    }   
 }
