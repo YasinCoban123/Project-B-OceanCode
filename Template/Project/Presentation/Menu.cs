@@ -71,7 +71,7 @@ static class Menu
                     AdminAccountPage.Start(currentUser);
                     break;
                 case 1:
-                    Screenings.Start();
+                    ScreeningsAdmin.Start();
                     break;
                 case 2:
                     Reservations.Start();

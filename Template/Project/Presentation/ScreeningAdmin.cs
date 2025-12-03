@@ -96,7 +96,9 @@ static class ScreeningsAdmin
         string DateTime = $"{Date} {Time}";
         screeningLogic.AddScreening(MovieID, HallID, DateTime);
         Console.WriteLine();
-        Console.WriteLine("Screening Succesfully added!");
+        Console.WriteLine("Screening Sucessfully added!\nPress ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
     }
 
     public static void EditScreening()
@@ -115,6 +117,7 @@ static class ScreeningsAdmin
         if (ChosenScreening is null)
         {
             Console.WriteLine("There is no screening with that ID");
+            EditScreening();
         }
 
 
@@ -178,7 +181,9 @@ static class ScreeningsAdmin
         ChosenScreening.ScreeningStartingTime = DateTime;
 
         screeningLogic.Update(ChosenScreening);
-        Console.WriteLine("Screening succesfully updated!");
+        Console.WriteLine("Screening Sucessfully updated!\nPress ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
 
     }
 
@@ -191,6 +196,10 @@ static class ScreeningsAdmin
         string choice = Console.ReadLine();
         long choiceint = Convert.ToInt64(choice);
         screeningLogic.DeleteScreening(choiceint);
+        Console.WriteLine("Screening Sucessfully deleted!\nPress ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
+
     }
 
     public static void ShowAllScreenings()
