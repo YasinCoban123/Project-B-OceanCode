@@ -139,6 +139,17 @@ static class Screenings
             }
         }
 
+        var accountsLogic = new AccountsLogic();
+        if (screeningLogic.GetPGRatingByAccess(screeningId) > accountsLogic.getAge(currentUser.DateOfBirth))
+        {
+            Console.WriteLine("\nYou do not meet the age requirement for this movie screening.");
+            Console.WriteLine("Press ENTER to return to menu...");
+            Console.ReadLine();
+            Console.Clear();
+            Menu.Start();
+            return;
+        }
+
         Console.WriteLine("\nSeat layout for this hall (for this screening):");
 
         var seatRows = screeningLogic.GetSeatStatus(screeningId);
@@ -356,5 +367,10 @@ static class Screenings
 
         Console.Clear();
         Menu.Start();
+    }
+
+    internal static void Start()
+    {
+        throw new NotImplementedException();
     }
 }

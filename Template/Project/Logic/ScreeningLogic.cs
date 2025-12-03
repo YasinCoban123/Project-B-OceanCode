@@ -139,11 +139,19 @@ public class ScreeningLogic
     }
 
     return total;
-}
+    }
 
 
     public List<ReservationModel> GetAllReservations()
     {
         return _reservationAccess.GetAllReservations();
     }
+
+    public long GetPGRatingByAccess(long screeningId)
+    {
+        return _screeningAccess.GetPGRatingByScreeningId(screeningId);
+    }
+
+
+
 }

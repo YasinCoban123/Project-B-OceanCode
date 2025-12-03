@@ -147,4 +147,12 @@ public class AccountsLogic
         }
     }
 
+    public int getAge(string dobString)
+    {
+        string yearString = dobString.Substring(6, 4);
+        int year = int.Parse(yearString);
+        int age = DateTime.Now.Year - year;
+        return age;
+    }
+
 }

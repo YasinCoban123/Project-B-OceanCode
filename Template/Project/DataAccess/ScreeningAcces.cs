@@ -84,4 +84,17 @@ public class ScreeningAcces
             .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}")
             .ToList();
     }
+
+    public long GetPGRatingByScreeningId(long screeningId)
+    {
+        string sql = @"
+            SELECT Movie.PGRating
+            FROM Screening
+            JOIN Movie ON Screening.MovieId = Movie.MovieId
+            WHERE Screening.ScreeningId = @ScreeningId;";
+ 
+        return _connection.QueryFirstOrDefault<long>(sql, new { ScreeningId = screeningId });
+    }
+
+
 }
