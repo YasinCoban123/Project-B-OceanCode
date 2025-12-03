@@ -10,6 +10,9 @@ static class Reservations
         if (currentUser == null)
         {
             Console.WriteLine("No user logged in.");
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
             Menu.Start();
             return;
         }
@@ -19,6 +22,9 @@ static class Reservations
         if (!reservations.Any())
         {
             Console.WriteLine("No reservations have yet been made");
+            Console.WriteLine("Press enter to return to menu");
+            Console.ReadLine();
+            Console.Clear();
             Menu.Start();
             return;
         }
@@ -47,6 +53,8 @@ static class Reservations
             string input = Console.ReadLine();
             if (input != null && (input.ToLower() == "exit" || input == "0"))
             {
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
                 Console.Clear();
                 Menu.Start();
                 return;
@@ -69,7 +77,8 @@ static class Reservations
             {
                 Console.WriteLine("Reservation deleted.");
                 Console.WriteLine("Returning to main menu...");
-                System.Threading.Thread.Sleep(4000);
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
                 Console.Clear();
                 Menu.Start();
                 return;

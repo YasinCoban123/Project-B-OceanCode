@@ -58,6 +58,7 @@ static class Menu
                 "Screenings",
                 "Reservations",
                 "Movies",
+                "Hall",
                 "Log out",
                 "Quit"
             },
@@ -80,9 +81,12 @@ static class Menu
                     Movie.Start();
                     break;
                 case 4:
-                    UserLogin.Start();
+                    Hall.Start();
                     break;
                 case 5:
+                    UserLogin.Start();
+                    break;
+                case 6:
                     Environment.Exit(0);
                     break;
             }

@@ -124,6 +124,9 @@ static class UserLogin
                 {
                     Console.WriteLine();
                     Console.WriteLine($"Account successfully created! Please login with your new account");
+                    Console.WriteLine("Press ENTER to continue");
+                    Console.ReadLine();
+                    Console.Clear();
                     Start();
                 }
             }
