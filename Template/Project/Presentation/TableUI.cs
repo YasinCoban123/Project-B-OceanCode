@@ -1,0 +1,303 @@
+public class TableUI<T>
+{
+    public string Title { get; }
+    public Dictionary<string, string> Headers { get; }
+    public HashSet<string> FilterableHeaders { get; }
+    public List<T> Data { get; }
+    private List<T> FilteredData { get; set; }
+
+    public int SelectedColumn { get; private set; } = 0;
+    public int SelectedIndex { get; private set; } = 0;
+    public string SelectedFilterProperty { get; private set; }
+    public string FilterInput { get; private set; }
+    public T Value{ get; private set; }
+
+    private bool exitLoop = false;
+    private bool ascending = true;
+    private string sortProperty = null;
+    private Dictionary<string, string> currentFilters = new();
+
+    public TableUI(
+        string title,
+        Dictionary<string, string> headers,
+        List<T> data,
+        IEnumerable<string> filterHeaders)
+    {
+        // Set the table title
+        Title = title;
+
+        // Set the headers dictionary (property name -> display name)
+        Headers = headers;
+
+        // Convert the input data to a list for easy indexing and manipulation
+        Data = data;
+        FilteredData = data;
+
+        // Create a HashSet of filterable property names for quick lookup
+        FilterableHeaders = new HashSet<string>(filterHeaders);
+
+        // Set the initial selected index:
+        // -1 is the header row, 
+        // -2, -3, ... are the filter options above the header,
+        // so starting at -1 - FilterableHeaders.Count puts the cursor on the topmost filter
+        SelectedIndex = -1 - FilterableHeaders.Count;
+    }
+
+
+    public T Start()
+    {
+        while (!exitLoop)
+        {
+            Console.Clear();
+
+            Console.WriteLine($"Sorting on: {sortProperty ?? "None"} ({(ascending ? "Ascending" : "Descending")})");
+            Console.WriteLine();
+
+            PrintFilterOptions();
+            PrintTitle();
+            PrintHeaderRow();
+            PrintRows();
+            PrintFooter();
+
+            HandleInput();
+        }
+
+        return Value;
+    }
+
+    // --------------------------------------------
+    // PRINTING
+    // --------------------------------------------
+
+    private void PrintTitle()
+    {
+        int tableWidth = Headers.Count * 16 + 1; // +1 for left border
+
+        // Center the title
+        int padding = (tableWidth - Title.Length) / 2;
+        if (padding < 0) padding = 0;
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(new string(' ', padding) + Title);
+        Console.WriteLine(new string('═', tableWidth));
+        Console.ResetColor();
+    }
+
+    private void PrintFilterOptions()
+    {
+        int idx = -1 - FilterableHeaders.Count;
+        foreach (var filter in FilterableHeaders)
+        {
+            if (!currentFilters.TryGetValue(filter, out string? val)) val = "";
+
+            if (SelectedIndex == idx)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+
+            Console.WriteLine($"Filter on {filter}: {val}");
+
+            Console.ResetColor();
+            idx++;
+        }
+        Console.WriteLine();
+    }
+
+    private void PrintHeaderRow()
+    {
+        bool highlightHeader = (SelectedIndex == -1);
+
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("╔" + string.Join("╦", Headers.Select(h => new string('═', 16))) + "╗");
+
+        int colIndex = 0;
+        Console.Write("║");
+
+        foreach (var h in Headers)
+        {
+            if (highlightHeader && colIndex == SelectedColumn)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+
+            Console.Write($" {h.Value,-14} ");
+            Console.ResetColor();
+            Console.Write("║");
+
+            colIndex++;
+        }
+        Console.WriteLine();
+
+        Console.WriteLine("╠" + string.Join("╬", Headers.Select(h => new string('═', 16))) + "╣");
+        Console.ResetColor();
+    }
+
+    private void PrintRows()
+    {
+        FilteredData = ApplyFilters();
+
+        for (int i = 0; i < FilteredData.Count; i++)
+        {
+            if (SelectedIndex == i)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+
+            Console.Write("║");
+
+            foreach (var h in Headers)
+            {
+                var prop = typeof(T).GetProperty(h.Key);
+                var val = prop?.GetValue(FilteredData[i])?.ToString() ?? "";
+                val = TrimToLength(val, 14);
+
+                Console.Write($" {val,-14} ");
+                Console.Write("║");
+            }
+
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+    }
+
+    private void PrintFooter()
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("╚" + string.Join("╩", Headers.Select(h => new string('═', 16))) + "╝");
+        Console.ResetColor();
+    }
+
+    private string TrimToLength(string str, int length)
+    {
+        if (str.Length <= length) return str;
+        return str.Substring(0, length - 1) + "…";
+    }
+
+    // --------------------------------------------
+    // INPUT / LOGIC
+    // --------------------------------------------
+
+    private void HandleInput()
+    {
+        var key = Console.ReadKey(true).Key;
+
+        switch (key)
+        {
+            case ConsoleKey.UpArrow:
+                SelectedIndex--;
+                if (SelectedIndex < (-1 - FilterableHeaders.Count))
+                    SelectedIndex = ApplyFilters().Count - 1;
+                break;
+
+            case ConsoleKey.DownArrow:
+                SelectedIndex++;
+                if (SelectedIndex > ApplyFilters().Count - 1)
+                    SelectedIndex = -1 - FilterableHeaders.Count;
+                break;
+
+            case ConsoleKey.LeftArrow:
+                if (SelectedIndex == -1)
+                {
+                    SelectedColumn--;
+                    if (SelectedColumn < 0) SelectedColumn = Headers.Count - 1;
+                }
+                break;
+
+            case ConsoleKey.RightArrow:
+                if (SelectedIndex == -1)
+                {
+                    SelectedColumn++;
+                    if (SelectedColumn >= Headers.Count) SelectedColumn = 0;
+                }
+                break;
+
+            case ConsoleKey.Enter:
+                HandleEnter();
+                break;
+        }
+    }
+
+    private void HandleEnter()
+    {
+        // Header selected → sort
+        if (SelectedIndex == -1)
+        {
+            string col = Headers.ElementAt(SelectedColumn).Key;
+            SortBy(col);
+            return;
+        }
+
+        // Filter option selected → input
+        int filterStart = -1 - FilterableHeaders.Count;
+        if (SelectedIndex < -1 && SelectedIndex >= filterStart)
+        {
+            int filterIdx = SelectedIndex - filterStart;
+            string filterProp = FilterableHeaders.ElementAt(filterIdx);
+
+            Console.SetCursorPosition(0, FilterableHeaders.Count + 5);
+            Console.Clear();
+            Console.Write($"Enter filter value for {filterProp}: ");
+            string input = Console.ReadLine();
+
+            currentFilters[filterProp] = input;
+            SelectedFilterProperty = filterProp;
+            FilterInput = input;
+            return;
+        }
+
+        // Selecting a row → exit
+        Value = FilteredData[SelectedIndex];
+        exitLoop = true;
+    }
+
+    private void SortBy(string property)
+    {
+        sortProperty = property;
+
+        var prop = typeof(T).GetProperty(property);
+        if (prop == null) return;
+
+        if (ascending)
+        {
+            Data.Sort((a, b) =>
+                Comparer<object>.Default.Compare(
+                    prop.GetValue(a), prop.GetValue(b)));
+        }
+        else
+        {
+            Data.Sort((a, b) =>
+                Comparer<object>.Default.Compare(
+                    prop.GetValue(b), prop.GetValue(a)));
+        }
+
+        ascending = !ascending;
+    }
+
+    private List<T> ApplyFilters()
+    {
+        IEnumerable<T> filtered = Data;
+
+        foreach (var kvp in currentFilters)
+        {
+            string propName = kvp.Key;
+            string filterVal = kvp.Value;
+
+            if (string.IsNullOrEmpty(filterVal)) continue;
+
+            var prop = typeof(T).GetProperty(propName);
+            if (prop == null) continue;
+
+            filtered = filtered.Where(d =>
+            {
+                var val = prop.GetValue(d)?.ToString() ?? "";
+                return val.Contains(filterVal, StringComparison.OrdinalIgnoreCase);
+            });
+        }
+
+        return filtered.ToList();
+    }
+}
