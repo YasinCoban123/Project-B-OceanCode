@@ -1,0 +1,68 @@
+public class EditOption<T>
+{
+    public string Label { get; set; }
+    public Func<T, string> Display { get; set; }
+    public Action<T> OnSelect { get; set; }
+}
+
+public class ItemEditor<T>
+{
+    private readonly T _item;
+    private readonly string _title;
+    private readonly List<EditOption<T>> _options;
+
+    public ItemEditor(T item, string title, List<EditOption<T>> options)
+    {
+        _item = item;
+        _title = title;
+        _options = options;
+    }
+
+    public T Start()
+    {
+        int index = 0;
+        bool confirmed = false;
+
+        while (!confirmed)
+        {
+            Console.Clear();
+            Console.WriteLine(_title);
+
+            for (int i = 0; i < _options.Count; i++)
+            {
+                var opt = _options[i];
+                string text = $"{opt.Label}: {opt.Display?.Invoke(_item) ?? ""}";
+
+                if (i == index)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ResetColor();
+                }
+
+                Console.WriteLine($"{text}");
+            }
+
+            Console.WriteLine("\n[Enter] Edit | [C] Confirm");
+
+            var key = Console.ReadKey(true);
+
+            if (key.Key == ConsoleKey.UpArrow)
+                index = (index - 1 + _options.Count) % _options.Count;
+
+            else if (key.Key == ConsoleKey.DownArrow)
+                index = (index + 1) % _options.Count;
+
+            else if (key.Key == ConsoleKey.Enter)
+                _options[index].OnSelect?.Invoke(_item);
+
+            else if (key.Key == ConsoleKey.C)
+                confirmed = true;
+        }
+
+        return _item; // returns updated item
+    }
+}
