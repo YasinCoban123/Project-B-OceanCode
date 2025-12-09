@@ -6,36 +6,56 @@ public class Hall
     public static void Start()
     {
         Console.WriteLine();
-        Console.WriteLine("[1] See all Halls");
-        Console.WriteLine("[2] Add a Hall");
-        Console.WriteLine("[3] Delete a Hall");
-        string choice = Console.ReadLine();
+        
+        MenuHelper menu = new MenuHelper(new[]
+        {
+            "See all Halls",
+            "Add a Hall",
+            "Delete a Hall",
+            "Go Back"
+        },
+        "Hall Menu");
 
-        if (choice == "1")
+        menu.Show();
+        int choice = menu.SelectedIndex;
+
+        Console.Clear();
+
+        if (choice == 0)
         {
             SeeAllHalls();
         }
 
-        if (choice == "2")
+        if (choice == 1)
         {
             CreateAHall();
         }
 
-        if (choice == "3")
+        if (choice == 2)
         {
             DeleteAHall();
         }
-        
+
+        if (choice == 3)
+        {
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
+            Menu.AdminStart();
+        }
     }
 
     public static void SeeAllHalls()
     {
-        foreach(HallModel Hall in AllHalls)
+        foreach (HallModel Hall in AllHalls)
         {
             Console.WriteLine($"Hall ID: {Hall.HallId}");
         }
-        
+        Console.WriteLine("Press ENTER to return to main menu");
+        Console.ReadLine();
+        Console.Clear();
     }
+
     public static void CreateAHall()
     {
         Console.WriteLine();
@@ -53,7 +73,6 @@ public class Hall
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
-
     }
 
     public static void DeleteAHall()
@@ -72,7 +91,6 @@ public class Hall
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
-
     }
 
 }
