@@ -5,7 +5,7 @@ public class MovieModel
 
     public string Title { get; set; }
 
-    public string Genre { get; set; }
+    public long GenreId { get; set; }
 
     public long PGRating { get; set; }
 
@@ -13,10 +13,10 @@ public class MovieModel
     {
         
     }
-    public MovieModel(string title, string genre, long pgrating)
+    public MovieModel(string title, long genreid, long pgrating)
     {
         Title = title;
-        Genre = genre;
+        GenreId = genreid;
         PGRating = pgrating;
     }
 }
