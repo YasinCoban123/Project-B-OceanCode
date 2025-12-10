@@ -5,36 +5,38 @@ public class Movie
     public static void Start()
     {
         
-        Console.WriteLine();
-        Console.WriteLine("[1] See all movies");
-        Console.WriteLine("[2] Add movies");
-        Console.WriteLine("[3] Delete movies");
-        Console.WriteLine("[4] Go back");
-        string choice = Console.ReadLine();
+      MenuHelper menu = new MenuHelper(new[]{
+            "See all Movies",
+            "Edit Movie",
+            "Delete Movie",
+            "Go Back"
+        },
+        "Movie Options");
 
-        if (choice == "1")
+        menu.Show();
+        switch (menu.SelectedIndex)
         {
-            ShowAllMovies();
+            case 0:
+                ShowAllMovies();
+                break;
+
+           case 1:
+                CreateAMovie();
+                break;
+
+            case 2:
+                DeleteAMovie();
+                break;
+
+            case 4:
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
+                Menu.AdminStart();
+                break;
         }
 
-        if (choice == "2")
-        {
-            CreateAMovie();
-            
-        }
-
-        if (choice == "3")
-        {
-            DeleteAMovie();
-        }
-
-        else if (choice == "4")
-        {
-            Console.WriteLine("Press ENTER to continue");
-            Console.ReadLine();
-            Console.Clear();
-            Menu.AdminStart();
-        }
+        
     }
 
     public static void ShowAllMovies()
@@ -47,6 +49,9 @@ public class Movie
                 Console.WriteLine($"Genre: {movie.Genre}");
                 Console.WriteLine($"PGrating: {movie.PGRating}");
             }
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
     }
 
     public static void CreateAMovie()

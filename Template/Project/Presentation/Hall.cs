@@ -5,25 +5,35 @@ public class Hall
     static List<HallModel> AllHalls => logic.GetAllHalls();
     public static void Start()
     {
-        Console.WriteLine();
-        Console.WriteLine("[1] See all Halls");
-        Console.WriteLine("[2] Add a Hall");
-        Console.WriteLine("[3] Delete a Hall");
-        string choice = Console.ReadLine();
+        MenuHelper menu = new MenuHelper(new[]{
+            "See all halls",
+            "Create a hall",
+            "Delete a hall",
+            "Go Back"
+        },
+        "Hall Options");
 
-        if (choice == "1")
+        menu.Show();
+        switch (menu.SelectedIndex)
         {
-            SeeAllHalls();
-        }
+            case 0:
+                SeeAllHalls();
+                break;
 
-        if (choice == "2")
-        {
-            CreateAHall();
-        }
+           case 1:
+                CreateAHall();
+                break;
 
-        if (choice == "3")
-        {
-            DeleteAHall();
+            case 2:
+                DeleteAHall();
+                break;
+
+            case 4:
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
+                Menu.AdminStart();
+                break;
         }
         
     }
@@ -34,6 +44,9 @@ public class Hall
         {
             Console.WriteLine($"Hall ID: {Hall.HallId}");
         }
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
         
     }
     public static void CreateAHall()
