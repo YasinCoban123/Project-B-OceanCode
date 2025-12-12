@@ -30,62 +30,68 @@ static class Reservations
         }
 
 
-    Console.Clear();
-    Console.WriteLine("Your reservations:");
-    Console.WriteLine("ID\tMovie Title\t\tScreening Time\t\tSeat");
-    
-    foreach (var r in reservations)
-    {
-        string movieTitle = r.MovieTitle ?? "Unknown";
-        string screeningTime = r.ScreeningStartingTime ?? "N/A"; // laat gewoon als string
-        string seat = $"{r.RowNumber}-{r.SeatNumber}";
-    
-        Console.WriteLine($"{r.ReservationId}\t{movieTitle,-20}\t{screeningTime,-20}\t{seat}");
-    }
+        Console.Clear();
 
+        List<ReservationModel> reservationsList = new List<ReservationModel>();
+        foreach (var r in reservations)
+        {
+            // string movieTitle = r.MovieTitle ?? "Unknown";
+            // string screeningTime = r.ScreeningStartingTime ?? "N/A"; // laat gewoon als string
+            // string seat = $"{r.RowNumber}-{r.SeatNumber}";
 
+            // Console.WriteLine($"{r.ReservationId}\t{movieTitle,-20}\t{screeningTime,-20}\t{seat}");
+
+            reservationsList.Add((ReservationModel)r);
+        }
 
         Console.WriteLine();
         Console.WriteLine("Type a reservation ID to delete it, or type 'exit' or '0' to return to the main menu.");
         while (true)
         {
-            Console.Write("Choice: ");
-            string input = Console.ReadLine();
-            if (input != null && (input.ToLower() == "exit" || input == "0"))
-            {
-                Console.WriteLine("Press ENTER to continue");
-                Console.ReadLine();
-                Console.Clear();
-                Menu.Start();
-                return;
-            }
+            var table = new TableUI<ReservationModel>(
+                "Your reservations", 
+                new(
+                    [new("MovieTitle", "MovieTitle"),
+                    new("ScreeningStartingTime", "Start time"),
+                    new("Seat", "Seat")
+                ]),
+                reservationsList,
+                ["MovieTitle", "ScreeningStartingTime"]);
+            ReservationModel chosen = table.Start();
 
-            if (!long.TryParse(input, out long reservationId))
+            MenuHelper menu = new MenuHelper(new[]
             {
-                Console.WriteLine("Invalid ID. Please enter a numeric reservation ID or 'exit' or '0' to return to the main menu.");
-                continue;
-            }
+                "Delete reservation",
+                "Go Back",
+                "Go back to main menu"
+            },
+            "Reservation");
+            menu.Show();
 
-            if (!reservations.Any(r => r.ReservationId == reservationId))
+            switch (menu.SelectedIndex)
             {
-                Console.WriteLine("You may only delete your own reservations. Please enter a valid reservation ID from the list or type 'exit'.");
-                continue;
-            }
-
-            bool deleted = userLogic.DeleteReservationIfExists(reservationId);
-            if (deleted)
-            {
-                Console.WriteLine("Reservation deleted.");
-                Console.WriteLine("Returning to main menu...");
-                Console.WriteLine("Press ENTER to continue");
-                Console.ReadLine();
-                Console.Clear();
-                Menu.Start();
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Reservation ID not found. Please retry or type 'exit' or '0' to return to the main menu.");
+                case 0:
+                    bool deleted = userLogic.DeleteReservationIfExists(chosen.ReservationId);
+                    if (deleted)
+                    {
+                        Console.WriteLine("Reservation deleted.");
+                        Console.WriteLine("Returning to main menu...");
+                        Console.WriteLine("Press ENTER to continue");
+                        Console.ReadLine();
+                        Console.Clear();
+                        Menu.Start();
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Reservation ID not found. Please retry or type 'exit' or '0' to return to the main menu.");
+                    }
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    AccountPage.Start(currentUser);
+                    break;
             }
         }
     }

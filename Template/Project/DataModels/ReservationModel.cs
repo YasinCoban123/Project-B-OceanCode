@@ -10,6 +10,12 @@ public class ReservationModel
     public int RowNumber { get; set; }
     public int SeatNumber { get; set; }
 
+    public string Seat { get
+        {
+            return $"{RowNumber}-{SeatNumber}";
+        }
+    }
+
     public ReservationModel(long accountid, long screeningid, string reservationtime)
     {
         AccountId = accountid;
