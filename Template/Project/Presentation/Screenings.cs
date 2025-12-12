@@ -12,6 +12,8 @@ static class Screenings
 
         bool filtering = true;
 
+        //var table = new TableUI()
+
         while (filtering)
         {
             Console.WriteLine("\nCurrent screenings:");
