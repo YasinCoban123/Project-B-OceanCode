@@ -1,6 +1,7 @@
 public class ReservationAdmin
 {
     ScreeningLogic screeningLogic = new ScreeningLogic();
+    static private UserLogic userLogic = new();
 
     public void Start()
     {
@@ -27,17 +28,49 @@ public class ReservationAdmin
             }
             else
             {
-                var table = new TableUI<ReservationModel>(
-                "All reservations (Select any to go back)", 
-                new(
-                    [new("ReservationId", "ID"),
-                    new("AccountId", "User ID"),
-                    new("ScreeningId", "Screening ID"),
-                    new("ReservationTime", "Time")
-                    ]),
-                    allReservations,
-                    ["AccountId", "ScreeningId", "ReservationTime"]);
-                table.Start();
+                while (true)
+                {
+                    var table = new TableUI<ReservationModel>(
+                    "All reservations (Select any to go back)", 
+                    new(
+                        [new("ReservationId", "ID"),
+                        new("AccountId", "User ID"),
+                        new("ScreeningId", "Screening ID"),
+                        new("ReservationTime", "Time")
+                        ]),
+                        allReservations,
+                        ["AccountId", "ScreeningId", "ReservationTime"]);
+                    ReservationModel chosen = table.Start();
+    
+                    menu = new MenuHelper(new[]
+                    {
+                        "Delete reservation",
+                        "Go Back",
+                        "Go back to main menu"
+                    },
+                    "Reservation");
+                    menu.Show();
+    
+                    switch (menu.SelectedIndex)
+                    {
+                        case 0:
+                            bool deleted = userLogic.DeleteReservationIfExists(chosen.ReservationId);
+                            if (deleted)
+                            {
+                                Console.WriteLine("Reservation deleted.");
+                                Console.WriteLine("Returning to main menu...");
+                                Console.WriteLine("Press ENTER to continue");
+                                Console.ReadLine();
+                                Console.Clear();
+                            }
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            Start();
+                            break;
+                    }                   
+                }
             }
         }
 
