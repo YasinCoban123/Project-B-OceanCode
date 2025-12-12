@@ -35,17 +35,9 @@ static class Reservations
         List<ReservationModel> reservationsList = new List<ReservationModel>();
         foreach (var r in reservations)
         {
-            // string movieTitle = r.MovieTitle ?? "Unknown";
-            // string screeningTime = r.ScreeningStartingTime ?? "N/A"; // laat gewoon als string
-            // string seat = $"{r.RowNumber}-{r.SeatNumber}";
-
-            // Console.WriteLine($"{r.ReservationId}\t{movieTitle,-20}\t{screeningTime,-20}\t{seat}");
-
             reservationsList.Add((ReservationModel)r);
         }
 
-        Console.WriteLine();
-        Console.WriteLine("Type a reservation ID to delete it, or type 'exit' or '0' to return to the main menu.");
         while (true)
         {
             var table = new TableUI<ReservationModel>(
@@ -79,18 +71,12 @@ static class Reservations
                         Console.WriteLine("Press ENTER to continue");
                         Console.ReadLine();
                         Console.Clear();
-                        Menu.Start();
-                        return;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Reservation ID not found. Please retry or type 'exit' or '0' to return to the main menu.");
                     }
                     break;
                 case 1:
                     break;
                 case 2:
-                    AccountPage.Start(currentUser);
+                    Menu.Start();
                     break;
             }
         }
