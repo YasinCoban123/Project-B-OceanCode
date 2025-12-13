@@ -44,7 +44,7 @@ public class Movie
                 Console.WriteLine();
                 Console.WriteLine($"MovieID: {movie.MovieId}");
                 Console.WriteLine($"Title: {movie.Title}");
-                Console.WriteLine($"Genre: {movie.Genre}");
+                Console.WriteLine($"Genre: {movie.GenreId}");
                 Console.WriteLine($"PGrating: {movie.PGRating}");
             }
     }
@@ -55,7 +55,7 @@ public class Movie
         Console.WriteLine("Give the Title of the Movie: ");
         string MovieTitle = Console.ReadLine();
         Console.WriteLine("What is the genre of the movie");
-        string MovieGenre = Console.ReadLine();
+        int MovieGenre = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("What is the PG Rating for the movie: ");
         string MoviePGRating = Console.ReadLine();
         long MoviePGrating = Convert.ToInt64(MoviePGRating);

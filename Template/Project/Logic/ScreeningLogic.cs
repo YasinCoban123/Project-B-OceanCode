@@ -1,18 +1,3 @@
-public enum Genres
-{
-    Action,
-    ActionComedy,
-    Comedy,
-    Drama,
-    Horror,
-    Romance,
-    SciFi,
-    Documentary,
-    Animation,
-    Thriller,
-    Fantasy
-}
-
 public enum Days
 {
     Monday,

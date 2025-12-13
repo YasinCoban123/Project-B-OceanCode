@@ -38,7 +38,12 @@ public class ScreeningAcces
 
     public List<string> GetScreenings()
     {
-        string sql = $"SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre, PGRating FROM {Table} JOIN Movie ON Screening.MovieId = Movie.MovieId;";
+        string sql = $@"
+            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre.Genre AS Genre, PGRating 
+            FROM {Table}
+            JOIN Movie ON Screening.MovieId = Movie.MovieId
+            JOIN Genre ON Movie.GenreId = Genre.GenreId;";
+            
         return _connection.Query(sql)
             .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId} StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}")
             .ToList();
@@ -46,26 +51,29 @@ public class ScreeningAcces
 
     public List<string> GetScreeningsByGenre(string genre)
     {
-        string sql = @"
-            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre, PGRating
-            FROM Screening
+        string sql = $@"
+            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre.Genre AS Genre, PGRating
+            FROM {Table}
             JOIN Movie ON Screening.MovieId = Movie.MovieId
-            WHERE LOWER(Genre) = LOWER(@Genre)
+            JOIN Genre ON Movie.GenreId = Genre.GenreId
+            WHERE LOWER(Genre.Genre) = LOWER(@Genre)
             ORDER BY ScreeningStartingTime;";
-    
+
+
         return _connection.Query(sql, new { Genre = genre })
             .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}")
             .ToList();
     }
-    
+
     public List<string> GetScreeningsByDate()
     {
-        string sql = @"
-            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre, PGRating
-            FROM Screening
+        string sql = $@"
+            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre.Genre AS Genre, PGRating
+            FROM {Table}
             JOIN Movie ON Screening.MovieId = Movie.MovieId
+            JOIN Genre ON Movie.GenreId = Genre.GenreId
             ORDER BY datetime(ScreeningStartingTime);";
-    
+
         return _connection.Query(sql)
             .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}")
             .ToList();
@@ -73,10 +81,11 @@ public class ScreeningAcces
 
     public List<string> GetScreeningsByDay(string dayNumber)
     {
-        string sql = @"
-            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre, PGRating
-            FROM Screening
+        string sql = $@"
+            SELECT ScreeningId, HallId, ScreeningStartingTime, Title, Genre.Genre AS Genre, PGRating
+            FROM {Table}
             JOIN Movie ON Screening.MovieId = Movie.MovieId
+            JOIN Genre ON Movie.GenreId = Genre.GenreId
             WHERE strftime('%w', ScreeningStartingTime) = @DayNumber
             ORDER BY datetime(ScreeningStartingTime);";
 
@@ -87,12 +96,12 @@ public class ScreeningAcces
 
     public long GetPGRatingByScreeningId(long screeningId)
     {
-        string sql = @"
+        string sql = $@"
             SELECT Movie.PGRating
-            FROM Screening
+            FROM {Table}
             JOIN Movie ON Screening.MovieId = Movie.MovieId
             WHERE Screening.ScreeningId = @ScreeningId;";
- 
+
         return _connection.QueryFirstOrDefault<long>(sql, new { ScreeningId = screeningId });
     }
 

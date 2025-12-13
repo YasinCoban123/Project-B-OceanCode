@@ -9,7 +9,7 @@ public class MovieLogic
     }
 
 
-    public bool CreateMovie(string title, string genre, long pgrating)
+    public bool CreateMovie(string title, long genre, long pgrating)
     {
         if (string.IsNullOrWhiteSpace(title)) return false;
         if (_movieacces.ExistsByTitle(title)) return false;
