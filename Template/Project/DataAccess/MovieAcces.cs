@@ -7,7 +7,7 @@ public class MovieAcces
 
     public void Write(MovieModel movie)
     {
-        string sql = $"INSERT INTO {Table} (Title, Genre, PGRating) VALUES (@Title, @Genre, @PGRating)";
+        string sql = $"INSERT INTO {Table} (Title, GenreId, PGRating) VALUES (@Title, @GenreId, @PGRating)";
         _connection.Execute(sql, movie);
     }
 

@@ -64,7 +64,7 @@ public class Movie
         Console.WriteLine("Give the Title of the Movie: ");
         string MovieTitle = Console.ReadLine();
         Console.WriteLine("What is the genre of the movie");
-        string MovieGenre = Console.ReadLine();
+        int MovieGenre = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("What is the PG Rating for the movie: ");
         string MoviePGRating = Console.ReadLine();
         long MoviePGrating = Convert.ToInt64(MoviePGRating);
