@@ -36,14 +36,12 @@ public class ItemEditor<T>
                 if (i == index)
                 {
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                else
-                {
-                    Console.ResetColor();
+                    Console.BackgroundColor = ConsoleColor.White;
                 }
 
                 Console.WriteLine($"{text}");
+
+                Console.ResetColor();
             }
 
             Console.WriteLine("\n[Enter] Edit | [C] Confirm");
@@ -57,7 +55,10 @@ public class ItemEditor<T>
                 index = (index + 1) % _options.Count;
 
             else if (key.Key == ConsoleKey.Enter)
+            {
+                Console.Clear();
                 _options[index].OnSelect?.Invoke(_item);
+            }
 
             else if (key.Key == ConsoleKey.C)
                 confirmed = true;

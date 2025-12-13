@@ -47,76 +47,7 @@ public static class AdminAccountPage
             }
             else if (accountchoice == 1)
             {
-                Console.Write("Enter new full name (leave blank to keep current): ");
-                string newName = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(newName))
-                    user.FullName = newName;
-
-                while (true)
-                {
-                    Console.Write("Enter new email (leave blank to keep current): ");
-                    string newEmail = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(newEmail))
-                    {
-                        break;
-                    }
-
-                    if (logic.CheckEmailCorrect(newEmail) == false)
-                    {
-                        Console.WriteLine("The email is not in the correct format. Try again.");
-                        continue;
-                    }
-
-                    if (logic.CheckIfEmailExist(newEmail)== false)
-                    {
-                        Console.WriteLine("This email already exists. Please use another one.");
-                        continue;
-                    }
-
-                    user.Email = newEmail;
-                    break;
-                }
-
-                while (true)
-                {
-                    Console.Write("Enter new password (leave blank to keep current): ");
-                    string newPassword = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(newPassword))
-                    {
-                        break;
-                    }
-
-                    if (!logic.CheckPassword(newPassword))
-                    {
-                        Console.WriteLine("Password does not meet the requirements. Try again.");
-                        continue;
-                    }
-
-                    user.Password = newPassword;
-                    break;
-                }
-
-                while (true)
-                {
-                    Console.Write("Enter new date of birth (leave blank to keep current): ");
-                    string newDob = Console.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(newDob))
-                    {
-                        break;
-                    }
-
-                    if (!logic.CheckDob(newDob))
-                    {
-                        Console.WriteLine("Invalid date of birth format or not allowed. Try again.");
-                        continue;
-                    }
-
-                    user.DateOfBirth = newDob;
-                    break;
-                }
+                user = AccountPage.EditUserScreen(user);
 
                 acces.Update(user);
                 Console.WriteLine("Account updated successfully!");
@@ -159,102 +90,56 @@ public static class AdminAccountPage
             if (accountchoice == 0)
             {
                 List<UserAccountModel> AllUserAccounts = logic.GetAllUserAccounts();
-                foreach (UserAccountModel account in AllUserAccounts)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine($"ID: {account.AccountId}");
-                    Console.WriteLine($"Name: {account.FullName}");
-                    Console.WriteLine($"Email: {account.Email}");
-                    Console.WriteLine($"Date of Birth: {account.DateOfBirth}");
-                }
-                Console.WriteLine("Press ENTER to continue");
-                Console.ReadLine();
+                var table = new TableUI<UserAccountModel>(
+                    "All users (Select one to go back)", 
+                    new(
+                        [new("AccountId", "ID"),
+                        new("FullName", "Name"),
+                        new("Email", "Email"),
+                        new("DateOfBirth", "Date of Birth")
+                        ]),
+                        AllUserAccounts,
+                        ["Name", "Email"]);
+                table.Start();
+                // foreach (UserAccountModel account in AllUserAccounts)
+                // {
+                //     Console.WriteLine();
+                //     Console.WriteLine($"ID: {account.AccountId}");
+                //     Console.WriteLine($"Name: {account.FullName}");
+                //     Console.WriteLine($"Email: {account.Email}");
+                //     Console.WriteLine($"Date of Birth: {account.DateOfBirth}");
+                // }
+                // Console.WriteLine("Press ENTER to continue");
+                // Console.ReadLine();
                 Console.Clear();
                 Start(user);
             }
             else if (accountchoice == 1)
             {
-                Console.WriteLine("Give the ID of the account you want to edit");
-                string chosenID = Console.ReadLine();
-                int ChosenID = Convert.ToInt32(chosenID);
+                List<UserAccountModel> AllUserAccounts = logic.GetAllUserAccounts();
+                var table = new TableUI<UserAccountModel>(
+                    "Select user you want to edit", 
+                    new(
+                        [new("AccountId", "ID"),
+                        new("FullName", "Name"),
+                        new("Email", "Email"),
+                        new("DateOfBirth", "Date of Birth")
+                        ]),
+                        AllUserAccounts,
+                        ["Name", "Email"]);
+                int ChosenID = Convert.ToInt32(table.Start().AccountId);
                 UserAccountModel chosenuser = logic.GetUserAccount(ChosenID);
+
                 if (chosenuser == null)
                 {
-                    Console.WriteLine("Admin account cannot be edited!");
+                    Console.WriteLine("Admin account cannot be edited! Press ENTER to continue");
+                    Console.ReadLine();
                 }
                 else
                 {
-                    Console.Write("Enter new full name (leave blank to keep current): ");
-                    string newName = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(newName))
-                        chosenuser.FullName = newName;
-
-                    while (true)
-                    {
-                        Console.Write("Enter new email (leave blank to keep current): ");
-                        string newEmail = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(newEmail))
-                        {
-                            break;
-                        }
-
-                        if (!logic.CheckEmailCorrect(newEmail))
-                        {
-                            Console.WriteLine("The email is not in the correct format. Try again.");
-                            continue;
-                        }
-
-                        if (!logic.CheckIfEmailExist(newEmail))
-                        {
-                            Console.WriteLine("This email already exists. Please use another one.");
-                            continue;
-                        }
-
-                        chosenuser.Email = newEmail;
-                        break;
-                    }
-
-                    while (true)
-                    {
-                        Console.Write("Enter new password (leave blank to keep current): ");
-                        string newPassword = Console.ReadLine();
-
-                        if (string.IsNullOrWhiteSpace(newPassword))
-                        {
-                            break;
-                        }
-
-                        if (!logic.CheckPassword(newPassword))
-                        {
-                            Console.WriteLine("Password does not meet the requirements. Try again.");
-                            continue;
-                        }
-
-                        chosenuser.Password = newPassword;
-                        break;
-                    }
-
-                    while (true)
-                    {
-                        Console.Write("Enter new date of birth (leave blank to keep current): ");
-                        string newDob = Console.ReadLine();
-
-                        if (string.IsNullOrWhiteSpace(newDob))
-                        {
-                            break;
-                        }
-
-                        if (!logic.CheckDob(newDob))
-                        {
-                            Console.WriteLine("Invalid date of birth format or not allowed. Try again.");
-                            continue;
-                        }
-
-                        chosenuser.DateOfBirth = newDob;
-                        break;
-                    }
-
+                    chosenuser = AccountPage.EditUserScreen(chosenuser);
                     acces.Update(chosenuser);
+                    Console.Clear();
                     Console.WriteLine("Account updated successfully!");
                     Console.WriteLine("Press ENTER to continue");
                     Console.ReadLine();
@@ -264,10 +149,21 @@ public static class AdminAccountPage
             }
             else if (accountchoice == 2)
             {
-                Console.WriteLine("Give the ID of the account you want to delete");
-                string chosenID = Console.ReadLine();
-                int ChosenID = Convert.ToInt32(chosenID);
+                List<UserAccountModel> AllUserAccounts = logic.GetAllUserAccounts();
+                var table = new TableUI<UserAccountModel>(
+                    "Select user you want to delete", 
+                    new(
+                        [new("AccountId", "ID"),
+                        new("FullName", "Name"),
+                        new("Email", "Email"),
+                        new("DateOfBirth", "Date of Birth")
+                        ]),
+                        AllUserAccounts,
+                        ["Name", "Email"]);
+                int ChosenID = Convert.ToInt32(table.Start().AccountId);
                 UserAccountModel chosenuser = logic.GetUserAccount(ChosenID);
+
+                Console.Clear();
                 if (chosenuser == null)
                 {
                     Console.WriteLine("Admin account cannot be deleted!");

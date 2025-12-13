@@ -1,52 +1,61 @@
+using System.Runtime.Intrinsics.Arm;
+
 public class Movie
 {
     static MovieLogic logic = new MovieLogic();
     static List<MovieModel> Allmovies = logic.GetAllMovies();
     public static void Start()
     {
-        
-        Console.WriteLine();
-        Console.WriteLine("[1] See all movies");
-        Console.WriteLine("[2] Add movies");
-        Console.WriteLine("[3] Delete movies");
-        Console.WriteLine("[4] Go back");
-        string choice = Console.ReadLine();
-
-        if (choice == "1")
+        string choice = "";
+        do
         {
-            ShowAllMovies();
-        }
+            OptionsMenu menu = new OptionsMenu(new(["See all movies", "Add movies", "Delete movies", "Go back"]));
+            choice = menu.Selected.ToString();
 
-        if (choice == "2")
-        {
-            CreateAMovie();
-            
-        }
+            if (menu.Selected == 0)
+            {
+                ShowAllMovies();
+            }
 
-        if (choice == "3")
-        {
-            DeleteAMovie();
-        }
+            if (menu.Selected == 1)
+            {
+                CreateAMovie();
 
-        else if (choice == "4")
-        {
-            Console.WriteLine("Press ENTER to continue");
-            Console.ReadLine();
-            Console.Clear();
-            Menu.AdminStart();
-        }
+            }
+
+            if (menu.Selected == 2)
+            {
+                DeleteAMovie();
+            }
+
+            else if (menu.Selected == 3)
+            {
+                Console.Clear();
+            }
+        } while (choice != "3");
     }
 
     public static void ShowAllMovies()
     {
-        foreach (MovieModel movie in Allmovies)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"MovieID: {movie.MovieId}");
-                Console.WriteLine($"Title: {movie.Title}");
-                Console.WriteLine($"Genre: {movie.GenreId}");
-                Console.WriteLine($"PGrating: {movie.PGRating}");
-            }
+        var table = new TableUI<MovieModel>(
+            "All movies (Select any movie to go back)", 
+            new(
+                [new("MovieId", "Movie ID"),
+                new("Title", "Title"),
+                new("Genre", "Genre"),
+                new("PGRating", "PG rating")
+                ]),
+                Allmovies,
+                ["Title", "Genre"]);
+        table.Start();
+        // foreach (MovieModel movie in Allmovies)
+        //     {
+        //         Console.WriteLine();
+        //         Console.WriteLine($"MovieID: {movie.MovieId}");
+        //         Console.WriteLine($"Title: {movie.Title}");
+        //         Console.WriteLine($"Genre: {movie.Genre}");
+        //         Console.WriteLine($"PGrating: {movie.PGRating}");
+        //     }
     }
 
     public static void CreateAMovie()
@@ -71,10 +80,19 @@ public class Movie
      public static void DeleteAMovie()
     {
         Console.WriteLine();
-        ShowAllMovies();
         Console.Write("Enter the ID of the movie you want to delete: ");
-        string keuzeID = Console.ReadLine();
-        long KeuzeID = Convert.ToInt64(keuzeID);
+        var table = new TableUI<MovieModel>(
+            "Enter the ID of the movie you want to delete:", 
+            new(
+                [new("MovieId", "Movie ID"),
+                new("Title", "Title"),
+                new("Genre", "Genre"),
+                new("PGRating", "PG rating")
+                ]),
+                Allmovies,
+                ["Title", "Genre"]);
+        long KeuzeID = Convert.ToInt64(table.Start().MovieId);
+        Console.Clear();
 
         MovieModel Deletedmovie = Allmovies.Find(movie => KeuzeID == movie.MovieId);
         logic.DeleteMovie(Deletedmovie);

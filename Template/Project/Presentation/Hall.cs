@@ -38,8 +38,6 @@ public class Hall
 
         if (choice == 3)
         {
-            Console.WriteLine("Press ENTER to continue");
-            Console.ReadLine();
             Console.Clear();
             Menu.AdminStart();
         }
@@ -47,12 +45,14 @@ public class Hall
 
     public static void SeeAllHalls()
     {
-        foreach (HallModel Hall in AllHalls)
-        {
-            Console.WriteLine($"Hall ID: {Hall.HallId}");
-        }
-        Console.WriteLine("Press ENTER to return to main menu");
-        Console.ReadLine();
+        var table = new TableUI<HallModel>(
+            "All halls (Select any to go back)", 
+            new(
+                [new("HallId", "ID")
+            ]),
+            AllHalls,
+            ["HallId"]);
+        table.Start();
         Console.Clear();
     }
 
@@ -63,7 +63,14 @@ public class Hall
         Console.WriteLine();
 
         Console.WriteLine("Which Hall blueprint do you want to choose\nHall 1 \nHall 2 \nHall 3 ");
-        string chosenHallBlueprintId = Console.ReadLine();
+        MenuHelper menu = new MenuHelper(new[]
+            {
+                "Hall 1",
+                "Hall 2",
+                "Hall 3"
+            },
+            "Which Hall blueprint do you want to choose:");
+        string chosenHallBlueprintId = menu.SelectedIndex + 1.ToString();
         long HallBlueprintId = Convert.ToInt64(chosenHallBlueprintId);
 
         HallModel ChosenHallBlueprint = AllHalls.Find(x => HallBlueprintId == x.HallId);
@@ -77,12 +84,14 @@ public class Hall
 
     public static void DeleteAHall()
     {
-        SeeAllHalls();
-        Console.WriteLine();
-        Console.WriteLine("Choose the Hall you want to delete");
-        string choice = Console.ReadLine();
-        long chosenHallId = Convert.ToInt64(choice);
-
+        var table = new TableUI<HallModel>(
+            "Choose the Hall you want to delete", 
+            new(
+                [new("HallId", "ID")
+            ]),
+            AllHalls,
+            ["HallId"]);
+        long chosenHallId = table.Start().HallId;
         HallModel ChosenHallBlue = AllHalls.Find(x => chosenHallId == x.HallId);
 
         logic.DeleteHallAndSeats(ChosenHallBlue);

@@ -65,9 +65,7 @@ public class TableUI<T>
         return Value;
     }
 
-    // --------------------------------------------
     // PRINTING
-    // --------------------------------------------
 
     private void PrintTitle()
     {
@@ -177,9 +175,7 @@ public class TableUI<T>
         return str.Substring(0, length - 1) + "…";
     }
 
-    // --------------------------------------------
-    // INPUT / LOGIC
-    // --------------------------------------------
+    // INPUT
 
     private void HandleInput()
     {
@@ -259,45 +255,66 @@ public class TableUI<T>
         sortProperty = property;
 
         var prop = typeof(T).GetProperty(property);
-        if (prop == null) return;
+        if (prop == null)
+            return; // Property doesn't exist
 
-        if (ascending)
-        {
-            Data.Sort((a, b) =>
-                Comparer<object>.Default.Compare(
-                    prop.GetValue(a), prop.GetValue(b)));
-        }
-        else
-        {
-            Data.Sort((a, b) =>
-                Comparer<object>.Default.Compare(
-                    prop.GetValue(b), prop.GetValue(a)));
-        }
 
+        Data.Sort((a, b) =>
+        {
+            object valueA = prop.GetValue(a);
+            object valueB = prop.GetValue(b);
+
+            // Compare the two values
+            int result = Comparer<object>.Default.Compare(valueA, valueB);
+
+            // Flip the result if sorting descending
+            if (!ascending)
+                result = -result;
+
+            return result;
+        });
+
+        // Next time, flip sorting direction
         ascending = !ascending;
     }
 
+
     private List<T> ApplyFilters()
     {
-        IEnumerable<T> filtered = Data;
+        List<T> result = new List<T>();
 
-        foreach (var kvp in currentFilters)
+        foreach (var item in Data)
         {
-            string propName = kvp.Key;
-            string filterVal = kvp.Value;
+            bool matchesAllFilters = true;
 
-            if (string.IsNullOrEmpty(filterVal)) continue;
-
-            var prop = typeof(T).GetProperty(propName);
-            if (prop == null) continue;
-
-            filtered = filtered.Where(d =>
+            foreach (var filter in currentFilters)
             {
-                var val = prop.GetValue(d)?.ToString() ?? "";
-                return val.Contains(filterVal, StringComparison.OrdinalIgnoreCase);
-            });
+                string propertyName = filter.Key;
+                string filterValue = filter.Value;
+
+                // Skip filters with no value
+                if (string.IsNullOrWhiteSpace(filterValue))
+                    continue;
+
+                // Get the property info
+                var property = typeof(T).GetProperty(propertyName);
+                if (property == null)
+                    continue;
+
+                // Get the item's value as a string
+                string itemValue = property.GetValue(item)?.ToString() ?? string.Empty;
+
+                if (!itemValue.Contains(filterValue, StringComparison.OrdinalIgnoreCase))
+                {
+                    matchesAllFilters = false;
+                    break;
+                }
+            }
+
+            if (matchesAllFilters)
+                result.Add(item);
         }
 
-        return filtered.ToList();
+        return result;
     }
 }

@@ -1,25 +1,77 @@
 public class ReservationAdmin
 {
     ScreeningLogic screeningLogic = new ScreeningLogic();
+    static private UserLogic userLogic = new();
 
     public void Start()
     {
         Console.WriteLine();
-        Console.WriteLine("[1] See all Reservations");
-        string choice = Console.ReadLine();
+        MenuHelper menu = new MenuHelper(new[]
+        {
+            "See all Reservations",
+            "Go Back"
+        },
+        "Reservation Admin");
+        menu.Show();
 
-        if (choice == "1")
+        if (menu.SelectedIndex == 0)
         {
             List<ReservationModel> allReservations = screeningLogic.GetAllReservations();
-            foreach (ReservationModel reservation in allReservations)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"ReservationId: {reservation.ReservationId}");
-                Console.WriteLine($"AccountId: {reservation.AccountId}");
-                Console.WriteLine($"ScreeningId: {reservation.ScreeningId}");
-                Console.WriteLine($"ReservationTime: {reservation.ReservationTime}");
-            }
 
+            if (allReservations.Count == 0)
+            {
+                new MenuHelper(new[]
+                    {
+                        "Go Back"
+                    },
+                    "There are no reservations").Show();;
+            }
+            else
+            {
+                while (true)
+                {
+                    var table = new TableUI<ReservationModel>(
+                    "All reservations (Select any to go back)", 
+                    new(
+                        [new("ReservationId", "ID"),
+                        new("AccountId", "User ID"),
+                        new("ScreeningId", "Screening ID"),
+                        new("ReservationTime", "Time")
+                        ]),
+                        allReservations,
+                        ["AccountId", "ScreeningId", "ReservationTime"]);
+                    ReservationModel chosen = table.Start();
+    
+                    menu = new MenuHelper(new[]
+                    {
+                        "Delete reservation",
+                        "Go Back",
+                        "Go back to main menu"
+                    },
+                    "Reservation");
+                    menu.Show();
+    
+                    switch (menu.SelectedIndex)
+                    {
+                        case 0:
+                            bool deleted = userLogic.DeleteReservationIfExists(chosen.ReservationId);
+                            if (deleted)
+                            {
+                                Console.WriteLine("Reservation deleted.");
+                                Console.WriteLine("Returning to main menu...");
+                                Console.WriteLine("Press ENTER to continue");
+                                Console.ReadLine();
+                                Console.Clear();
+                            }
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            Start();
+                            break;
+                    }                   
+                }
+            }
         }
 
     }
