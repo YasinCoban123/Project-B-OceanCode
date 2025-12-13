@@ -28,9 +28,7 @@ static class Screenings
         List<string> allScreenings = screeningLogic.ShowScreenings();
         List<string> filteredScreenings = allScreenings;
 
-        //var table = new TableUI()
-
-        while (filtering)
+        if (choice == 0)
         {
             ShowScreenings(allScreenings);
 

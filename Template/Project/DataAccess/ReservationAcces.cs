@@ -17,10 +17,10 @@ public class ReservationAcces
     }
 
 
-    public IEnumerable<dynamic> GetByAccountId(long accountId)
+    public IEnumerable<ReservationModel> GetByAccountId(long accountId)
     {
         string sql = @"
-        SELECT 
+            SELECT 
             r.ReservationId,
             m.Title AS MovieTitle,
             s.ScreeningStartingTime,
@@ -33,10 +33,11 @@ public class ReservationAcces
         JOIN Seat st           ON rs.SeatId = st.SeatId
         WHERE r.AccountId = @AccountId
         ORDER BY s.ScreeningStartingTime DESC;
-    ";
+        ";
 
-        return _connection.Query(sql, new { AccountId = accountId });
+        return _connection.Query<ReservationModel>(sql, new { AccountId = accountId });
     }
+
 
 
     public bool Exists(long reservationId)
