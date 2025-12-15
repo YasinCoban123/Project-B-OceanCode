@@ -49,9 +49,6 @@ public class TableUI<T>
         while (!exitLoop)
         {
             Console.Clear();
-
-            Header.PrintHeader();
-
             Console.WriteLine($"Sorting on: {sortProperty ?? "None"} ({(ascending ? "Ascending" : "Descending")})");
             Console.WriteLine();
 
