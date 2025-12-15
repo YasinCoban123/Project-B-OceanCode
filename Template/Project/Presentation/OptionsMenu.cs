@@ -19,6 +19,8 @@ public class OptionsMenu
         do
         {
             Console.Clear();
+
+            Header.PrintHeader();
             if (Title != null || Title != "")
             {
                 Console.WriteLine(Title);

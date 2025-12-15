@@ -50,6 +50,8 @@ public class TableUI<T>
         {
             Console.Clear();
 
+            Header.PrintHeader();
+
             Console.WriteLine($"Sorting on: {sortProperty ?? "None"} ({(ascending ? "Ascending" : "Descending")})");
             Console.WriteLine();
 

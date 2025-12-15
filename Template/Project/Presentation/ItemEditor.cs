@@ -26,6 +26,7 @@ public class ItemEditor<T>
         while (!confirmed)
         {
             Console.Clear();
+            Header.PrintHeader();
             Console.WriteLine(_title);
 
             for (int i = 0; i < _options.Count; i++)

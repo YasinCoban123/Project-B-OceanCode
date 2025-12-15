@@ -60,6 +60,8 @@ public class MenuHelper
 
         Console.SetCursorPosition(0, 0);
 
+        Header.PrintHeader();
+
         if (!string.IsNullOrWhiteSpace(_title))
         {
             Console.WriteLine(_title);
