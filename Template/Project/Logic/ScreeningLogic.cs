@@ -137,6 +137,41 @@ public class ScreeningLogic
         return _screeningAccess.GetPGRatingByScreeningId(screeningId);
     }
 
+    public DateTime GetScreeningStartTimeByAccess(long screeningId)
+    {
+        return _screeningAccess.GetScreeningStartTime(screeningId);
+    }
+
+    public int GetHallIdByScreeningIdAccess(long screeningId)
+    {
+        return _screeningAccess.GetHallIdByScreeningId(screeningId);
+    }
+
+    public bool CheckScreeningOverlap(int hallId, long newMovieId, string screeningTime)
+    {
+        var screenings = _screeningAccess.GetAll().Where(screening => screening.HallId == hallId).ToList();
+        DateTime newStartTime = DateTime.Parse(screeningTime);
+
+        var movieLogic = new MovieLogic();
+        double newDurationMinutes = movieLogic.GetMovieDuration(newMovieId).TimeOfDay.TotalMinutes;
+        DateTime newEndTime = newStartTime.AddMinutes(newDurationMinutes);
+
+        foreach (var screening in screenings)
+        {
+            DateTime existingStartTime = DateTime.Parse(screening.ScreeningStartingTime);
+            double existingDurationMinutes = movieLogic.GetMovieDuration(screening.MovieId).TimeOfDay.TotalMinutes;
+            DateTime existingEndTime = existingStartTime.AddMinutes(existingDurationMinutes);
+            DateTime existingEndTimeExtra = existingEndTime.AddMinutes(10);
+
+            if (newStartTime < existingEndTimeExtra && existingStartTime < newEndTime)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
 }

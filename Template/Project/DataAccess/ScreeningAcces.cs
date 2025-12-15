@@ -111,5 +111,26 @@ public class ScreeningAcces
         return _connection.QueryFirstOrDefault<long>(sql, new { ScreeningId = screeningId });
     }
 
+    public DateTime GetScreeningStartTime(long screeningId)
+    {
+        string sql = $@"
+            SELECT ScreeningStartingTime
+            FROM {Table}
+            WHERE ScreeningId = @ScreeningId;";
+
+        string startTimeStr = _connection.QueryFirstOrDefault<string>(sql, new { ScreeningId = screeningId });
+        return DateTime.Parse(startTimeStr);
+    }
+
+    public int GetHallIdByScreeningId(long screeningId)
+    {
+        string sql = $@"
+            SELECT HallId
+            FROM {Table}
+            WHERE ScreeningId = @ScreeningId;";
+
+        return _connection.QueryFirstOrDefault<int>(sql, new { ScreeningId = screeningId });
+    }
+
 
 }
