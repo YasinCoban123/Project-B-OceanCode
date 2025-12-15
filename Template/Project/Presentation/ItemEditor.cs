@@ -7,13 +7,13 @@ public class EditOption<T>
 
 public class ItemEditor<T>
 {
-    private readonly T _item;
-    private readonly string _title;
+    public T Item;
+    public readonly string _title;
     private readonly List<EditOption<T>> _options;
 
     public ItemEditor(T item, string title, List<EditOption<T>> options)
     {
-        _item = item;
+        Item = item;
         _title = title;
         _options = options;
     }
@@ -31,7 +31,7 @@ public class ItemEditor<T>
             for (int i = 0; i < _options.Count; i++)
             {
                 var opt = _options[i];
-                string text = $"{opt.Label}: {opt.Display?.Invoke(_item) ?? ""}";
+                string text = $"{opt.Label}: {opt.Display?.Invoke(Item) ?? ""}";
 
                 if (i == index)
                 {
@@ -57,13 +57,13 @@ public class ItemEditor<T>
             else if (key.Key == ConsoleKey.Enter)
             {
                 Console.Clear();
-                _options[index].OnSelect?.Invoke(_item);
+                _options[index].OnSelect?.Invoke(Item);
             }
 
             else if (key.Key == ConsoleKey.C)
                 confirmed = true;
         }
 
-        return _item; // returns updated item
+        return Item; // return updated item
     }
 }

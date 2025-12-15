@@ -1,7 +1,7 @@
 public class OptionsMenu
 {
     private List<string> _options;
-    private readonly string Title;
+    public readonly string Title;
     public int Selected;
     public string SelectedText;
     public OptionsMenu(List<string> options, string title = "")
