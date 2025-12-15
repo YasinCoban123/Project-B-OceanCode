@@ -24,4 +24,15 @@ public class MovieLogic
     {
         _movieacces.Delete(movie);
     }
+
+    public DateTime GetMovieDuration(long movieId)
+    {
+        long durationInMinutes = _movieacces.GetMovieDuration(movieId);
+        return DateTime.MinValue.AddMinutes(durationInMinutes);
+    }
+
+    public DateTime GetDurationInRightFormat(DateTime GetMovieDuration)
+    {
+        return new DateTime().AddMinutes(GetMovieDuration.Minute).AddHours(GetMovieDuration.Hour);
+    }
 }
