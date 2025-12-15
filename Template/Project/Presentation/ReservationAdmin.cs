@@ -1,6 +1,7 @@
 public class ReservationAdmin
 {
     ScreeningLogic screeningLogic = new ScreeningLogic();
+    GenreLogic genrelLogic = new GenreLogic();
     static private UserLogic userLogic = new();
 
     public void Start()
@@ -9,7 +10,8 @@ public class ReservationAdmin
         MenuHelper menu = new MenuHelper(new[]
         {
             "See all Reservations",
-            "Go Back"
+            "See statistics reserved Movies",
+            "Go back"
         },
         "Reservation Admin");
         menu.Show();
@@ -73,6 +75,18 @@ public class ReservationAdmin
                 }
             }
         }
+        if (menu.SelectedIndex == 1)
+        {
+            Console.WriteLine("All statistics from reserved movies");
+
+        }
+        if (menu.SelectedIndex == 2)
+        {
+            Console.Clear();
+            Menu.AdminStart();
+        }
+
+
 
     }
 }
