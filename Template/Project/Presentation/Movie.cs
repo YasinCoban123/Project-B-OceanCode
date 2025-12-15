@@ -32,6 +32,8 @@ public class Movie
             {
                 Console.Clear();
             }
+
+            Allmovies = logic.GetAllMovies();
         } while (choice != "3");
     }
 
