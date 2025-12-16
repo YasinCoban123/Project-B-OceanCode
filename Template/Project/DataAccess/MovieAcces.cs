@@ -29,6 +29,20 @@ public class MovieAcces
        return _connection.ExecuteScalar<int>(sql, new { Title = title }) > 0;
     }
 
+    public string GetMostPopularMovie()
+    {
+        string sql = @"SELECT Movie.Title
+          FROM Reservation
+          JOIN Screening ON Reservation.ScreeningId = Screening.ScreeningId
+          JOIN Movie ON Screening.MovieId = Movie.MovieId
+          GROUP BY Movie.Title
+          ORDER BY COUNT(*) DESC
+          LIMIT 1;";
+    
+        return _connection.QueryFirstOrDefault<string>(sql);
+    }
+
+
         public long GetMovieDuration(long movieId)
     {
         string sql = "SELECT Duration FROM Movie WHERE MovieId = @MovieId";

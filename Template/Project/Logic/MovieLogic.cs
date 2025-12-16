@@ -8,6 +8,10 @@ public class MovieLogic
         return _movieacces.GetAllMovie();
     }
 
+    public string GetMostPopularMovie()
+    {
+        return _movieacces.GetMostPopularMovie();
+    }
 
     public bool CreateMovie(string title, long genre, long pgrating)
     {

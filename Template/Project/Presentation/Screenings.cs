@@ -153,78 +153,13 @@ static class Screenings
 
         Console.WriteLine("\nSeat layout for this hall (for this screening):");
 
-        var seatRows = screeningLogic.GetSeatStatus(screeningId);
-
-        if (seatRows == null || seatRows.Count == 0)
-        {
-            Console.WriteLine("No seats found for this screening.");
-            Console.WriteLine("Press ENTER to return...");
-            Console.ReadLine();
-            Console.Clear();
-            MakeReservation();
+        var seatRows = GetSeatRowsOrReturn(screeningId);
+        if (seatRows == null)
             return;
-        }
 
-        Console.WriteLine("\nSeat Layout:\n");
-        Console.ForegroundColor = ConsoleColor.DarkBlue;
-        Console.WriteLine("                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        Console.ResetColor();
-
-        foreach (var row in seatRows)
-        {
-            string rowLabel = $"Row {row.RowNumber}: ";
-            int totalWidth = Console.WindowWidth;
-
-            string preview = "";
-            foreach (var seat in row.Seats)
-                preview += "[XXX]";
-
-            int seatWidth = preview.Length;
-            int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
-            if (leftPadding < 0) leftPadding = 0;
-
-            Console.Write(rowLabel);
-            Console.Write(new string(' ', leftPadding));
-
-            foreach (var seat in row.Seats)
-            {
-                if (seat.IsTaken)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("[X]");
-                }
-                else
-                {
-                    if (seat.TypeName == "Normal")
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                    else if (seat.TypeName == "Relax")
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                }
-                Console.ResetColor();
-            }
-            Console.WriteLine();
-        }
-
-        Console.WriteLine("\nLegend: [X] = Taken   [ ] = Free\n");
-        Console.Write("Relax Color: ");
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.WriteLine("Relax");
-        Console.ResetColor();
-        Console.Write("VIP Color: ");
-        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-        Console.WriteLine("VIP");
-        Console.ResetColor();
+        PrintSeatLayoutHeader();
+        PrintSeatRows(seatRows);
+        PrintSeatLegend();
 
         int seatCount = 0;
         bool validInput = false;
@@ -298,18 +233,18 @@ static class Screenings
 
         if (failedSeats.Count > 0)
         {
-            Console.WriteLine("\nSome seats could not be reserved:");
-            foreach (var fs in failedSeats)
-                Console.WriteLine($" - Seat {fs}");
+            MenuHelper failedSeatMenu = new MenuHelper(
+                [
+                    "Continue with remaining seats",
+                    "Cancel",
+                    "Re-select failed seats"
+                ],
+                "Some seats could not be reserved:"
+            );
 
-            Console.WriteLine("\nChoose:");
-            Console.WriteLine("[1] Continue with remaining seats");
-            Console.WriteLine("[2] Cancel");
-            Console.WriteLine("[3] Re-select failed seats");
+            failedSeatMenu.Show();
 
-            string choice2 = Console.ReadLine();
-
-            if (choice2 == "2")
+            if (failedSeatMenu.SelectedIndex == 1)
             {
                 Console.WriteLine("Press ENTER to return...");
                 Console.ReadLine();
@@ -318,7 +253,7 @@ static class Screenings
                 return;
             }
 
-            if (choice2 == "3")
+            if (failedSeatMenu.SelectedIndex == 2)
             {
                 List<int> replacements = new List<int>();
                 foreach (int fs in failedSeats)
@@ -330,47 +265,32 @@ static class Screenings
                 selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
                 selectedSeatIds.AddRange(replacements);
             }
-            else if (choice2 == "1")
-            {
-                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
-            }
             else
             {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
+                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
             }
         }
 
         decimal total = screeningLogic.CalculateTotalPrice(selectedSeatIds);
         Console.WriteLine($"\nTotal price: €{total:F2}");
 
-        string confirm = "";
-        bool answered = false;
+        MenuHelper confirmMenu = new MenuHelper(
+            ["Yes", 
+            "No"
+            ],
+            "Confirm reservation:"
+        );
 
-        while (!answered)
+        confirmMenu.Show();
+
+        if (confirmMenu.SelectedIndex == 1)
         {
-            Console.Write("Confirm? (yes/no): ");
-            confirm = Console.ReadLine().Trim().ToLower();
-
-            if (confirm == "yes")
-            {
-                answered = true;
-            }
-            else if (confirm == "no")
-            {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Type yes or no.");
-            }
+            AudioLogic.PlayReservationSuccessSound();
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return;
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
@@ -394,9 +314,7 @@ static class Screenings
     {
         var genres = genreLogic.GetAllGenres();
         if (genres.Count == 0)
-        {
             return null;
-        }
 
         MenuHelper menu = new MenuHelper(genres, "Select a genre:");
         menu.Show();
@@ -418,29 +336,119 @@ static class Screenings
     {
         if (screenings.Count == 0)
             return -1;
-    
+
         List<string> spaced = new List<string>();
         foreach (var s in screenings)
         {
             spaced.Add(s);
             spaced.Add("");
         }
-    
+
         MenuHelper menu = new MenuHelper(spaced, "Select a screening:");
         menu.Show();
-    
+
         string selected = spaced[menu.SelectedIndex];
-    
+
         while (string.IsNullOrWhiteSpace(selected))
         {
             menu.Show();
             selected = spaced[menu.SelectedIndex];
         }
-    
+
         string idPart = selected.Split(',')[0];
         int id = Convert.ToInt32(idPart.Replace("ScreeningId:", "").Trim());
-    
+
         return id;
     }
 
+    private static List<SeatRowLogic> GetSeatRowsOrReturn(int screeningId)
+    {
+        var seatRows = screeningLogic.GetSeatStatus(screeningId);
+
+        if (seatRows == null || seatRows.Count == 0)
+        {
+            Console.WriteLine("No seats found for this screening.");
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return null;
+        }
+
+        return seatRows;
+    }
+
+    private static void PrintSeatLayoutHeader()
+    {
+        Console.Clear();
+        Console.WriteLine("\nSeat Layout:\n");
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
+        Console.WriteLine("                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        Console.ResetColor();
+    }
+
+    private static void PrintSeatRows(List<SeatRowLogic> seatRows)
+    {
+        foreach (var row in seatRows)
+        {
+            string rowLabel = $"Row {row.RowNumber}: ";
+            int totalWidth = Console.WindowWidth;
+
+            string preview = "";
+            foreach (var seat in row.Seats)
+                preview += "[XXX]";
+
+            int seatWidth = preview.Length;
+            int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
+            if (leftPadding < 0) leftPadding = 0;
+
+            Console.Write(rowLabel);
+            Console.Write(new string(' ', leftPadding));
+
+            foreach (var seat in row.Seats)
+            {
+                PrintSeat(seat);
+            }
+
+            Console.WriteLine();
+        }
+    }
+
+    private static void PrintSeat(
+        (long SeatId, int SeatNumber, string TypeName, decimal Price, bool IsTaken) seat)
+    {
+        if (seat.IsTaken)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("[XXX]");
+        }
+        else
+        {
+            if (seat.TypeName == "Normal")
+                Console.ForegroundColor = ConsoleColor.Green;
+            else if (seat.TypeName == "Relax")
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Console.Write($"[{seat.SeatId}]");
+        }
+
+        Console.ResetColor();
+    }
+
+    private static void PrintSeatLegend()
+    {
+        Console.WriteLine("\nLegend: [X] = Taken   [SeatId] = Free\n");
+
+        Console.Write("Relax Color: ");
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("Relax");
+        Console.ResetColor();
+
+        Console.Write("VIP Color: ");
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.WriteLine("VIP");
+        Console.ResetColor();
+    }
 }

@@ -1,9 +1,15 @@
 public class GenreLogic
 {
-    private GenreAcces _genreAccess = new GenreAcces();
+    private GenreAcces _genreAcces = new GenreAcces();
+    private ReservationAcces _reservationAcces = new ReservationAcces();
 
     public List<string> GetAllGenres()
     {
-        return _genreAccess.GetAllGenres();
+        return _genreAcces.GetAllGenres();
+    }
+
+    public string GetMostPopularGenre()
+    {
+        return _genreAcces.GetMostPopularGenre();
     }
 }
