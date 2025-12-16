@@ -20,4 +20,9 @@ public class UserLogic
         return false;
     }
 
+    public string GetDateWithMostReservations()
+    {
+        return _reservationAccess.GetDateWithMostReservations();
+    }
+
 }
