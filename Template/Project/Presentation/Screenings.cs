@@ -233,18 +233,18 @@ static class Screenings
 
         if (failedSeats.Count > 0)
         {
-            Console.WriteLine("\nSome seats could not be reserved:");
-            foreach (var fs in failedSeats)
-                Console.WriteLine($" - Seat {fs}");
+            MenuHelper failedSeatMenu = new MenuHelper(
+                [
+                    "Continue with remaining seats",
+                    "Cancel",
+                    "Re-select failed seats"
+                ],
+                "Some seats could not be reserved:"
+            );
 
-            Console.WriteLine("\nChoose:");
-            Console.WriteLine("[1] Continue with remaining seats");
-            Console.WriteLine("[2] Cancel");
-            Console.WriteLine("[3] Re-select failed seats");
+            failedSeatMenu.Show();
 
-            string choice2 = Console.ReadLine();
-
-            if (choice2 == "2")
+            if (failedSeatMenu.SelectedIndex == 1)
             {
                 Console.WriteLine("Press ENTER to return...");
                 Console.ReadLine();
@@ -253,7 +253,7 @@ static class Screenings
                 return;
             }
 
-            if (choice2 == "3")
+            if (failedSeatMenu.SelectedIndex == 2)
             {
                 List<int> replacements = new List<int>();
                 foreach (int fs in failedSeats)
@@ -265,47 +265,32 @@ static class Screenings
                 selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
                 selectedSeatIds.AddRange(replacements);
             }
-            else if (choice2 == "1")
-            {
-                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
-            }
             else
             {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
+                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
             }
         }
 
         decimal total = screeningLogic.CalculateTotalPrice(selectedSeatIds);
         Console.WriteLine($"\nTotal price: €{total:F2}");
 
-        string confirm = "";
-        bool answered = false;
+        MenuHelper confirmMenu = new MenuHelper(
+            ["Yes", 
+            "No"
+            ],
+            "Confirm reservation:"
+        );
 
-        while (!answered)
+        confirmMenu.Show();
+
+        if (confirmMenu.SelectedIndex == 1)
         {
-            Console.Write("Confirm? (yes/no): ");
-            confirm = Console.ReadLine().Trim().ToLower();
-
-            if (confirm == "yes")
-            {
-                answered = true;
-            }
-            else if (confirm == "no")
-            {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Type yes or no.");
-            }
+            AudioLogic.PlayReservationSuccessSound();
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return;
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
@@ -445,13 +430,12 @@ static class Screenings
                 Console.ForegroundColor = ConsoleColor.Yellow;
             else
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
-    
+
             Console.Write($"[{seat.SeatId}]");
         }
-    
+
         Console.ResetColor();
     }
-
 
     private static void PrintSeatLegend()
     {

@@ -31,10 +31,16 @@ public class MenuHelper
             key = Console.ReadKey(true).Key;
 
             if (key == ConsoleKey.UpArrow)
+            {
                 index = (index - 1 + _options.Count) % _options.Count;
+                // AudioLogic.PlayMoveSound();
+            }
 
             if (key == ConsoleKey.DownArrow)
+            {
                 index = (index + 1) % _options.Count;
+                // AudioLogic.PlayMoveSound();
+            }
 
         } while (key != ConsoleKey.Enter);
 
