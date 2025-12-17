@@ -41,6 +41,7 @@ public class MovieLogic
     public void Update(MovieModel movie)
     {
         _movieacces.Update(movie);
+    }
     public DateTime GetMovieDuration(long movieId)
     {
         long durationInMinutes = _movieacces.GetMovieDuration(movieId);
