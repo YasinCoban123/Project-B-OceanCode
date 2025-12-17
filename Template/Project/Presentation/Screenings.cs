@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 static class Screenings
 {
     static private ScreeningLogic screeningLogic = new ScreeningLogic();
@@ -415,8 +411,7 @@ static class Screenings
         }
     }
 
-    private static void PrintSeat(
-        (long SeatId, int SeatNumber, string TypeName, decimal Price, bool IsTaken) seat)
+    private static void PrintSeat((long SeatId, int SeatNumber, string TypeName, decimal Price, bool IsTaken) seat)
     {
         if (seat.IsTaken)
         {
