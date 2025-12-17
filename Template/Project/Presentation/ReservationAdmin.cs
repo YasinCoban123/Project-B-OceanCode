@@ -33,7 +33,7 @@ public class ReservationAdmin
                 while (true)
                 {
                     var table = new TableUI<ReservationModel>(
-                    "All reservations (Select any to go back)", 
+                    "All reservations", 
                     new(
                         [new("ReservationId", "ID"),
                         new("AccountId", "User ID"),
@@ -42,7 +42,12 @@ public class ReservationAdmin
                         ]),
                         allReservations,
                         ["AccountId", "ScreeningId", "ReservationTime"]);
-                    ReservationModel chosen = table.Start();
+                    ReservationModel? chosen = table.Start();
+
+                    if (chosen is null)
+                    {
+                        break;
+                    }
     
                     menu = new MenuHelper(new[]
                     {

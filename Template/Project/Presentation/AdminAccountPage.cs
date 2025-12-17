@@ -91,7 +91,7 @@ public static class AdminAccountPage
             {
                 List<UserAccountModel> AllUserAccounts = logic.GetAllUserAccounts();
                 var table = new TableUI<UserAccountModel>(
-                    "All users (Select one to go back)", 
+                    "All users", 
                     new(
                         [new("AccountId", "ID"),
                         new("FullName", "Name"),
@@ -132,7 +132,8 @@ public static class AdminAccountPage
 
                 if (chosenuser == null)
                 {
-                    Console.WriteLine("Admin account cannot be edited! Press ENTER to continue");
+                    Console.Clear();
+                    Console.WriteLine("Account cannot be edited! Press ENTER to continue");
                     Console.ReadLine();
                 }
                 else
@@ -160,13 +161,21 @@ public static class AdminAccountPage
                         ]),
                         AllUserAccounts,
                         ["Name", "Email"]);
-                int ChosenID = Convert.ToInt32(table.Start().AccountId);
+                
+                UserAccountModel? chosen = table.Start();
+
+                if (chosen is null)
+                {
+                    return;
+                }
+                int ChosenID = Convert.ToInt32(chosen.AccountId);
                 UserAccountModel chosenuser = logic.GetUserAccount(ChosenID);
 
                 Console.Clear();
                 if (chosenuser == null)
                 {
-                    Console.WriteLine("Admin account cannot be deleted!");
+                    Console.WriteLine("Account cannot be deleted!");
+                    return;
                 }
                 if (acces.Delete(chosenuser) == false)
                 {

@@ -1,4 +1,4 @@
-public class TableUI<T>
+public class TableUI<T> where T : class
 {
     public string Title { get; }
     public Dictionary<string, string> Headers { get; }
@@ -10,7 +10,7 @@ public class TableUI<T>
     public int SelectedIndex { get; private set; } = 0;
     public string SelectedFilterProperty { get; private set; }
     public string FilterInput { get; private set; }
-    public T Value{ get; private set; }
+    public T? Value{ get; private set; }
 
     private bool exitLoop = false;
     private bool ascending = true;
@@ -44,7 +44,7 @@ public class TableUI<T>
     }
 
 
-    public T Start()
+    public T? Start()
     {
         while (!exitLoop)
         {
@@ -166,6 +166,17 @@ public class TableUI<T>
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("╚" + string.Join("╩", Headers.Select(h => new string('═', 16))) + "╝");
         Console.ResetColor();
+
+        Console.WriteLine();
+
+        if (SelectedIndex == ApplyFilters().Count)
+        {
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+        Console.WriteLine("Go Back");
+        Console.ResetColor();
     }
 
     private string TrimToLength(string str, int length)
@@ -185,12 +196,12 @@ public class TableUI<T>
             case ConsoleKey.UpArrow:
                 SelectedIndex--;
                 if (SelectedIndex < (-1 - FilterableHeaders.Count))
-                    SelectedIndex = ApplyFilters().Count - 1;
+                    SelectedIndex = ApplyFilters().Count;
                 break;
 
             case ConsoleKey.DownArrow:
                 SelectedIndex++;
-                if (SelectedIndex > ApplyFilters().Count - 1)
+                if (SelectedIndex > ApplyFilters().Count)
                     SelectedIndex = -1 - FilterableHeaders.Count;
                 break;
 
@@ -241,6 +252,14 @@ public class TableUI<T>
             currentFilters[filterProp] = input;
             SelectedFilterProperty = filterProp;
             FilterInput = input;
+            return;
+        }
+
+        // Go Back selected
+        if (SelectedIndex == ApplyFilters().Count)
+        {
+            Value = null;
+            exitLoop = true;
             return;
         }
 

@@ -46,7 +46,7 @@ public class Hall
     public static void SeeAllHalls()
     {
         var table = new TableUI<HallModel>(
-            "All halls (Select any to go back)", 
+            "All halls", 
             new(
                 [new("HallId", "ID")
             ]),
@@ -91,8 +91,16 @@ public class Hall
             ]),
             AllHalls,
             ["HallId"]);
-        long chosenHallId = table.Start().HallId;
-        HallModel ChosenHallBlue = AllHalls.Find(x => chosenHallId == x.HallId);
+        
+        HallModel? hall = table.Start();
+
+        if (hall is null)
+        {
+            return;
+        }
+
+        long chosenHallId = hall.HallId;
+        HallModel? ChosenHallBlue = AllHalls.Find(x => chosenHallId == x.HallId);
 
         logic.DeleteHallAndSeats(ChosenHallBlue);
         Console.WriteLine();

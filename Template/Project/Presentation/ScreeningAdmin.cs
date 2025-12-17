@@ -54,7 +54,7 @@ static class ScreeningsAdmin
         else if (choice == 4)
         {
             Console.WriteLine("Returning...");
-            Console.ReadLine();
+            //Console.ReadLine();
             Console.Clear();
             Menu.AdminStart();
         }

@@ -41,7 +41,7 @@ static class Reservations
         while (true)
         {
             var table = new TableUI<ReservationModel>(
-                "Your reservations (For the option to go back to main menu, select a reservation)", 
+                "Your reservations", 
                 new(
                     [new("MovieTitle", "MovieTitle"),
                     new("ScreeningStartingTime", "Start time"),
@@ -49,7 +49,12 @@ static class Reservations
                 ]),
                 reservationsList,
                 ["MovieTitle", "ScreeningStartingTime"]);
-            ReservationModel chosen = table.Start();
+            ReservationModel? chosen = table.Start();
+
+            if (chosen is null)
+            {
+                return;
+            }
 
             MenuHelper menu = new MenuHelper(new[]
             {

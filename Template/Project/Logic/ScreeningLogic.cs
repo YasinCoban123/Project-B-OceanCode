@@ -171,7 +171,4 @@ public class ScreeningLogic
 
         return false;
     }
-
-
-
 }

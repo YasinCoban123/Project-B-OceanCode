@@ -40,7 +40,7 @@ public class Movie
     public static void ShowAllMovies()
     {
         var table = new TableUI<MovieModel>(
-            "All movies (Select any movie to go back)", 
+            "All movies", 
             new(
                 [new("MovieId", "Movie ID"),
                 new("Title", "Title"),
@@ -93,10 +93,19 @@ public class Movie
                 ]),
                 Allmovies,
                 ["Title", "Genre"]);
-        long KeuzeID = Convert.ToInt64(table.Start().MovieId);
+        
+        MovieModel? movie = table.Start();
+
+        if (movie is null)
+        {
+            return;
+        }
+
+        long KeuzeID = Convert.ToInt64(movie.MovieId);
         Console.Clear();
 
         MovieModel Deletedmovie = Allmovies.Find(movie => KeuzeID == movie.MovieId);
+
         logic.DeleteMovie(Deletedmovie);
         Console.WriteLine("Movie successfully deleted");
         Console.WriteLine("Press ENTER to continue");
