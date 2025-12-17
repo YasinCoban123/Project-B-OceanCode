@@ -260,114 +260,32 @@ static class ScreeningsAdmin
             return screeningEditor.Start();
         }
 
-
-    // public static void EditScreening()
-    // {
-        
-    //     Console.Clear();
-    //     ShowAllScreenings();
-
-    //     int chosenScreeningId = 0;
-    //     while (true)
-    //     {
-    //         Console.WriteLine("Enter Screening ID to edit:");
-    //         if (int.TryParse(Console.ReadLine(), out chosenScreeningId))
-    //             break;
-
-    //         Console.WriteLine("Invalid input.");
-    //     }
-
-    //     List<ScreeningModel> AllScreenings = screeningLogic.GetAll();
-    //     ScreeningModel ChosenScreening = AllScreenings.Find(x => chosenScreeningId == x.ScreeningId);
-
-    //     if (ChosenScreening == null)
-    //     {
-    //         Console.WriteLine("No screening found.");
-    //         return;
-    //     }
-
-    //     int chosenMovieID = 0;
-    //     while (true)
-    //     {
-    //         Console.WriteLine();
-    //         foreach (MovieModel movie in allmovies)
-    //         {
-    //             Console.WriteLine();
-    //             Console.WriteLine($"Movie ID: {movie.MovieId}");
-    //             Console.WriteLine($"Movie Title: {movie.Title}");
-    //         }
-    //         Console.Write("Enter new Movie ID: ");
-    //         if (int.TryParse(Console.ReadLine(), out chosenMovieID) &&
-    //             allmovies.Any(m => m.MovieId == chosenMovieID))
-    //         {
-    //             break;
-    //         }
-    //         Console.WriteLine("Invalid Movie ID.");
-    //     }
-
-    //     ChosenScreening.MovieId = chosenMovieID;
-
-    //     int chosenHallID = 0;
-    //     while (true)
-    //     {
-    //         Console.WriteLine();
-    //         foreach (HallModel hall in allhalls)
-    //         {
-    //             Console.WriteLine();
-    //             Console.WriteLine($"Hall ID: {hall.HallId}");
-    //         }
-    //         Console.Write("Enter new Hall ID: ");
-    //         if (int.TryParse(Console.ReadLine(), out chosenHallID) &&
-    //             allhalls.Any(m => m.HallId == chosenHallID))
-    //         {
-    //             break;
-    //         }
-    //         Console.WriteLine("Invalid Hall ID.");
-    //     }
-    //     ChosenScreening.HallId = chosenHallID;
-
-    //     string Date = "";
-    //     while (true)
-    //     {
-    //         Console.Write("Enter date (dd-MM-yyyy): ");
-    //         Date = Console.ReadLine();
-    //         if (hallLogic.CheckDate(Date)) break;
-    //         Console.WriteLine("Invalid date.");
-    //     }
-
-    //     string Time = "";
-    //     while (true)
-    //     {
-    //         Console.Write("Enter time (HH-mm): ");
-    //         Time = Console.ReadLine();
-    //         if (hallLogic.CheckTime(Time)) break;
-    //         Console.WriteLine("Invalid time.");
-    //     }
-
-    //     string DateTime = $"{Date} {Time}";
-    //     ChosenScreening.ScreeningStartingTime = DateTime;
-
-    //     screeningLogic.Update(ChosenScreening);
-    //     Console.WriteLine("Screening updated!");
-    // }
-
     public static void DeleteScreening()
     {
+        Console.WriteLine();
+        var table = new TableUI<ScreeningModel>
+        (
+            "All screenings (Select any screening to delete)",
+            new(
+                [
+                    new("ScreeningId", "Screening ID"),
+                    new("MovieId", "Movie ID"),
+                    new("HallId", "Hall ID"),
+                    new("ScreeningStartingTime", "Start Time")
+                ]
+            ),
+            allscreenings,
+            ["MovieId", "HallId"]
+        );
+        long KeuzeID = Convert.ToInt64(table.Start().MovieId);
         Console.Clear();
-        ShowAllScreenings();
 
-        long id = 0;
-        while (true)
-        {
-            Console.WriteLine("Enter Screening ID to delete:");
-            if (long.TryParse(Console.ReadLine(), out id))
-                break;
-
-            Console.WriteLine("Invalid ID.");
-        }
-
-        screeningLogic.DeleteScreening(id);
-        Console.WriteLine("Screening removed.");
+        ScreeningModel screening = allscreenings.Find(screening => KeuzeID == screening.ScreeningId);
+        screeningLogic.DeleteScreening(screening);
+        Console.WriteLine("Movie successfully deleted");
+        Console.WriteLine("Press ENTER to continue");
+        Console.ReadLine();
+        Console.Clear();
     }
 
     public static void ShowAllScreenings()

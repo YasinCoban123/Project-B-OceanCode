@@ -43,9 +43,9 @@ public class ScreeningLogic
         _screeningAccess.Add(newscreening);
     }
 
-    public void DeleteScreening(long id)
+    public void DeleteScreening(ScreeningModel Screening)
     {
-        _screeningAccess.Delete(id);
+        _screeningAccess.Delete(Screening);
     }
 
     public List<string> ShowScreeningsByDate()
