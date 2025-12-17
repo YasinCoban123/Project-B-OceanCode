@@ -30,10 +30,11 @@ public class ScreeningAcces
         _connection.Execute(sql, new { screening.MovieId, screening.HallId, StartTime = screening.ScreeningStartingTime, screening.ScreeningId });
     }
 
-    public void Delete(long screeningId)
+    public void Delete(ScreeningModel screening)
     {
-        string sql = $"DELETE FROM {Table} WHERE ScreeningId = @ScreeningId";
-        _connection.Execute(sql, new { ScreeningId = screeningId });
+        _connection.Execute("PRAGMA foreign_keys = OFF");
+        _connection.Execute($"DELETE FROM {Table} WHERE ScreeningId = @ScreeningId", screening);
+        _connection.Execute("PRAGMA foreign_keys = ON");
     }
 
     public List<string> GetScreenings()
