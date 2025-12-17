@@ -94,12 +94,24 @@ public class Hall
         long chosenHallId = table.Start().HallId;
         HallModel ChosenHallBlue = AllHalls.Find(x => chosenHallId == x.HallId);
 
-        logic.DeleteHallAndSeats(ChosenHallBlue);
-        Console.WriteLine();
-        Console.WriteLine("Succedfully deleted all the seats and the hall!");
-        Console.WriteLine("Press ENTER to continue");
-        Console.ReadLine();
-        Console.Clear();
+        if (ChosenHallBlue.HallId == 1 || ChosenHallBlue.HallId == 2 || ChosenHallBlue.HallId == 3)
+        {
+            Console.WriteLine("Blueprint Halls 1,2,3 cannot be deleted!");
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
+        }
+        else
+        {
+            logic.DeleteHallAndSeats(ChosenHallBlue);
+            Console.WriteLine();
+            Console.WriteLine("Succedfully deleted all the seats and the hall!");
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
+        }
+
+        
     }
 
 }
