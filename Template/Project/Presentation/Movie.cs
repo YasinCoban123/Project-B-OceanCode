@@ -229,11 +229,9 @@ public class Movie
 
      public static void DeleteAMovie()
     {
-        Console.WriteLine();
-        Console.Write("Enter the ID of the movie you want to delete: ");
         var table = new TableUI<MovieModel>
         (
-            "All movies (Select any movie to go back)", 
+            "All movies (Select any movie to delete)", 
             new(
                 [new("MovieId", "Movie ID"),
                 new("Title", "Title"),
