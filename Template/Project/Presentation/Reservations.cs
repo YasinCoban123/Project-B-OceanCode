@@ -41,7 +41,7 @@ static class Reservations
         while (true)
         {
             var table = new TableUI<ReservationModel>(
-                "Your reservations", 
+                "Your reservations (For the option to go back to main menu, select a reservation)", 
                 new(
                     [new("MovieTitle", "MovieTitle"),
                     new("ScreeningStartingTime", "Start time"),
@@ -71,6 +71,14 @@ static class Reservations
                         Console.WriteLine("Press ENTER to continue");
                         Console.ReadLine();
                         Console.Clear();
+
+                        // Update data
+                        reservations = userLogic.GetReservationsForUser(currentUser.AccountId).ToList();
+                        reservationsList = new();
+                        foreach (var r in reservations)
+                        {
+                            reservationsList.Add((ReservationModel)r);
+                        }
                     }
                     break;
                 case 1:

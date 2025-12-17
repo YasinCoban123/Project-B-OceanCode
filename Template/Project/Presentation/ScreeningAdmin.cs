@@ -124,6 +124,12 @@ static class ScreeningsAdmin
             Console.WriteLine("Invalid time.");
         }
 
+        if (screeningLogic.CheckScreeningOverlap((int)ChosenHall.HallId, ChosenMovie.MovieId, $"{Date} {Time}"))
+        {
+            Console.WriteLine("Screening overlaps with existing screening in the same hall. Cannot add screening.");
+            return;
+        }
+
         string DateTime = $"{Date} {Time}";
         screeningLogic.AddScreening(ChosenMovie.MovieId, ChosenHall.HallId, DateTime);
 

@@ -48,9 +48,8 @@ static class Screenings
         }
         else if (choice == 1)
         {
-            filteredScreenings = FilterByGenre(allScreenings);
-
-            if (filteredScreenings.Count == 0)
+            string selectedGenre = SelectGenreArrow();
+            if (selectedGenre == null)
             {
                 Console.WriteLine("\nPress ENTER to return...");
                 Console.ReadLine();
@@ -58,6 +57,21 @@ static class Screenings
                 MakeReservation();
                 return;
             }
+
+            filteredScreenings = screeningLogic.ShowScreeningsByGenre(selectedGenre);
+
+            Console.Clear();
+            if (filteredScreenings.Count == 0)
+            {
+                Console.WriteLine("No screenings found for this genre.");
+                Console.WriteLine("\nPress ENTER to return...");
+                Console.ReadLine();
+                Console.Clear();
+                MakeReservation();
+                return;
+            }
+
+            ShowScreenings(filteredScreenings);
 
             Console.WriteLine("\nPress ENTER to continue...");
             Console.ReadLine();
@@ -73,9 +87,8 @@ static class Screenings
         }
         else if (choice == 2)
         {
-            filteredScreenings = FilterByDay(allScreenings);
-
-            if (filteredScreenings.Count == 0)
+            Days? selectedDay = SelectDayArrow();
+            if (selectedDay == null)
             {
                 Console.WriteLine("\nPress ENTER to return...");
                 Console.ReadLine();
@@ -84,8 +97,26 @@ static class Screenings
                 return;
             }
 
+            filteredScreenings = screeningLogic.ShowScreeningsByDay(selectedDay.Value);
+
+            Console.Clear();
+            if (filteredScreenings.Count == 0)
+            {
+                Console.WriteLine("No screenings found on this day.");
+                Console.WriteLine("\nPress ENTER to return...");
+                Console.ReadLine();
+                Console.Clear();
+                MakeReservation();
+                return;
+            }
+
+            ShowScreenings(filteredScreenings);
+
+            Console.WriteLine("\nPress ENTER to continue...");
+            Console.ReadLine();
+
             Console.WriteLine("\nType 'back' to return to screenings menu, or press ENTER to continue:");
-            string ans = Console.ReadLine()!.ToLower();
+            string ans = Console.ReadLine()!.Trim().ToLower();
             if (ans == "back")
             {
                 Console.Clear();
@@ -99,48 +130,14 @@ static class Screenings
             return;
         }
 
-        List<int> validScreeningIds = new List<int>();
-        foreach (string scr in filteredScreenings)
+        int screeningId = SelectScreeningArrow(filteredScreenings);
+        if (screeningId == -1)
         {
-            string idPart = scr.Split(',')[0];
-            int id = Convert.ToInt32(idPart.Replace("ScreeningId:", "").Trim());
-            validScreeningIds.Add(id);
-        }
-
-        int screeningId = 0;
-        bool validInput = false;
-
-        while (!validInput)
-        {
-            Console.Write("\nEnter the ScreeningId you want to reserve (or type 'exit' to go back): ");
-            string input = Console.ReadLine();
-
-            if (input.ToLower() == "exit")
-            {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
-            }
-
-            try
-            {
-                screeningId = Convert.ToInt32(input);
-
-                if (validScreeningIds.Contains(screeningId))
-                {
-                    validInput = true;
-                }
-                else
-                {
-                    Console.WriteLine("This screening is not available based on your selection.");
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Invalid input.");
-            }
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return;
         }
 
         var accountsLogic = new AccountsLogic();
@@ -156,81 +153,16 @@ static class Screenings
 
         Console.WriteLine("\nSeat layout for this hall (for this screening):");
 
-        var seatRows = screeningLogic.GetSeatStatus(screeningId);
-
-        if (seatRows == null || seatRows.Count == 0)
-        {
-            Console.WriteLine("No seats found for this screening.");
-            Console.WriteLine("Press ENTER to return...");
-            Console.ReadLine();
-            Console.Clear();
-            MakeReservation();
+        var seatRows = GetSeatRowsOrReturn(screeningId);
+        if (seatRows == null)
             return;
-        }
 
-        Console.WriteLine("\nSeat Layout:\n");
-        Console.ForegroundColor = ConsoleColor.DarkBlue;
-        Console.WriteLine("                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-        Console.ResetColor();
-
-        foreach (var row in seatRows)
-        {
-            string rowLabel = $"Row {row.RowNumber}: ";
-            int totalWidth = Console.WindowWidth;
-
-            string preview = "";
-            foreach (var seat in row.Seats)
-                preview += "[XXX]";
-
-            int seatWidth = preview.Length;
-            int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
-            if (leftPadding < 0) leftPadding = 0;
-
-            Console.Write(rowLabel);
-            Console.Write(new string(' ', leftPadding));
-
-            foreach (var seat in row.Seats)
-            {
-                if (seat.IsTaken)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("[X]");
-                }
-                else
-                {
-                    if (seat.TypeName == "Normal")
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                    else if (seat.TypeName == "Relax")
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                        Console.Write($"[{seat.SeatId}]");
-                    }
-                }
-                Console.ResetColor();
-            }
-            Console.WriteLine();
-        }
-
-        Console.WriteLine("\nLegend: [X] = Taken   [ ] = Free\n");
-        Console.Write("Relax Color: ");
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.WriteLine("Relax");
-        Console.ResetColor();
-        Console.Write("VIP Color: ");
-        Console.ForegroundColor = ConsoleColor.DarkMagenta;
-        Console.WriteLine("VIP");
-        Console.ResetColor();
+        PrintSeatLayoutHeader();
+        PrintSeatRows(seatRows);
+        PrintSeatLegend();
 
         int seatCount = 0;
-        validInput = false;
+        bool validInput = false;
 
         while (!validInput)
         {
@@ -301,18 +233,18 @@ static class Screenings
 
         if (failedSeats.Count > 0)
         {
-            Console.WriteLine("\nSome seats could not be reserved:");
-            foreach (var fs in failedSeats)
-                Console.WriteLine($" - Seat {fs}");
+            MenuHelper failedSeatMenu = new MenuHelper(
+                [
+                    "Continue with remaining seats",
+                    "Cancel",
+                    "Re-select failed seats"
+                ],
+                "Some seats could not be reserved:"
+            );
 
-            Console.WriteLine("\nChoose:");
-            Console.WriteLine("[1] Continue with remaining seats");
-            Console.WriteLine("[2] Cancel");
-            Console.WriteLine("[3] Re-select failed seats");
+            failedSeatMenu.Show();
 
-            string choice2 = Console.ReadLine();
-
-            if (choice2 == "2")
+            if (failedSeatMenu.SelectedIndex == 1)
             {
                 Console.WriteLine("Press ENTER to return...");
                 Console.ReadLine();
@@ -321,7 +253,7 @@ static class Screenings
                 return;
             }
 
-            if (choice2 == "3")
+            if (failedSeatMenu.SelectedIndex == 2)
             {
                 List<int> replacements = new List<int>();
                 foreach (int fs in failedSeats)
@@ -333,47 +265,32 @@ static class Screenings
                 selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
                 selectedSeatIds.AddRange(replacements);
             }
-            else if (choice2 == "1")
-            {
-                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
-            }
             else
             {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
+                selectedSeatIds = selectedSeatIds.Except(failedSeats).ToList();
             }
         }
 
         decimal total = screeningLogic.CalculateTotalPrice(selectedSeatIds);
         Console.WriteLine($"\nTotal price: €{total:F2}");
 
-        string confirm = "";
-        bool answered = false;
+        MenuHelper confirmMenu = new MenuHelper(
+            ["Yes", 
+            "No"
+            ],
+            "Confirm reservation:"
+        );
 
-        while (!answered)
+        confirmMenu.Show();
+
+        if (confirmMenu.SelectedIndex == 1)
         {
-            Console.Write("Confirm? (yes/no): ");
-            confirm = Console.ReadLine().Trim().ToLower();
-
-            if (confirm == "yes")
-            {
-                answered = true;
-            }
-            else if (confirm == "no")
-            {
-                Console.WriteLine("Press ENTER to return...");
-                Console.ReadLine();
-                Console.Clear();
-                MakeReservation();
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Type yes or no.");
-            }
+            AudioLogic.PlayReservationSuccessSound();
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return;
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
@@ -387,80 +304,151 @@ static class Screenings
     {
         Console.WriteLine("=== Screenings ===\n");
         foreach (string s in screenings)
+        {
             Console.WriteLine(s);
+            Console.WriteLine();
+        }
     }
 
-    private static List<string> FilterByGenre(List<string> all)
+    private static string SelectGenreArrow()
     {
-        Console.WriteLine("Available genres: ");
+        var genres = genreLogic.GetAllGenres();
+        if (genres.Count == 0)
+            return null;
 
-        List<string> genres = genreLogic.GetAllGenres();
+        MenuHelper menu = new MenuHelper(genres, "Select a genre:");
+        menu.Show();
 
-        foreach (string g in genres)
-            Console.WriteLine(g);
+        return genres[menu.SelectedIndex];
+    }
 
-        Console.Write("\nEnter genre to filter by: ");
-        string genre = Console.ReadLine()!;
+    private static Days? SelectDayArrow()
+    {
+        string[] days = Enum.GetNames(typeof(Days));
 
-        Console.Clear();
+        MenuHelper menu = new MenuHelper(days, "Select a day:");
+        menu.Show();
 
-        var shown = screeningLogic.ShowScreeningsByGenre(genre);
+        return (Days)menu.SelectedIndex;
+    }
 
-        if (shown.Count == 0)
+    private static int SelectScreeningArrow(List<string> screenings)
+    {
+        if (screenings.Count == 0)
+            return -1;
+
+        List<string> spaced = new List<string>();
+        foreach (var s in screenings)
         {
-            Console.WriteLine("No screenings found for this genre.");
-            return new List<string>();
+            spaced.Add(s);
+            spaced.Add("");
         }
 
-        foreach (var s in shown)
-            Console.WriteLine(s);
+        MenuHelper menu = new MenuHelper(spaced, "Select a screening:");
+        menu.Show();
 
-        return shown;
+        string selected = spaced[menu.SelectedIndex];
+
+        while (string.IsNullOrWhiteSpace(selected))
+        {
+            menu.Show();
+            selected = spaced[menu.SelectedIndex];
+        }
+
+        string idPart = selected.Split(',')[0];
+        int id = Convert.ToInt32(idPart.Replace("ScreeningId:", "").Trim());
+
+        return id;
     }
 
-    private static List<string> FilterByDay(List<string> all)
+    private static List<SeatRowLogic> GetSeatRowsOrReturn(int screeningId)
     {
-        Console.WriteLine("Available days:");
-        string[] values = Enum.GetNames(typeof(Days));
-        foreach (string word in values)
-            Console.WriteLine(word);
+        var seatRows = screeningLogic.GetSeatStatus(screeningId);
 
-        Console.Write("\nEnter day: ");
-        string d = Console.ReadLine();
-
-        Days chosen = Days.Monday;
-        bool match = false;
-        string[] names = Enum.GetNames(typeof(Days));
-
-        for (int i = 0; i < names.Length; i++)
+        if (seatRows == null || seatRows.Count == 0)
         {
-            if (names[i].ToLower() == d.ToLower())
+            Console.WriteLine("No seats found for this screening.");
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return null;
+        }
+
+        return seatRows;
+    }
+
+    private static void PrintSeatLayoutHeader()
+    {
+        Console.Clear();
+        Console.WriteLine("\nSeat Layout:\n");
+        Console.ForegroundColor = ConsoleColor.DarkBlue;
+        Console.WriteLine("                                                      ━━━━━━━━━━━━━━━━━━━━━━━━━ Screen ━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        Console.ResetColor();
+    }
+
+    private static void PrintSeatRows(List<SeatRowLogic> seatRows)
+    {
+        foreach (var row in seatRows)
+        {
+            string rowLabel = $"Row {row.RowNumber}: ";
+            int totalWidth = Console.WindowWidth;
+
+            string preview = "";
+            foreach (var seat in row.Seats)
+                preview += "[XXX]";
+
+            int seatWidth = preview.Length;
+            int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
+            if (leftPadding < 0) leftPadding = 0;
+
+            Console.Write(rowLabel);
+            Console.Write(new string(' ', leftPadding));
+
+            foreach (var seat in row.Seats)
             {
-                chosen = (Days)i;
-                match = true;
-                break;
+                PrintSeat(seat);
             }
-        }
 
-        if (!match)
+            Console.WriteLine();
+        }
+    }
+
+    private static void PrintSeat(
+        (long SeatId, int SeatNumber, string TypeName, decimal Price, bool IsTaken) seat)
+    {
+        if (seat.IsTaken)
         {
-            Console.WriteLine("Invalid day.");
-            return new List<string>();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("[XXX]");
         }
-
-        Console.Clear();
-
-        var shown = screeningLogic.ShowScreeningsByDay(chosen);
-
-        if (shown.Count == 0)
+        else
         {
-            Console.WriteLine("No screenings found on this day.");
-            return new List<string>();
+            if (seat.TypeName == "Normal")
+                Console.ForegroundColor = ConsoleColor.Green;
+            else if (seat.TypeName == "Relax")
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Console.Write($"[{seat.SeatId}]");
         }
 
-        foreach (var s in shown)
-            Console.WriteLine(s);
+        Console.ResetColor();
+    }
 
-        return shown;
+    private static void PrintSeatLegend()
+    {
+        Console.WriteLine("\nLegend: [X] = Taken   [SeatId] = Free\n");
+
+        Console.Write("Relax Color: ");
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("Relax");
+        Console.ResetColor();
+
+        Console.Write("VIP Color: ");
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.WriteLine("VIP");
+        Console.ResetColor();
     }
 }

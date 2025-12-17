@@ -1,6 +1,9 @@
 public class ReservationAdmin
 {
     ScreeningLogic screeningLogic = new ScreeningLogic();
+    GenreLogic genrelLogic = new GenreLogic();
+    MovieLogic movieLogic = new MovieLogic();
+
     static private UserLogic userLogic = new();
 
     public void Start()
@@ -9,7 +12,8 @@ public class ReservationAdmin
         MenuHelper menu = new MenuHelper(new[]
         {
             "See all Reservations",
-            "Go Back"
+            "See statistics reserved Movies",
+            "Go back"
         },
         "Reservation Admin");
         menu.Show();
@@ -73,6 +77,66 @@ public class ReservationAdmin
                 }
             }
         }
+        if (menu.SelectedIndex == 1)
+        {
+            Console.Clear();
+            Console.WriteLine("=== Statistics for Reserved Movies ===\n");
+        
+            Console.WriteLine($"Most popular movie:");
+            string res1 = movieLogic.GetMostPopularMovie();
+            if (res1 == null)
+            {
+                PrintResultMessage();
+            }
+            else
+            {
+                PrintResultMessage(res1);
+            }
 
+            Console.WriteLine($"Most popular genre:");
+            string res2 = genrelLogic.GetMostPopularGenre();
+            if (res2 == null)
+            {
+                PrintResultMessage();
+            }
+            else
+            {
+                PrintResultMessage(res2);
+            }
+
+            Console.WriteLine($"Date with most reservations:");
+            string res3 = userLogic.GetDateWithMostReservations();
+            if (res3 == null)
+            {
+                PrintResultMessage();
+            }
+            else
+            {
+                PrintResultMessage(res3);
+            }
+            
+            Console.WriteLine("\nPress ENTER to go back...");
+            Console.ReadLine();
+            Console.Clear();
+            Menu.AdminStart();
+        }
+        if (menu.SelectedIndex == 2)
+        {
+            Console.Clear();
+            Menu.AdminStart();
+        } 
+    }
+    static void PrintResultMessage()
+    {
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.WriteLine("No data available, so no reservations has been made");
+        Console.ResetColor();
+    }
+
+    static void PrintResultMessage(string res)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine(res);
+        Console.ResetColor();
     }
 }

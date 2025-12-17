@@ -16,6 +16,18 @@ public class ReservationAcces
         return _connection.QuerySingle<long>("SELECT last_insert_rowid()");
     }
 
+    public string GetDateWithMostReservations()
+    {
+        string sql = @"SELECT DATE(Reservation.ReservationTime)
+          FROM Reservation
+          GROUP BY DATE(Reservation.ReservationTime)
+          ORDER BY COUNT(*) DESC
+          LIMIT 1;";
+    
+        return _connection.QueryFirstOrDefault<string>(sql);
+    }
+
+
 
     public IEnumerable<ReservationModel> GetByAccountId(long accountId)
     {

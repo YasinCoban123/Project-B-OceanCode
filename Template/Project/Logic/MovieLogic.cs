@@ -8,6 +8,10 @@ public class MovieLogic
         return _movieacces.GetAllMovie();
     }
 
+    public string GetMostPopularMovie()
+    {
+        return _movieacces.GetMostPopularMovie();
+    }
 
     public bool CreateMovie(string title,long genre,long pgrating,string description,string actors,string duration)
     {
@@ -37,5 +41,14 @@ public class MovieLogic
     public void Update(MovieModel movie)
     {
         _movieacces.Update(movie);
+    public DateTime GetMovieDuration(long movieId)
+    {
+        long durationInMinutes = _movieacces.GetMovieDuration(movieId);
+        return DateTime.MinValue.AddMinutes(durationInMinutes);
+    }
+
+    public DateTime GetDurationInRightFormat(DateTime GetMovieDuration)
+    {
+        return new DateTime().AddMinutes(GetMovieDuration.Minute).AddHours(GetMovieDuration.Hour);
     }
 }
