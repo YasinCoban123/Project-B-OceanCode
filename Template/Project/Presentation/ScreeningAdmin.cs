@@ -153,8 +153,14 @@ static class ScreeningsAdmin
             ["MovieId", "HallId"]
         );
 
-        table.Start();
-        int ChosenID = Convert.ToInt32(table.Start().ScreeningId);
+        ScreeningModel? chosen = table.Start();
+
+        if (chosen is null)
+        {
+            return;
+        }
+
+        int ChosenID = Convert.ToInt32(chosen.ScreeningId);
         ScreeningModel chosenscreening = allscreenings.Find(x => x.ScreeningId == ChosenID);
         ScreeningModel screening = UpdateScreening(chosenscreening);
         screeningLogic.Update(screening);
@@ -374,7 +380,7 @@ static class ScreeningsAdmin
     {
         var table = new TableUI<ScreeningModel>
         (
-            "All screenings (Select any screening to edit / go back)",
+            "All screenings (Select any screening to edit)",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
