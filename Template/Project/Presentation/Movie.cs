@@ -114,7 +114,7 @@ public class Movie
     {
         var table = new TableUI<MovieModel>
         (
-            "All movies (Select any movie to go back)", 
+            "All movies (Select a movie to edit)", 
             new(
                 [
                     new("MovieId", "Movie ID"),
@@ -131,7 +131,13 @@ public class Movie
         );
 
         table.Start();
-        int ChosenID = Convert.ToInt32(table.Start().MovieId);
+        MovieModel chosen = table.Start();
+
+        if (chosen is null)
+        {
+            return;
+        }
+        int ChosenID = Convert.ToInt32(chosen.MovieId);
         MovieModel chosenmovie = Allmovies.Find(x => x.MovieId == ChosenID);
         MovieModel movie = UpdateMovie(chosenmovie);
         logic.Update(movie);

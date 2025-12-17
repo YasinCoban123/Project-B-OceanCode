@@ -283,7 +283,14 @@ static class ScreeningsAdmin
             allscreenings,
             ["MovieId", "HallId"]
         );
-        long KeuzeID = Convert.ToInt64(table.Start().ScreeningId);
+        ScreeningModel? chosen = table.Start();
+
+        if (chosen is null)
+        {
+            return;
+        }
+
+        long KeuzeID = Convert.ToInt64(chosen.ScreeningId);
         Console.Clear();
 
         ScreeningModel screening = allscreenings.Find(screening => KeuzeID == screening.ScreeningId);
@@ -318,7 +325,7 @@ static class ScreeningsAdmin
     private static void PauseReturn()
     {
         Console.WriteLine("\nPress ENTER to return...");
-        Console.ReadLine();
+        //Console.ReadLine();
         Console.Clear();
         Menu.AdminStart();
     }

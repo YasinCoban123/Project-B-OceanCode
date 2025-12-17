@@ -127,7 +127,15 @@ public static class AdminAccountPage
                         ]),
                         AllUserAccounts,
                         ["Name", "Email"]);
-                int ChosenID = Convert.ToInt32(table.Start().AccountId);
+                
+                UserAccountModel? chosen = table.Start();
+
+                if (chosen is null)
+                {
+                    return;
+                }
+                
+                int ChosenID = Convert.ToInt32(chosen.AccountId);
                 UserAccountModel chosenuser = logic.GetUserAccount(ChosenID);
 
                 if (chosenuser == null)
