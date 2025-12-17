@@ -278,7 +278,8 @@ static class Screenings
             ["Yes", 
             "No"
             ],
-            "Confirm reservation:"
+            @$"\nTotal price: €{total:F2}
+            Confirm reservation:"
         );
 
         confirmMenu.Show();
