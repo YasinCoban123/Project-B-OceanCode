@@ -26,7 +26,6 @@ public static class AccountPage
             Console.WriteLine($"ID: {user.AccountId}");
             Console.WriteLine($"Name: {user.FullName}");
             Console.WriteLine($"Email: {user.Email}");
-            Console.WriteLine($"Password: {user.Password}");
             Console.WriteLine($"Date of Birth: {user.DateOfBirth}");
 
             Console.WriteLine();
@@ -44,6 +43,15 @@ public static class AccountPage
 
         else if (choice == 2)
         {
+            // Confirm deletion
+            Console.WriteLine("Are you sure you want to delete your account? This action cannot be undone. (yes/no)");
+            string confirmation = Console.ReadLine().Trim().ToLower();
+            if (confirmation != "yes")
+            {
+                Console.WriteLine("Account deletion cancelled.");
+                Menu.Start();
+                return;
+            }
 
             if (acces.Delete(user) == false)
             {

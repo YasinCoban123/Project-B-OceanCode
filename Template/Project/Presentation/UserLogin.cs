@@ -17,10 +17,18 @@ static class UserLogin
             {
                 Console.Clear();
                 Console.WriteLine("Welcome to the login page");
-                Console.WriteLine("Please enter your email address");
+                Console.WriteLine("Please enter your email address, or type '0' to go back to the main menu");
                 string email = Console.ReadLine();
-                Console.WriteLine("Please enter your password");
+                if (email.ToLower() == "0")
+                    {
+                        Start();
+                    }
+                Console.WriteLine("Please enter your password, or type '0' to go back to the main menu");
                 string password = Console.ReadLine();
+                if (password.ToLower() == "0")
+                    {
+                        Start();
+                    }
                 UserAccountModel acc = accountsLogic.CheckLogin(email, password);
                 if (acc == null)
                 {
@@ -61,15 +69,28 @@ static class UserLogin
                 Console.WriteLine("Welcome to the registration page");
 
                 // Ask full name (no extra validation per request)
-                Console.Write("Enter your full name: ");
+                Console.Write("Enter your full name, or type '0' to go back to the main menu: ");
+                Console.WriteLine();
                 string fullName = Console.ReadLine();
+                
+                if (fullName.ToLower() == "0")
+                    {
+                        Start();
+                    }
 
                 // Email loop
                 string email;
                 while (true)
                 {
-                    Console.Write("Enter your email address: ");
+                    Console.Write("Enter your email address, or type '0' to go back to the main menu: ");
+                    Console.WriteLine();
                     email = Console.ReadLine();
+                    
+
+                    if (email.ToLower() == "0")
+                    {
+                        Start();
+                    }
 
                     if (!accountsLogic.CheckEmailCorrect(email))
                     {
@@ -79,7 +100,7 @@ static class UserLogin
 
                     if (!accountsLogic.CheckIfEmailExist(email))
                     {
-                        Console.WriteLine("This email already exists. Please use another one.");
+                        Console.WriteLine("Email with this account already exists. Please use another one.");
                         continue;
                     }
                     break;
@@ -89,9 +110,14 @@ static class UserLogin
                 string password;
                 while (true)
                 {
-                    Console.WriteLine("Enter your password: ");
                     Console.WriteLine("Password must be longer than 6 characters, Must contain an Uppercase and a Digit");
+                    Console.WriteLine("Enter your password, or type '0' to go back to the main menu: ");
                     password = Console.ReadLine();
+
+                    if (password.ToLower() == "0")
+                    {
+                        Start();
+                    }
 
                     if (!accountsLogic.CheckPassword(password))
                     {
@@ -105,8 +131,14 @@ static class UserLogin
                 string dateOfBirth;
                 while (true)
                 {
-                    Console.Write("Enter your date of birth (DD-MM-YYYY): ");
+                    Console.Write("Enter your date of birth (DD-MM-YYYY), or type '0' to go back to the main menu:");
+                    Console.WriteLine();
                     dateOfBirth = Console.ReadLine();
+
+                    if (dateOfBirth.ToLower() == "0")
+                    {
+                        Start();
+                    }
 
                     if (!accountsLogic.CheckDob(dateOfBirth))
                     {
