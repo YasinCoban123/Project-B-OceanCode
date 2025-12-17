@@ -33,7 +33,7 @@ public class ScreeningAcces
     public void Delete(ScreeningModel screening)
     {
         _connection.Execute("PRAGMA foreign_keys = OFF");
-        _connection.Execute($"DELETE FROM {Table} WHERE MovieId = @MovieId", screening);
+        _connection.Execute($"DELETE FROM {Table} WHERE ScreeningId = @ScreeningId", screening);
         _connection.Execute("PRAGMA foreign_keys = ON");
     }
 

@@ -277,12 +277,12 @@ static class ScreeningsAdmin
             allscreenings,
             ["MovieId", "HallId"]
         );
-        long KeuzeID = Convert.ToInt64(table.Start().MovieId);
+        long KeuzeID = Convert.ToInt64(table.Start().ScreeningId);
         Console.Clear();
 
         ScreeningModel screening = allscreenings.Find(screening => KeuzeID == screening.ScreeningId);
         screeningLogic.DeleteScreening(screening);
-        Console.WriteLine("Movie successfully deleted");
+        Console.WriteLine("Screening successfully deleted");
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
