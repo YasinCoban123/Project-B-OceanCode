@@ -305,7 +305,7 @@ static class ScreeningsAdmin
     {
         var table = new TableUI<ScreeningModel>
         (
-            "All screenings (Select any screening to edit)",
+            "All screenings",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
