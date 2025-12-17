@@ -33,13 +33,13 @@ public class MenuHelper
             if (key == ConsoleKey.UpArrow)
             {
                 index = (index - 1 + _options.Count) % _options.Count;
-                // AudioLogic.PlayMoveSound();
+                AudioLogic.PlayMoveSound();
             }
 
             if (key == ConsoleKey.DownArrow)
             {
                 index = (index + 1) % _options.Count;
-                // AudioLogic.PlayMoveSound();
+                AudioLogic.PlayMoveSound();
             }
 
         } while (key != ConsoleKey.Enter);

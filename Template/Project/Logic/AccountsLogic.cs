@@ -41,12 +41,12 @@ public class AccountsLogic
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth, bool notAdmin)
     {
         UserAccountModel newAccount = new UserAccountModel(fullName, email, dateOfBirth, password, notAdmin);
-        // AudioLogic.CurrentGenre = "Action";
+        AudioLogic.CurrentGenre = "Action";
         // AudioLogic.MusicEnabled = true;
 
         _access.Write(newAccount);
         CurrentAccount = newAccount;
-        // AudioLogic.PlayBackgroundMusic();
+        AudioLogic.PlayBackgroundMusic();
 
         return newAccount;
     }

@@ -6,7 +6,7 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
-        // AudioLogic.PlayBackgroundMusic();
+        AudioLogic.PlayBackgroundMusic();
         UserAccountModel? currentUser = AccountsLogic.CurrentAccount;
 
         MenuHelper menu;

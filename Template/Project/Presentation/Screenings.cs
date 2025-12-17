@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 static class Screenings
 {
     static private ScreeningLogic screeningLogic = new ScreeningLogic();
