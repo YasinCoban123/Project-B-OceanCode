@@ -9,19 +9,33 @@ public class MovieLogic
     }
 
 
-    public bool CreateMovie(string title, long genre, long pgrating)
+    public bool CreateMovie(string title,long genre,long pgrating,string description,string actors,string duration)
     {
         if (string.IsNullOrWhiteSpace(title)) return false;
         if (_movieacces.ExistsByTitle(title)) return false;
 
-        MovieModel movie = new(title, genre, pgrating);
-        _movieacces.Write(movie);
-        return true;
-    }
+        MovieModel movie = new MovieModel(
+            title,
+            genre,
+            pgrating,
+            description,
+            actors,
+            duration
+        );
+
+    _movieacces.Write(movie);
+    return true;
+}
+
 
 
     public void DeleteMovie(MovieModel movie)
     {
         _movieacces.Delete(movie);
+    }
+
+    public void Update(MovieModel movie)
+    {
+        _movieacces.Update(movie);
     }
 }

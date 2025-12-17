@@ -1,15 +1,16 @@
 using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography.X509Certificates;
 
 public class Movie
 {
     static MovieLogic logic = new MovieLogic();
-    static List<MovieModel> Allmovies = logic.GetAllMovies();
+    static List<MovieModel> Allmovies => logic.GetAllMovies();
     public static void Start()
     {
         string choice = "";
         do
         {
-            OptionsMenu menu = new OptionsMenu(new(["See all movies", "Add movies", "Delete movies", "Go back"]));
+            OptionsMenu menu = new OptionsMenu(new(["See all movies", "Add movies","Edit movies", "Delete movies", "Go back"]));
             choice = menu.Selected.ToString();
 
             if (menu.Selected == 0)
@@ -25,28 +26,42 @@ public class Movie
 
             if (menu.Selected == 2)
             {
+                EditAMovie();
+
+            }
+
+            if (menu.Selected == 3)
+            {
                 DeleteAMovie();
             }
 
-            else if (menu.Selected == 3)
+            else if (menu.Selected == 4)
             {
                 Console.Clear();
             }
-        } while (choice != "3");
+        } while (choice != "4");
     }
 
     public static void ShowAllMovies()
     {
-        var table = new TableUI<MovieModel>(
+        var table = new TableUI<MovieModel>
+        (
             "All movies (Select any movie to go back)", 
             new(
-                [new("MovieId", "Movie ID"),
-                new("Title", "Title"),
-                new("Genre", "Genre"),
-                new("PGRating", "PG rating")
-                ]),
-                Allmovies,
-                ["Title", "Genre"]);
+                [
+                    new("MovieId", "Movie ID"),
+                    new("Title", "Title"),
+                    new("GenreId", "Genre ID"),
+                    new("PGRating", "PG Rating"),
+                    new("Description", "Description"),
+                    new("Actors", "Actors"),
+                    new("Duration", "Duration")
+                ]
+            ),
+            Allmovies,
+            ["Title", "GenreId"]
+        );
+
         table.Start();
         // foreach (MovieModel movie in Allmovies)
         //     {
@@ -61,36 +76,179 @@ public class Movie
     public static void CreateAMovie()
     {
         Console.WriteLine();
-        Console.WriteLine("Give the Title of the Movie: ");
-        string MovieTitle = Console.ReadLine();
-        Console.WriteLine("What is the genre of the movie");
-        int MovieGenre = Convert.ToInt32(Console.ReadLine());
-        Console.WriteLine("What is the PG Rating for the movie: ");
-        string MoviePGRating = Console.ReadLine();
-        long MoviePGrating = Convert.ToInt64(MoviePGRating);
+        Console.Write("Give the title of the movie: ");
+        string movieTitle = Console.ReadLine();
 
-        logic.CreateMovie(MovieTitle, MovieGenre, MoviePGrating);
-        Console.WriteLine("Movie successfully created");
+        Console.Write("What is the genre ID of the movie: ");
+        long movieGenreId = Convert.ToInt64(Console.ReadLine());
+
+        Console.Write("What is the PG rating of the movie: ");
+        long moviePGRating = Convert.ToInt64(Console.ReadLine());
+
+        Console.Write("Give a short description of the movie: ");
+        string description = Console.ReadLine();
+
+        Console.Write("List the actors (comma separated): ");
+        string actors = Console.ReadLine();
+
+        Console.Write("What is the duration of the movie (e.g. 2h 15m): ");
+        string duration = Console.ReadLine();
+
+        logic.CreateMovie(
+            movieTitle,
+            movieGenreId,
+            moviePGRating,
+            description,
+            actors,
+            duration
+        );
+
+        Console.WriteLine("\nMovie successfully created!");
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
+
             
     }
+
+    public static void EditAMovie()
+    {
+        var table = new TableUI<MovieModel>
+        (
+            "All movies (Select any movie to go back)", 
+            new(
+                [
+                    new("MovieId", "Movie ID"),
+                    new("Title", "Title"),
+                    new("GenreId", "Genre ID"),
+                    new("PGRating", "PG Rating"),
+                    new("Description", "Description"),
+                    new("Actors", "Actors"),
+                    new("Duration", "Duration")
+                ]
+            ),
+            Allmovies,
+            ["Title", "GenreId"]
+        );
+
+        table.Start();
+        int ChosenID = Convert.ToInt32(table.Start().MovieId);
+        MovieModel chosenmovie = Allmovies.Find(x => x.MovieId == ChosenID);
+        MovieModel movie = UpdateMovie(chosenmovie);
+        logic.Update(movie);
+    }
+
+    public static MovieModel UpdateMovie(MovieModel movie)
+    {
+        var movieEditor = new ItemEditor<MovieModel>(
+            movie,
+            "Edit movie screen",
+            new List<EditOption<MovieModel>>
+            {
+                new EditOption<MovieModel>
+                {
+                    Label = "Title",
+                    Display = m => m.Title,
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new title (leave blank to keep current): ");
+                        string newTitle = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(newTitle))
+                            m.Title = newTitle;
+                    }
+                },
+                new EditOption<MovieModel>
+                {
+                    Label = "Genre ID",
+                    Display = m => m.GenreId.ToString(),
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new genre ID (leave blank to keep current): ");
+                        string input = Console.ReadLine();
+                        if (long.TryParse(input, out long newGenreId))
+                            m.GenreId = newGenreId;
+                    }
+                },
+                new EditOption<MovieModel>
+                {
+                    Label = "PG Rating",
+                    Display = m => m.PGRating.ToString(),
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new PG rating (leave blank to keep current): ");
+                        string input = Console.ReadLine();
+                        if (long.TryParse(input, out long newRating))
+                            m.PGRating = newRating;
+                    }
+                },
+                new EditOption<MovieModel>
+                {
+                    Label = "Description",
+                    Display = m => m.Description,
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new description (leave blank to keep current): ");
+                        string newDesc = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(newDesc))
+                            m.Description = newDesc;
+                    }
+                },
+                new EditOption<MovieModel>
+                {
+                    Label = "Actors",
+                    Display = m => m.Actors,
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new actors (leave blank to keep current): ");
+                        string newActors = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(newActors))
+                            m.Actors = newActors;
+                    }
+                },
+                new EditOption<MovieModel>
+                {
+                    Label = "Duration",
+                    Display = m => m.Duration,
+                    OnSelect = m =>
+                    {
+                        Console.Write("Enter new duration (leave blank to keep current): ");
+                        string newDuration = Console.ReadLine();
+                        if (!string.IsNullOrWhiteSpace(newDuration))
+                            m.Duration = newDuration;
+                    }
+                }
+            }
+        );
+
+        return movieEditor.Start();
+    }
+
+                
+
+
+        
 
      public static void DeleteAMovie()
     {
         Console.WriteLine();
         Console.Write("Enter the ID of the movie you want to delete: ");
-        var table = new TableUI<MovieModel>(
-            "Enter the ID of the movie you want to delete:", 
+        var table = new TableUI<MovieModel>
+        (
+            "All movies (Select any movie to go back)", 
             new(
-                [new("MovieId", "Movie ID"),
-                new("Title", "Title"),
-                new("Genre", "Genre"),
-                new("PGRating", "PG rating")
-                ]),
-                Allmovies,
-                ["Title", "Genre"]);
+                [
+                    new("MovieId", "Movie ID"),
+                    new("Title", "Title"),
+                    new("GenreId", "Genre ID"),
+                    new("PGRating", "PG Rating"),
+                    new("Description", "Description"),
+                    new("Actors", "Actors"),
+                    new("Duration", "Duration")
+                ]
+            ),
+            Allmovies,
+            ["Title", "GenreId"]
+        );
         long KeuzeID = Convert.ToInt64(table.Start().MovieId);
         Console.Clear();
 
