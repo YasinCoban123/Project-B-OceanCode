@@ -17,6 +17,7 @@ static class Menu
                 "Account",
                 "View Screenings",
                 "Reservations",
+                "Send Feedback",
                 "Log out",
                 "Quit"
             },
@@ -36,9 +37,13 @@ static class Menu
                     Reservations.Start();
                     break;
                 case 3:
-                    UserLogin.Start();
+                    Feedback.Start();
                     break;
                 case 4:
+                    UserLogin.Start();
+                    break;
+                case 5:
+                    Console.Clear();
                     Environment.Exit(0);
                     break;
             }
@@ -60,6 +65,7 @@ static class Menu
                 "Reservations",
                 "Movies",
                 "Hall",
+                "Feedback",
                 "Log out",
                 "Quit"
             },
@@ -85,9 +91,13 @@ static class Menu
                     Hall.Start();
                     break;
                 case 5:
-                    UserLogin.Start();
+                    FeedbackAdmin.Start();
                     break;
                 case 6:
+                    UserLogin.Start();
+                    break;
+                case 7:
+                    Console.Clear();
                     Environment.Exit(0);
                     break;
             }
