@@ -20,13 +20,13 @@ static class FeedbackAdmin
 
         Console.Clear();
 
-        if (choice == 1)
+        if (choice == 0)
         {
             Console.Clear();
             int num = 0;
             ViewFeedback(num);
         }
-        else if (choice == 0)
+        else if (choice == 1)
         {
             Console.Clear();
             int num = 1;

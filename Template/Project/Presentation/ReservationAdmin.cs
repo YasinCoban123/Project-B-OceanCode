@@ -1,10 +1,10 @@
 public class ReservationAdmin
 {
-    ScreeningLogic screeningLogic = new ScreeningLogic();
-    GenreLogic genrelLogic = new GenreLogic();
-    MovieLogic movieLogic = new MovieLogic();
-
+    static private ScreeningLogic screeningLogic = new ScreeningLogic();
+    static private GenreLogic genrelLogic = new GenreLogic();
+    static private MovieLogic movieLogic = new MovieLogic();
     static private UserLogic userLogic = new();
+    static private HallLogic hallLogic = new();
 
     public void Start()
     {
@@ -82,48 +82,40 @@ public class ReservationAdmin
                 }
             }
         }
+
         if (menu.SelectedIndex == 1)
         {
             Console.Clear();
-            Console.WriteLine("=== Statistics for Reserved Movies ===\n");
-        
-            Console.WriteLine($"Most popular movie:");
-            string res1 = movieLogic.GetMostPopularMovie();
-            if (res1 == null)
-            {
-                PrintResultMessage();
-            }
-            else
-            {
-                PrintResultMessage(res1);
-            }
 
-            Console.WriteLine($"Most popular genre:");
-            string res2 = genrelLogic.GetMostPopularGenre();
-            if (res2 == null)
+            MenuHelper menu2 = new MenuHelper(new[]
             {
-                PrintResultMessage();
-            }
-            else
-            {
-                PrintResultMessage(res2);
-            }
+                "View statistics between two dates",
+                "View All round statistics",
+                "Return back to Menu"
+            },
+            "Screenings Admin");
 
-            Console.WriteLine($"Date with most reservations:");
-            string res3 = userLogic.GetDateWithMostReservations();
-            if (res3 == null)
-            {
-                PrintResultMessage();
-            }
-            else
-            {
-                PrintResultMessage(res3);
-            }
-            
-            Console.WriteLine("\nPress ENTER to go back...");
-            Console.ReadLine();
+            menu2.Show();
+
+            int choice = menu2.SelectedIndex;
+
             Console.Clear();
-            Menu.AdminStart();
+
+            if (choice == 0)
+            {
+                ViewStatsFiltered();
+                Console.Clear();
+            }
+            else if (choice == 1)
+            {
+                ViewStats();
+                Console.Clear();
+            }
+            else if (choice == 2)
+            {
+                Console.Clear();
+                Start();
+            }
         }
         if (menu.SelectedIndex == 2)
         {
@@ -131,6 +123,98 @@ public class ReservationAdmin
             Menu.AdminStart();
         } 
     }
+
+    public static void ViewStatsFiltered()
+    {
+        Console.WriteLine("Enter first date (dd-MM-yyyy): ");
+        string date1 = Console.ReadLine()!;
+
+        Console.WriteLine("Enter second date (dd-MM-yyyy): ");
+        string date2 = Console.ReadLine()!;
+
+        bool res = userLogic.FilterBetweenCheck(date1, date2);
+        if(!res)
+        {
+            Console.WriteLine("Dates given not correct");
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
+            ViewStatsFiltered();
+            return;
+        }
+
+        DateTime fromDate = DateTime.Parse(date1);
+        DateTime toDate = DateTime.Parse(date2);
+
+        ViewStatsBetween(fromDate, toDate);
+    }
+
+    public static void ViewStatsBetween(DateTime fromDate, DateTime toDate)
+    {
+        Console.Clear();
+        Console.WriteLine("=== Statistics for Reserved Movies ===\n");
+
+        Console.WriteLine("Date with most reservations:");
+        string res = userLogic.GetDateWithMostReservationsBetween(fromDate, toDate);
+
+        if (res == null)
+        {
+            PrintResultMessage();
+        }
+        else
+        {
+            PrintResultMessage(res);
+        }
+
+        Console.WriteLine("\nPress ENTER to go back...");
+        Console.ReadLine();
+        Console.Clear();
+    }
+
+    public static void ViewStats()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Statistics for Reserved Movies ===\n");
+        
+        Console.WriteLine($"Most popular movie:");
+        string res1 = movieLogic.GetMostPopularMovie();
+        if (res1 == null)
+        {
+            PrintResultMessage();
+        }
+        else
+        {
+            PrintResultMessage(res1);
+        }
+
+        Console.WriteLine($"Most popular genre:");
+        string res2 = genrelLogic.GetMostPopularGenre();
+        if (res2 == null)
+        {
+            PrintResultMessage();
+        }
+        else
+        {
+            PrintResultMessage(res2);
+        }
+
+        Console.WriteLine($"Date with most reservations:");
+        string res3 = userLogic.GetDateWithMostReservations();
+        if (res3 == null)
+        {
+            PrintResultMessage();
+        }
+        else
+        {
+            PrintResultMessage(res3);
+        }
+            
+        Console.WriteLine("\nPress ENTER to go back...");
+        Console.ReadLine();
+        Console.Clear();
+        Menu.AdminStart();
+    }
+
     static void PrintResultMessage()
     {
         Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -143,5 +227,5 @@ public class ReservationAdmin
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.WriteLine(res);
         Console.ResetColor();
-    }
+    }      
 }
