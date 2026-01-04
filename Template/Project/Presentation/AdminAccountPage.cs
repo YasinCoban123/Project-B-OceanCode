@@ -101,16 +101,6 @@ public static class AdminAccountPage
                         AllUserAccounts,
                         ["Name", "Email"]);
                 table.Start();
-                // foreach (UserAccountModel account in AllUserAccounts)
-                // {
-                //     Console.WriteLine();
-                //     Console.WriteLine($"ID: {account.AccountId}");
-                //     Console.WriteLine($"Name: {account.FullName}");
-                //     Console.WriteLine($"Email: {account.Email}");
-                //     Console.WriteLine($"Date of Birth: {account.DateOfBirth}");
-                // }
-                // Console.WriteLine("Press ENTER to continue");
-                // Console.ReadLine();
                 Console.Clear();
                 Start(user);
             }
@@ -197,6 +187,8 @@ public static class AdminAccountPage
                 {
                     acces.Delete(chosenuser);
                     Console.WriteLine("Account deleted successfully!");
+                    Console.WriteLine("Press ENTER to continue");
+                    Console.ReadLine();
                     Console.Clear();
                     Start(user);
                 }
@@ -210,7 +202,7 @@ public static class AdminAccountPage
 
         if (choiceIndex == 2)
         {
-            Console.WriteLine();
+            Console.Clear();
             Console.Write("Name: ");
             string fullName = Console.ReadLine();
 
@@ -266,10 +258,10 @@ public static class AdminAccountPage
 
             if (newAccount != null)
             {
-                Console.WriteLine();
                 Console.WriteLine($"Admin account successfully created!");
             }
             Console.WriteLine($"Press Enter to continue");
+            Console.ReadLine();
             Console.Clear();
             Menu.AdminStart();
         }
