@@ -151,75 +151,33 @@ static class Screenings
 
         var seatRows = GetSeatRowsOrReturn(screeningId);
         if (seatRows == null)
+        {
             return;
+        }
 
         PrintSeatLayoutHeader();
         PrintSeatRows(seatRows);
         PrintSeatLegend();
 
-        int seatCount = 0;
-        bool validInput = false;
+        SeatSelectionHelper seatSelector = new SeatSelectionHelper(seatRows);
+        List<int> selectedSeatIds = seatSelector.StartSelection();
 
-        while (!validInput)
+        if (selectedSeatIds.Count == 0)
         {
-            Console.Write("\nHow many seats do you want to reserve (max 20)? ");
-            try
-            {
-                seatCount = Convert.ToInt32(Console.ReadLine());
-                if (seatCount > 0 && seatCount <= 20)
-                    validInput = true;
-                else
-                    Console.WriteLine("You can reserve between 1 and 20 seats.");
-            }
-            catch
-            {
-                Console.WriteLine("Invalid input.");
-            }
-        }
-
-        List<int> selectedSeatIds = new();
-        var validSeatIds = seatRows.SelectMany(r => r.Seats).Select(s => (int)s.SeatId).ToList();
-
-        for (int i = 0; i < seatCount; i++)
-        {
-            int seatId = 0;
-            bool seatValid = false;
-
-            while (!seatValid)
-            {
-                Console.Write($"Enter SeatId #{i + 1}: ");
-                try
-                {
-                    seatId = Convert.ToInt32(Console.ReadLine());
-
-                    if (!validSeatIds.Contains(seatId))
-                    {
-                        Console.WriteLine("That seat does not exist in this hall.");
-                        continue;
-                    }
-
-                    if (selectedSeatIds.Contains(seatId))
-                    {
-                        Console.WriteLine("You already selected this seat. Choose another one.");
-                        continue;
-                    }
-
-                    seatValid = true;
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid input.");
-                }
-            }
-
-            selectedSeatIds.Add(seatId);
+            Console.WriteLine("\nNo seats selected.");
+            Console.WriteLine("Press ENTER to return...");
+            Console.ReadLine();
+            Console.Clear();
+            MakeReservation();
+            return;
         }
 
         var (valid, failedSeats) = screeningLogic.ValidateSeatsBeforeReservation(currentUser, screeningId, selectedSeatIds);
 
         if (failedSeats.Count == selectedSeatIds.Count)
         {
-            Console.WriteLine("\nAll selected seats are unavailable. Please try again.");
+            Console.Write("\nAll selected seats are unavailable.");
+            Console.WriteLine("Or you have already reserved too many seats \nfor this reservation Please try again.");
             Console.WriteLine("Press ENTER to return...");
             Console.ReadLine();
             Console.Clear();
@@ -271,11 +229,8 @@ static class Screenings
         Console.WriteLine($"\nTotal price: €{total:F2}");
 
         MenuHelper confirmMenu = new MenuHelper(
-            ["Yes", 
-            "No"
-            ],
-            @$"\nTotal price: €{total:F2}
-            Confirm reservation:"
+            new[] { "Yes", "No" },
+            $"\nTotal price: €{total:F2}\nConfirm reservation:"
         );
 
         confirmMenu.Show();
@@ -311,7 +266,9 @@ static class Screenings
     {
         var genres = genreLogic.GetAllGenres();
         if (genres.Count == 0)
-            return null;
+        {
+            return null!;
+        }
 
         MenuHelper menu = new MenuHelper(genres, "Select a genre:");
         menu.Show();
@@ -333,7 +290,9 @@ static class Screenings
     private static int SelectScreeningArrow(List<string> screenings)
     {
         if (screenings.Count == 0)
+        {
             return -1;
+        }
 
         List<string> spaced = new List<string>();
         foreach (var s in screenings)
@@ -394,11 +353,16 @@ static class Screenings
 
             string preview = "";
             foreach (var seat in row.Seats)
+            {
                 preview += "[XXX]";
+            }
 
             int seatWidth = preview.Length;
             int leftPadding = (totalWidth - rowLabel.Length - seatWidth) / 2;
-            if (leftPadding < 0) leftPadding = 0;
+            if (leftPadding < 0) 
+            {
+                leftPadding = 0;
+            }
 
             Console.Write(rowLabel);
             Console.Write(new string(' ', leftPadding));
@@ -422,11 +386,17 @@ static class Screenings
         else
         {
             if (seat.TypeName == "Normal")
+            {
                 Console.ForegroundColor = ConsoleColor.Green;
+            }
             else if (seat.TypeName == "Relax")
+            {
                 Console.ForegroundColor = ConsoleColor.Yellow;
+            }
             else
+            {
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            }
 
             Console.Write($"[{seat.SeatId}]");
         }
