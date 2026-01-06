@@ -307,7 +307,7 @@ static class Screenings
         }
     }
 
-    private static string SelectGenreArrow()
+    public static string SelectGenreArrow()
     {
         var genres = genreLogic.GetAllGenres();
         if (genres.Count == 0)
@@ -318,6 +318,7 @@ static class Screenings
 
         return genres[menu.SelectedIndex];
     }
+    
 
     private static Days? SelectDayArrow()
     {
@@ -358,7 +359,7 @@ static class Screenings
         return id;
     }
 
-    private static List<SeatRowLogic> GetSeatRowsOrReturn(int screeningId)
+    public static List<SeatRowLogic> GetSeatRowsOrReturn(int screeningId)
     {
         var seatRows = screeningLogic.GetSeatStatus(screeningId);
 
@@ -384,7 +385,7 @@ static class Screenings
         Console.ResetColor();
     }
 
-    private static void PrintSeatRows(List<SeatRowLogic> seatRows)
+    public static void PrintSeatRows(List<SeatRowLogic> seatRows)
     {
         foreach (var row in seatRows)
         {

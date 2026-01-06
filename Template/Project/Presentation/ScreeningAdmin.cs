@@ -66,45 +66,12 @@ static class ScreeningsAdmin
         Console.Clear();
         Console.WriteLine("Welcome to the add screening page");
 
-        foreach (MovieModel movie in allmovies)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Movie ID: {movie.MovieId}");
-            Console.WriteLine($"Movie Title: {movie.Title}");
-        }
+        MovieModel chosenmovie = SelectMovieArrow();
 
-        int chosenMovieID = 0;
-        while (true)
-        {
-            Console.WriteLine("Choose Movie ID:");
-            if (int.TryParse(Console.ReadLine(), out chosenMovieID) &&
-                allmovies.Any(m => m.MovieId == chosenMovieID))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Movie ID.");
-        }
 
-        MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
+        HallModel chosenHall = SelectHallArrow();
 
-        foreach (HallModel hall in allhalls)
-        {
-            Console.WriteLine($"Hall {hall.HallId}");
-        }
-
-        long chosenHallID = 0;
-        while (true)
-        {
-            Console.WriteLine("Choose Hall ID:");
-            if (long.TryParse(Console.ReadLine(), out chosenHallID) &&
-                allhalls.Any(h => h.HallId == chosenHallID))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Hall ID.");
-        }
-
-        HallModel ChosenHall = allhalls.Find(Hall => chosenHallID == Hall.HallId);
+        Console.Clear();
 
         string Date = "";
         while (true)
@@ -124,14 +91,14 @@ static class ScreeningsAdmin
             Console.WriteLine("Invalid time.");
         }
 
-        if (screeningLogic.CheckScreeningOverlap((int)ChosenHall.HallId, ChosenMovie.MovieId, $"{Date} {Time}"))
+        if (screeningLogic.CheckScreeningOverlap((int)chosenHall.HallId, chosenmovie.MovieId, $"{Date} {Time}"))
         {
             Console.WriteLine("Screening overlaps with existing screening in the same hall. Cannot add screening.");
             return;
         }
 
         string DateTime = $"{Date} {Time}";
-        screeningLogic.AddScreening(ChosenMovie.MovieId, ChosenHall.HallId, DateTime);
+        screeningLogic.AddScreening(chosenmovie.MovieId, chosenHall.HallId, DateTime);
 
         Console.WriteLine("Screening added!");
     }
@@ -174,56 +141,30 @@ static class ScreeningsAdmin
                 {
                     new EditOption<ScreeningModel>
                     {
-                        Label = "Movie ID",
-                        Display = s => s.MovieId.ToString(),
-                        OnSelect = s =>
+                        Label = "Movie",
+                        Display = m => m.MovieId.ToString(),
+                        OnSelect = m =>
                         {
-                            while (true)
+                            MovieModel selectedMovie = SelectMovieArrow();
+                            if (selectedMovie != null)
                             {
-                                Console.Write("Enter new movie ID (leave blank to keep current): ");
-                                string input = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(input))
-                                    return;
-
-                                if (long.TryParse(input, out long newMovieId) &&
-                                    allmovies.Any(m => m.MovieId == newMovieId))
-                                {
-                                    s.MovieId = newMovieId;
-                                    return;
-                                }
-
-                                Console.WriteLine("Invalid Movie ID.");
+                                m.MovieId = selectedMovie.MovieId;
                             }
                         }
                     },
-
                     new EditOption<ScreeningModel>
                     {
-                        Label = "Hall ID",
-                        Display = s => s.HallId.ToString(),
-                        OnSelect = s =>
+                        Label = "Hall",
+                        Display = m => m.HallId.ToString(),
+                        OnSelect = m =>
                         {
-                            while (true)
+                            HallModel selectedHall = SelectHallArrow();
+                            if (selectedHall != null)
                             {
-                                Console.Write("Enter new hall ID (leave blank to keep current): ");
-                                string input = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(input))
-                                    return;
-
-                                if (long.TryParse(input, out long newHallId) &&
-                                    allhalls.Any(h => h.HallId == newHallId))
-                                {
-                                    s.HallId = newHallId;
-                                    return;
-                                }
-
-                                Console.WriteLine("Invalid Hall ID.");
+                                m.HallId = selectedHall.HallId;
                             }
                         }
                     },
-
                     new EditOption<ScreeningModel>
                     {
                         Label = "Starting Time",
@@ -328,5 +269,25 @@ static class ScreeningsAdmin
         //Console.ReadLine();
         Console.Clear();
         Menu.AdminStart();
+    }
+
+    public static MovieModel SelectMovieArrow()
+    {
+        List<string> MoviesTitles = allmovies.Select(x => $"{x.MovieId} - {x.Title}").ToList();
+
+        MenuHelper menu = new MenuHelper(MoviesTitles, "Select a Movie:");
+        menu.Show();
+
+        return allmovies[menu.SelectedIndex];
+    }
+
+    public static HallModel SelectHallArrow()
+    {
+        List<string> Halls = allhalls.Select(x => $" Hall {x.HallId}").ToList();
+
+        MenuHelper menu = new MenuHelper(Halls, "Select a Hall:");
+        menu.Show();
+
+        return allhalls[menu.SelectedIndex];
     }
 }

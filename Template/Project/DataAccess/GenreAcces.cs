@@ -11,6 +11,12 @@ public class GenreAcces
         return _connection.Query<string>(sql).ToList();
     }
 
+    public List<GenreModel> GetAllGenresObject()
+    {
+        string sql = $"SELECT * FROM {Table};";
+        return _connection.Query<GenreModel>(sql).ToList();
+    }
+
     public string GetMostPopularGenre()
     {
         string sql = @"SELECT Genre.Genre

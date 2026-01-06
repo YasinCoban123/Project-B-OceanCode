@@ -8,6 +8,11 @@ public class GenreLogic
         return _genreAcces.GetAllGenres();
     }
 
+    public List<GenreModel> GetAllGenresObject()
+    {
+        return _genreAcces.GetAllGenresObject();
+    }
+
     public string GetMostPopularGenre()
     {
         return _genreAcces.GetMostPopularGenre();

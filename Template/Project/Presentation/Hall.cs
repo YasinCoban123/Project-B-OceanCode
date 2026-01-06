@@ -58,29 +58,64 @@ public class Hall
 
     public static void CreateAHall()
     {
-        Console.WriteLine();
-        HallModel Hall = logic.CreateAHall();
-        Console.WriteLine();
+        while (true)
+        {
+            Console.WriteLine();
+            HallModel hall = logic.CreateAHall();
+            Console.WriteLine();
 
-        Console.WriteLine("Which Hall blueprint do you want to choose\nHall 1 \nHall 2 \nHall 3 ");
-        MenuHelper menu = new MenuHelper(new[]
+            MenuHelper menu = new MenuHelper(
+                new[]
+                {
+                    "Hall 1",
+                    "Hall 2",
+                    "Hall 3"
+                },
+                "Which Hall blueprint do you want to choose:"
+            );
+
+            menu.Show();
+
+            int hallBlueprintId = menu.SelectedIndex + 1;
+
+            List<SeatRowLogic> seatrows = Screenings.GetSeatRowsOrReturn(hallBlueprintId);
+            Screenings.PrintSeatRows(seatrows);
+            Console.WriteLine("Press ENTER to continue");
+            Console.ReadLine();
+            Console.Clear();
+
+
+            MenuHelper choiceMenu = new MenuHelper(
+                new[]
+                {
+                    "Yes",
+                    "No",
+                },
+                "Do you want this seat layout?"
+            );
+
+            choiceMenu.Show();
+
+            if (choiceMenu.SelectedIndex == 0)
             {
-                "Hall 1",
-                "Hall 2",
-                "Hall 3"
-            },
-            "Which Hall blueprint do you want to choose:");
-        string chosenHallBlueprintId = menu.SelectedIndex + 1.ToString();
-        long HallBlueprintId = Convert.ToInt64(chosenHallBlueprintId);
+                HallModel chosenHallBlueprint =
+                    AllHalls.Find(x => x.HallId == hallBlueprintId);
 
-        HallModel ChosenHallBlueprint = AllHalls.Find(x => HallBlueprintId == x.HallId);
-        seatLogic.DuplicateSeatsByHall(ChosenHallBlueprint, Hall.HallId);
+                seatLogic.DuplicateSeatsByHall(chosenHallBlueprint, hall.HallId);
 
-        Console.WriteLine($"Successfully created Hall {Hall.HallId}");
-        Console.WriteLine("Press ENTER to continue");
-        Console.ReadLine();
-        Console.Clear();
+                Console.Clear();
+                Console.WriteLine($"Successfully created Hall {hall.HallId}");
+                Console.WriteLine("Press ENTER to continue");
+                Console.ReadLine();
+                Console.Clear();
+
+                break;
+            }
+
+            Console.Clear();
+        }
     }
+
 
     public static void DeleteAHall()
     {
