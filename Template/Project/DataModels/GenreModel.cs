@@ -10,9 +10,4 @@ public class GenreModel
         GenreId = gerneid;
         Genre = genre;
     }
-
-    public GenreModel()
-    {
-
-    }
 }

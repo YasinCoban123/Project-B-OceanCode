@@ -24,7 +24,7 @@ public class GenreLogic
 
     public List<GenreModel> GetAllGenresObject()
     {
-        return _genreAcces.GetAllGenresObject();
+        return _genreAcces.GetAllGenresModel();
     }
 
     public string GetMostPopularGenre()
