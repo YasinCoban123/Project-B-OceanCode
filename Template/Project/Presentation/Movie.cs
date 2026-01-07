@@ -44,13 +44,17 @@ public class Movie
 
     public static void ShowAllMovies()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>(
             "All movies", 
             new(
                 [
-                    new("MovieId", "Movie ID"),
                     new("Title", "Title"),
-                    new("GenreId", "Genre ID"),
+                    new("GenreId", "Genre"),
                     new("PGRating", "PG Rating"),
                     new("Description", "Description"),
                     new("Actors", "Actors"),
@@ -58,7 +62,8 @@ public class Movie
                 ]
             ),
             Allmovies,
-            ["Title", "GenreId"]
+            ["Title"],
+            idMapper
         );
 
         table.Start();
@@ -112,14 +117,18 @@ public class Movie
 
     public static void EditAMovie()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>
         (
             "All movies (Select a movie to edit)", 
             new(
                 [
-                    new("MovieId", "Movie ID"),
                     new("Title", "Title"),
-                    new("GenreId", "Genre ID"),
+                    new("GenreId", "Genre"),
                     new("PGRating", "PG Rating"),
                     new("Description", "Description"),
                     new("Actors", "Actors"),
@@ -127,7 +136,8 @@ public class Movie
                 ]
             ),
             Allmovies,
-            ["Title", "GenreId"]
+            ["Title"],
+            idMapper
         );
 
         table.Start();
@@ -235,17 +245,24 @@ public class Movie
 
      public static void DeleteAMovie()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>
         (
             "All movies (Select any movie to delete)", 
             new(
-                [new("MovieId", "Movie ID"),
+                [
                 new("Title", "Title"),
-                new("Genre", "Genre"),
+                new("GenreId", "Genre"),
                 new("PGRating", "PG rating")
                 ]),
                 Allmovies,
-                ["Title", "Genre"]);
+                ["Title"],
+                idMapper
+            );
         
         MovieModel? movie = table.Start();
 

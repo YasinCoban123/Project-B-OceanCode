@@ -138,19 +138,25 @@ static class ScreeningsAdmin
 
     public static void EditAScreening()
     {
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings (Select any screening to edit / go back)",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
 
         ScreeningModel? chosen = table.Start();
@@ -269,19 +275,26 @@ static class ScreeningsAdmin
     public static void DeleteScreening()
     {
         Console.WriteLine();
+
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings (Select any screening to delete)",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
         ScreeningModel? chosen = table.Start();
 
@@ -303,19 +316,25 @@ static class ScreeningsAdmin
 
     public static void ShowAllScreenings()
     {
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
 
         table.Start();

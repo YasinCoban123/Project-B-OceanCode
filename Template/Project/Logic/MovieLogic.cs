@@ -52,4 +52,10 @@ public class MovieLogic
     {
         return new DateTime().AddMinutes(GetMovieDuration.Minute).AddHours(GetMovieDuration.Hour);
     }
+
+    public static MovieModel? GetById(int id)
+    {
+        MovieAcces movieacces = new();
+        return movieacces.GetAllMovie().FirstOrDefault(x => x.MovieId == id);
+    }
 }
