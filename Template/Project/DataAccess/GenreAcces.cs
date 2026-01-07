@@ -17,7 +17,6 @@ public class GenreAcces
         return _connection.Query<GenreModel>(sql).ToList();
     }
 
-
     public string GetMostPopularGenre()
     {
         string sql = @"SELECT Genre.Genre

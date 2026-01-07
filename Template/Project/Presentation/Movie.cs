@@ -5,6 +5,8 @@ public class Movie
 {
     static MovieLogic logic = new MovieLogic();
     static List<MovieModel> Allmovies => logic.GetAllMovies();
+
+    static private GenreLogic genreLogic = new GenreLogic();
     public static void Start()
     {
         string choice = "";
@@ -176,7 +178,7 @@ public class Movie
 
                 new EditOption<MovieModel>
                 {
-                    Label = "Genre ID",
+                    Label = "Genre",
                     Display = m => m.GenreId.ToString(),
                     TryApply = (m, input) =>
                     {
@@ -293,5 +295,24 @@ public class Movie
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
-    }   
+    }
+
+    public static GenreModel SelectGenreArrow()
+    {
+        List<GenreModel> genres = genreLogic.GetAllGenresObject();
+        if (genres == null || genres.Count == 0)
+            return null;
+
+        List<string> genreNames = genres.Select(g => $"{g.GenreId} - {g.Genre}").ToList();
+
+        MenuHelper menu = new MenuHelper(genreNames, "Select a genre:");
+        menu.Show();
+
+        return genres[menu.SelectedIndex];
+    }
+
+
+
+
+   
 }
