@@ -11,7 +11,7 @@ public class GenreAcces
         return _connection.Query<string>(sql).ToList();
     }
 
-    public List<GenreModel> GetAllGenresObject()
+    public List<GenreModel> GetAllGenresModel()
     {
         string sql = $"SELECT * FROM {Table};";
         return _connection.Query<GenreModel>(sql).ToList();

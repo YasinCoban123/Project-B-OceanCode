@@ -34,16 +34,23 @@ public class ReservationAdmin
             {
                 while (true)
                 {
+                    var idMapper = new Dictionary<string, Func<ReservationModel, string>>
+                    {
+                        { "AccountId", x => UserLogic.GetById((int)x.AccountId).FullName },
+                        { "ScreeningId", x => ScreeningLogic.GetById((int)x.ScreeningId).HallId.ToString() }
+                    };
+
                     var table = new TableUI<ReservationModel>(
                     "All reservations", 
                     new(
                         [new("ReservationId", "ID"),
-                        new("AccountId", "User ID"),
-                        new("ScreeningId", "Screening ID"),
+                        new("AccountId", "User"),
+                        new("ScreeningId", "Hall"),
                         new("ReservationTime", "Time")
                         ]),
                         allReservations,
-                        ["AccountId", "ScreeningId", "ReservationTime"]);
+                        ["ReservationTime"],
+                        idMapper);
                     ReservationModel? chosen = table.Start();
 
                     if (chosen is null)
