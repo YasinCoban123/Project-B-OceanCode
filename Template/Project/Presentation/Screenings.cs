@@ -238,6 +238,7 @@ static class Screenings
         if (confirmMenu.SelectedIndex == 1)
         {
             AudioLogic.PlayReservationSuccessSound();
+            Console.Clear();
             Console.WriteLine("Press ENTER to return...");
             Console.ReadLine();
             Console.Clear();
@@ -246,6 +247,8 @@ static class Screenings
         }
 
         screeningLogic.ConfirmReservation(currentUser, screeningId, selectedSeatIds);
+        Console.Clear();
+        Console.WriteLine("Reservation Succesfull");
         Console.WriteLine("Press ENTER to return to menu...");
         Console.ReadLine();
         Console.Clear();
@@ -254,13 +257,31 @@ static class Screenings
 
     private static void ShowScreenings(List<string> screenings)
     {
+        Console.Clear();
         Console.WriteLine("=== Screenings ===\n");
-        foreach (string s in screenings)
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("Nr  | Movie                | Day        | Time             | Hall");
+        Console.ResetColor();
+
+        foreach (var s in screenings)
         {
-            Console.WriteLine(s);
-            Console.WriteLine();
+            Console.WriteLine(FormatScreening(s));
         }
     }
+
+    private static string FormatScreening(string s)
+    {
+        var parts = s.Split(',');
+
+        string id    = parts[0].Split(':')[1];
+        string hall  = parts[1].Split(':')[1];
+        string time  = parts[2].Split(':', 2)[1];
+        string title = parts[3].Split(':', 2)[1];
+        string genre = parts[4].Split(':', 2)[1];
+
+        return $"{id,-3} | {title,-20} | {genre,-10} | {time,-16} | Hall {hall,-2}";
+    }
+
 
     public static string SelectGenreArrow()
     {
@@ -275,7 +296,7 @@ static class Screenings
 
         return genres[menu.SelectedIndex];
     }
-    
+
 
     private static Days? SelectDayArrow()
     {
@@ -294,26 +315,19 @@ static class Screenings
             return -1;
         }
 
-        List<string> spaced = new List<string>();
+        List<string> menuItems = new List<string>();
         foreach (var s in screenings)
         {
-            spaced.Add(s);
-            spaced.Add("");
+            menuItems.Add(FormatScreening(s));
         }
 
-        MenuHelper menu = new MenuHelper(spaced, "Select a screening:");
+        MenuHelper menu = new MenuHelper(menuItems, "Select a screening:");
         menu.Show();
 
-        string selected = spaced[menu.SelectedIndex];
+        string selected = menuItems[menu.SelectedIndex];
 
-        while (string.IsNullOrWhiteSpace(selected))
-        {
-            menu.Show();
-            selected = spaced[menu.SelectedIndex];
-        }
-
-        string idPart = selected.Split(',')[0];
-        int id = Convert.ToInt32(idPart.Replace("ScreeningId:", "").Trim());
+        string idPart = selected.Split('|')[0];
+        int id = Convert.ToInt32(idPart);
 
         return id;
     }
