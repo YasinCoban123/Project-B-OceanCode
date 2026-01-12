@@ -84,7 +84,7 @@ public class TableUI<T> where T : class
 
                 if (DateTime.TryParse(value, out _))
                 {
-                    width = 32; // 30 chars + padding
+                    width = 32; // This is to show the full datetime
                     break;
                 }
             }
