@@ -1,10 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ScreeningAcces
+public class ScreeningAcces : DataAccess
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "Screening";
+    protected override string Table => "Screening";
 
     public void Add(ScreeningModel screening)
     {
@@ -46,7 +45,7 @@ public class ScreeningAcces
             JOIN Genre ON Movie.GenreId = Genre.GenreId;";
             
         return _connection.Query(sql)
-            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
+            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime:dd-MM-yyyy HH:mm}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
             .ToList();
     }
 
@@ -62,7 +61,7 @@ public class ScreeningAcces
 
 
         return _connection.Query(sql, new { Genre = genre })
-            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
+            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime:dd-MM-yyyy HH:mm}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
             .ToList();
     }
 
@@ -76,7 +75,7 @@ public class ScreeningAcces
             ORDER BY datetime(ScreeningStartingTime);";
 
         return _connection.Query(sql)
-            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
+            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime:dd-MM-yyyy HH:mm}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
             .ToList();
     }
 
@@ -96,7 +95,7 @@ public class ScreeningAcces
             ORDER BY ScreeningStartingTime;";
     
         return _connection.Query(sql, new { DayNumber = dayNumber })
-            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
+            .Select(row => $"ScreeningId: {row.ScreeningId}, HallId: {row.HallId}, StartTime: {row.ScreeningStartingTime:dd-MM-yyyy HH:mm}, Title: {row.Title}, Genre: {row.Genre}, PG: {row.PGRating}, Description: {row.Description}, Actors: {row.Actors}, Duration: {row.Duration}")
             .ToList();
     }
 

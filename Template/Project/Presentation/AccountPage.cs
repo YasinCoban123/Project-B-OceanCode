@@ -86,87 +86,72 @@ public static class AccountPage
                 {
                     Label = "Full Name",
                     Display = u => u.FullName,
-                    OnSelect = u =>
+                    TryApply = (u, input) =>
                     {
-                        Console.Write("Enter new full name (leave blank to keep current): ");
-                        string newName = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newName))
-                            u.FullName = newName;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+        
+                        u.FullName = input;
+                        return (true, null);
                     }
                 },
+        
                 new EditOption<UserAccountModel>
                 {
                     Label = "Email",
                     Display = u => u.Email,
-                    OnSelect = u =>
+                    TryApply = (u, input) =>
                     {
-                        while (true)
-                        {
-                            Console.Write("Enter new email (leave blank to keep current): ");
-                            string newEmail = Console.ReadLine();
-                            if (string.IsNullOrWhiteSpace(newEmail))
-                                break;
-                            if (!logic.CheckEmailCorrect(newEmail))
-                            {
-                                Console.WriteLine("The email is not in the correct format. Try again.");
-                                continue;
-                            }
-                            if (!logic.CheckIfEmailExist(newEmail))
-                            {
-                                Console.WriteLine("This email already exists. Choose another.");
-                                continue;
-                            }
-                            u.Email = newEmail;
-                            break;
-                        }
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+        
+                        if (!logic.CheckEmailCorrect(input))
+                            return (false, "Email format is invalid.");
+        
+                        if (!logic.CheckIfEmailExist(input))
+                            return (false, "This email already exists.");
+        
+                        u.Email = input;
+                        return (true, null);
                     }
                 },
+        
                 new EditOption<UserAccountModel>
                 {
                     Label = "Password",
                     Display = u => new string('*', u.Password?.Length ?? 0),
-                    OnSelect = u =>
+                    TryApply = (u, input) =>
                     {
-                        while (true)
-                        {
-                            Console.Write("Enter new password (leave blank to keep current): ");
-                            string newPassword = Console.ReadLine();
-                            if (string.IsNullOrWhiteSpace(newPassword))
-                                break;
-                            if (!logic.CheckPassword(newPassword))
-                            {
-                                Console.WriteLine("Password does not meet requirements.");
-                                continue;
-                            }
-                            u.Password = newPassword;
-                            break;
-                        }
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+        
+                        if (!logic.CheckPassword(input))
+                            return (false, "Password does not meet requirements.");
+        
+                        u.Password = input;
+                        return (true, null);
                     }
                 },
+        
                 new EditOption<UserAccountModel>
                 {
                     Label = "Date of Birth",
                     Display = u => u.DateOfBirth,
-                    OnSelect = u =>
+                    TryApply = (u, input) =>
                     {
-                        while (true)
-                        {
-                            Console.Write("Enter new date of birth (leave blank to keep current): ");
-                            string newDob = Console.ReadLine();
-                            if (string.IsNullOrWhiteSpace(newDob))
-                                break;
-                            if (!logic.CheckDob(newDob))
-                            {
-                                Console.WriteLine("Invalid format or not allowed.");
-                                continue;
-                            }
-                            u.DateOfBirth = newDob;
-                            break;
-                        }
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+        
+                        if (!logic.CheckDob(input))
+                            return (false, "Invalid date of birth format.");
+        
+                        u.DateOfBirth = input;
+                        return (true, null);
                     }
                 }
             }
         );
+
         return accountEditor.Start();
     }
     

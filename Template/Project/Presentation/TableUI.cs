@@ -5,6 +5,7 @@ public class TableUI<T> where T : class
     public HashSet<string> FilterableHeaders { get; }
     public List<T> Data { get; }
     private List<T> FilteredData { get; set; }
+    private Dictionary<string, Func<T, string>> ValueMappers { get; }
 
     public int SelectedColumn { get; private set; } = 0;
     public int SelectedIndex { get; private set; } = 0;
@@ -21,7 +22,8 @@ public class TableUI<T> where T : class
         string title,
         Dictionary<string, string> headers,
         List<T> data,
-        IEnumerable<string> filterHeaders)
+        IEnumerable<string> filterHeaders,
+        Dictionary<string, Func<T, string>>? valueMappers = null)
     {
         // Set the table title
         Title = title;
@@ -35,6 +37,8 @@ public class TableUI<T> where T : class
 
         // Create a HashSet of filterable property names for quick lookup
         FilterableHeaders = new HashSet<string>(filterHeaders);
+
+        ValueMappers = valueMappers ?? new Dictionary<string, Func<T, string>>();
 
         // Set the initial selected index:
         // -1 is the header row, 
@@ -149,7 +153,16 @@ public class TableUI<T> where T : class
             foreach (var h in Headers)
             {
                 var prop = typeof(T).GetProperty(h.Key);
-                var val = prop?.GetValue(FilteredData[i])?.ToString() ?? "";
+                string val;
+
+                if (ValueMappers.ContainsKey(h.Key))
+                {
+                    val = ValueMappers[h.Key](FilteredData[i]); // use custom mapper
+                }
+                else
+                {
+                    val = prop?.GetValue(FilteredData[i])?.ToString() ?? "";
+                }
                 val = TrimToLength(val, 14);
 
                 Console.Write($" {val,-14} ");

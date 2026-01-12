@@ -171,4 +171,10 @@ public class ScreeningLogic
 
         return false;
     }
+
+    public static ScreeningModel GetById(int screeningId)
+    {
+        ScreeningAcces screeningAccess = new();
+        return screeningAccess.GetById(screeningId);
+    }
 }

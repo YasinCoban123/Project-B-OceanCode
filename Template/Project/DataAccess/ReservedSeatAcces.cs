@@ -1,10 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ReservedSeatAccess
+public class ReservedSeatAccess : DataAccess
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "ReservedSeat";
+    protected override string Table => "ReservedSeat";
     
     public bool IsSeatReserved(int seatId, int screeningId)
     {

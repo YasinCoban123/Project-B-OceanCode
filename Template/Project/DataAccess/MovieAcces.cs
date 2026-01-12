@@ -1,9 +1,8 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-public class MovieAcces
-{
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private const string Table = "Movie";
+public class MovieAcces : DataAccess
+{    
+    protected override string Table => "Movie";
 
     public void Write(MovieModel movie)
     {
