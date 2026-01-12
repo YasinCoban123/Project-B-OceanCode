@@ -70,15 +70,46 @@ public class TableUI<T> where T : class
 
     // PRINTING
 
+    private Dictionary<string, int> GetColumnWidths()
+    {
+        var widths = new Dictionary<string, int>();
+
+        foreach (var header in Headers)
+        {
+            int width = 16;
+
+            foreach (var item in Data)
+            {
+                string value = GetCellValue(item, header.Key);
+
+                if (DateTime.TryParse(value, out _))
+                {
+                    width = 32; // 30 chars + padding
+                    break;
+                }
+            }
+
+            widths[header.Key] = width;
+        }
+
+        return widths;
+    }
+
+    private string GetCellValue(T item, string property)
+    {
+        if (ValueMappers.TryGetValue(property, out var mapper))
+            return mapper(item) ?? string.Empty;
+
+        return typeof(T).GetProperty(property)?.GetValue(item)?.ToString() ?? string.Empty;
+    }
+
     private void PrintTitle()
     {
-        int tableWidth = Headers.Count * 16 + 1; // +1 for left border
+        var widths = GetColumnWidths();
+        int tableWidth = widths.Values.Sum() + 1;
 
-        // Center the title
-        int padding = (tableWidth - Title.Length) / 2;
-        if (padding < 0) padding = 0;
+        int padding = Math.Max(0, (tableWidth - Title.Length) / 2);
 
-        Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(new string(' ', padding) + Title);
         Console.WriteLine(new string('═', tableWidth));
@@ -88,56 +119,59 @@ public class TableUI<T> where T : class
     private void PrintFilterOptions()
     {
         int idx = -1 - FilterableHeaders.Count;
+
         foreach (var filter in FilterableHeaders)
         {
-            if (!currentFilters.TryGetValue(filter, out string? val)) val = "";
-
             if (SelectedIndex == idx)
             {
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.Black;
             }
 
-            Console.WriteLine($"Filter on {filter}: {val}");
-
+            currentFilters.TryGetValue(filter, out var value);
+            Console.WriteLine($"Filter on {filter}: {value}");
             Console.ResetColor();
             idx++;
         }
+
         Console.WriteLine();
     }
 
     private void PrintHeaderRow()
     {
-        bool highlightHeader = (SelectedIndex == -1);
+        var widths = GetColumnWidths();
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("╔" + string.Join("╦", Headers.Select(h => new string('═', 16))) + "╗");
+        Console.WriteLine("╔" + string.Join("╦", Headers.Select(h => new string('═', widths[h.Key]))) + "╗");
 
-        int colIndex = 0;
         Console.Write("║");
+        int colIndex = 0;
 
         foreach (var h in Headers)
         {
-            if (highlightHeader && colIndex == SelectedColumn)
+            int innerWidth = widths[h.Key] - 2;
+            string text = h.Value ?? "";
+
+            if (SelectedIndex == -1 && colIndex == SelectedColumn)
             {
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.Black;
             }
 
-            Console.Write($" {h.Value,-14} ");
+            Console.Write(" " + text.PadRight(innerWidth) + " ");
             Console.ResetColor();
             Console.Write("║");
-
             colIndex++;
         }
-        Console.WriteLine();
 
-        Console.WriteLine("╠" + string.Join("╬", Headers.Select(h => new string('═', 16))) + "╣");
+        Console.WriteLine();
+        Console.WriteLine("╠" + string.Join("╬", Headers.Select(h => new string('═', widths[h.Key]))) + "╣");
         Console.ResetColor();
     }
 
     private void PrintRows()
     {
+        var widths = GetColumnWidths();
         FilteredData = ApplyFilters();
 
         for (int i = 0; i < FilteredData.Count; i++)
@@ -152,20 +186,13 @@ public class TableUI<T> where T : class
 
             foreach (var h in Headers)
             {
-                var prop = typeof(T).GetProperty(h.Key);
-                string val;
+                int innerWidth = widths[h.Key] - 2;
+                string value = GetCellValue(FilteredData[i], h.Key);
 
-                if (ValueMappers.ContainsKey(h.Key))
-                {
-                    val = ValueMappers[h.Key](FilteredData[i]); // use custom mapper
-                }
-                else
-                {
-                    val = prop?.GetValue(FilteredData[i])?.ToString() ?? "";
-                }
-                val = TrimToLength(val, 14);
+                int trimLength = DateTime.TryParse(value, out _) ? 30 : innerWidth;
+                value = TrimToLength(value, trimLength);
 
-                Console.Write($" {val,-14} ");
+                Console.Write(" " + value.PadRight(innerWidth) + " ");
                 Console.Write("║");
             }
 
@@ -176,8 +203,10 @@ public class TableUI<T> where T : class
 
     private void PrintFooter()
     {
+        var widths = GetColumnWidths();
+
         Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("╚" + string.Join("╩", Headers.Select(h => new string('═', 16))) + "╝");
+        Console.WriteLine("╚" + string.Join("╩", Headers.Select(h => new string('═', widths[h.Key]))) + "╝");
         Console.ResetColor();
 
         Console.WriteLine();
