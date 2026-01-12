@@ -4,10 +4,10 @@ using NAudio.Wave;
 public static class BGPlayer
 {
     private static readonly string Jazz =
-        @"C:\Users\amine\OneDrive\Documenten\GitHub\Project-B-OceanCode\Template\Project\AudioPlayer\MusicBG\cool-jazz-loops-2641.mp3";
+        @"https://drive.google.com/uc?export=download&id=1-oh7k7xUX-pWk_JKmQ5LGmRzgyKr0SHe";
 
     private static readonly string Action =
-        @"C:\Users\amine\OneDrive\Documenten\GitHub\Project-B-OceanCode\Template\Project\AudioPlayer\MusicBG\racing-speed-action-music-416097.mp3";
+        @"Project-B-OceanCode\Template\Project\AudioPlayer\MusicBG\racing-speed-action-music-416097.mp3";
 
     private static WaveOutEvent outputDevice;
     private static AudioFileReader audioFile;
