@@ -88,7 +88,7 @@ public static class BGPlayer
     private static void Play(string path)
     {
         Console.Clear();
-        Stop(); // stop previous music first
+        Stop();
 
         audioFile = new AudioFileReader(path);
         outputDevice = new WaveOutEvent();
