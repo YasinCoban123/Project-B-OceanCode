@@ -42,7 +42,7 @@ static class Menu
                     Feedback.Start();
                     break;
                 case 4:
-                    BGPlayer.Main()
+                    BGPlayer.Main();
                     break;
                 case 5:
                     InspectMovie.Start();
@@ -50,7 +50,7 @@ static class Menu
                 case 6:
                     UserLogin.Start();
                     break;
-                case 6:
+                case 7:
                     Console.Clear();
                     Environment.Exit(0);
                     break;
