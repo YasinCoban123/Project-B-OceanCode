@@ -69,14 +69,6 @@ public class Movie
         );
 
         table.Start();
-        // foreach (MovieModel movie in Allmovies)
-        //     {
-        //         Console.WriteLine();
-        //         Console.WriteLine($"MovieID: {movie.MovieId}");
-        //         Console.WriteLine($"Title: {movie.Title}");
-        //         Console.WriteLine($"Genre: {movie.Genre}");
-        //         Console.WriteLine($"PGrating: {movie.PGRating}");
-        //     }
     }
 
     public static void CreateAMovie()

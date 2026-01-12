@@ -10,13 +10,13 @@ public class EditOption<T>
 public class ItemEditor<T>
 {
     public T Item;
-    public readonly string _title;
+    public readonly string Title;
     private readonly List<EditOption<T>> _options;
 
     public ItemEditor(T item, string title, List<EditOption<T>> options)
     {
         Item = item;
-        _title = title;
+        Title = title;
         _options = options;
     }
 
@@ -30,7 +30,7 @@ public class ItemEditor<T>
         {
             Console.Clear();
             Header.PrintHeader();
-            Console.WriteLine(_title);
+            Console.WriteLine(Title);
 
             lineTops.Clear();
 
