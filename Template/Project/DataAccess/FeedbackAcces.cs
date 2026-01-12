@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-public class FeedbackAcces : DataAcces
+public class FeedbackAcces : DataAccess
 {
     protected override string Table => "Feedback";
 

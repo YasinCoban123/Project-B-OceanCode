@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ScreeningAcces : DataAcces
+public class ScreeningAcces : DataAccess
 {
     protected override string Table => "Screening";
 

@@ -1,7 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ReservedSeatAccess : DataAcces
+public class ReservedSeatAccess : DataAccess
 {
     protected override string Table => "ReservedSeat";
     

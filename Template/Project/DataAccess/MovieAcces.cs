@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-public class MovieAcces : DataAcces
+public class MovieAcces : DataAccess
 {    
     protected override string Table => "Movie";
 

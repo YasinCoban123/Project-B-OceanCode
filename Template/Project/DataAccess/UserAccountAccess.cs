@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 
 
-public class UserAccountsAccess : DataAcces
+public class UserAccountsAccess : DataAccess
 {
     protected override string Table => "UserAccount";
 
