@@ -18,6 +18,7 @@ static class Menu
                 "View Screenings",
                 "Reservations",
                 "Send Feedback",
+                "Music",
                 "Inspect Movies",
                 "Log out",
                 "Quit"
@@ -41,9 +42,12 @@ static class Menu
                     Feedback.Start();
                     break;
                 case 4:
-                    InspectMovie.Start();
+                    BGPlayer.Main()
                     break;
                 case 5:
+                    InspectMovie.Start();
+                    break;
+                case 6:
                     UserLogin.Start();
                     break;
                 case 6:
