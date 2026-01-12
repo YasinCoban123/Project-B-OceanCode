@@ -1,10 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ScreeningAcces
+public class ScreeningAcces : DataAcces
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "Screening";
+    protected override string Table => "Screening";
 
     public void Add(ScreeningModel screening)
     {

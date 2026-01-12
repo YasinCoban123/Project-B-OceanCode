@@ -1,10 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class HallAcces
+public class HallAcces : DataAcces
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "Hall";
+    protected override string Table => "Hall";
 
     public List<HallModel> GetAllHalls()
     {

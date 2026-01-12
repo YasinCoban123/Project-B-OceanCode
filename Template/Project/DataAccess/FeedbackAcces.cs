@@ -1,9 +1,8 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-public class FeedbackAcces
+public class FeedbackAcces : DataAcces
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private const string Table = "Feedback";
+    protected override string Table => "Feedback";
 
     public void SendFeedbackAcces(string feedback, int num)
     {

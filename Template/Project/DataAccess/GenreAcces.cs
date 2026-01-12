@@ -1,9 +1,8 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
-public class GenreAcces
+public class GenreAcces : DataAcces
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private const string Table = "Genre";
+    protected override string Table => "Genre";
 
     public List<string> GetAllGenres()
     {

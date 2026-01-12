@@ -2,10 +2,9 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Collections.Generic;
 
-public class SeatAcces
+public class SeatAcces : DataAcces
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "Seat";
+    protected override string Table => "Seat";
 
     public List<SeatRowLogic> GetSeatRowsByScreening(long hallId, int screeningId)
     {
