@@ -25,4 +25,9 @@ public class UserLogic
         return _reservationAccess.GetDateWithMostReservations();
     }
 
+    public static UserAccountModel GetById(int id)
+    {
+        UserAccountsAccess userAccess = new();
+        return userAccess.GetAccountByID(id);
+    }
 }

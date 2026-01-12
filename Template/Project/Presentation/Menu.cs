@@ -19,6 +19,7 @@ static class Menu
                 "Reservations",
                 "Send Feedback",
                 "Music",
+                "Inspect Movies",
                 "Log out",
                 "Quit"
             },
@@ -41,10 +42,12 @@ static class Menu
                     Feedback.Start();
                     break;
                 case 4:
-                    // should call AudioPlayer map in here
-                    BGPlayer.Main();
+                    BGPlayer.Main()
                     break;
                 case 5:
+                    InspectMovie.Start();
+                    break;
+                case 6:
                     UserLogin.Start();
                     break;
                 case 6:

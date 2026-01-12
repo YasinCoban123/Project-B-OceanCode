@@ -5,6 +5,8 @@ public class Movie
 {
     static MovieLogic logic = new MovieLogic();
     static List<MovieModel> Allmovies => logic.GetAllMovies();
+
+    static private GenreLogic genreLogic = new GenreLogic();
     public static void Start()
     {
         string choice = "";
@@ -44,13 +46,17 @@ public class Movie
 
     public static void ShowAllMovies()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>(
             "All movies", 
             new(
                 [
-                    new("MovieId", "Movie ID"),
                     new("Title", "Title"),
-                    new("GenreId", "Genre ID"),
+                    new("GenreId", "Genre"),
                     new("PGRating", "PG Rating"),
                     new("Description", "Description"),
                     new("Actors", "Actors"),
@@ -58,18 +64,11 @@ public class Movie
                 ]
             ),
             Allmovies,
-            ["Title", "GenreId"]
+            ["Title"],
+            idMapper
         );
 
         table.Start();
-        // foreach (MovieModel movie in Allmovies)
-        //     {
-        //         Console.WriteLine();
-        //         Console.WriteLine($"MovieID: {movie.MovieId}");
-        //         Console.WriteLine($"Title: {movie.Title}");
-        //         Console.WriteLine($"Genre: {movie.Genre}");
-        //         Console.WriteLine($"PGrating: {movie.PGRating}");
-        //     }
     }
 
     public static void CreateAMovie()
@@ -112,14 +111,18 @@ public class Movie
 
     public static void EditAMovie()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>
         (
             "All movies (Select a movie to edit)", 
             new(
                 [
-                    new("MovieId", "Movie ID"),
                     new("Title", "Title"),
-                    new("GenreId", "Genre ID"),
+                    new("GenreId", "Genre"),
                     new("PGRating", "PG Rating"),
                     new("Description", "Description"),
                     new("Actors", "Actors"),
@@ -127,7 +130,8 @@ public class Movie
                 ]
             ),
             Allmovies,
-            ["Title", "GenreId"]
+            ["Title"],
+            idMapper
         );
 
         table.Start();
@@ -154,72 +158,89 @@ public class Movie
                 {
                     Label = "Title",
                     Display = m => m.Title,
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new title (leave blank to keep current): ");
-                        string newTitle = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newTitle))
-                            m.Title = newTitle;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        m.Title = input;
+                        return (true, null);
                     }
                 },
+
                 new EditOption<MovieModel>
                 {
-                    Label = "Genre ID",
+                    Label = "Genre",
                     Display = m => m.GenreId.ToString(),
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new genre ID (leave blank to keep current): ");
-                        string input = Console.ReadLine();
-                        if (long.TryParse(input, out long newGenreId))
-                            m.GenreId = newGenreId;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        if (!long.TryParse(input, out long newGenreId))
+                            return (false, "Genre ID must be a number.");
+
+                        m.GenreId = newGenreId;
+                        return (true, null);
                     }
                 },
+
                 new EditOption<MovieModel>
                 {
                     Label = "PG Rating",
                     Display = m => m.PGRating.ToString(),
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new PG rating (leave blank to keep current): ");
-                        string input = Console.ReadLine();
-                        if (long.TryParse(input, out long newRating))
-                            m.PGRating = newRating;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        if (!long.TryParse(input, out long newRating))
+                            return (false, "PG rating must be a number.");
+
+                        m.PGRating = newRating;
+                        return (true, null);
                     }
                 },
+
                 new EditOption<MovieModel>
                 {
                     Label = "Description",
                     Display = m => m.Description,
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new description (leave blank to keep current): ");
-                        string newDesc = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newDesc))
-                            m.Description = newDesc;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        m.Description = input;
+                        return (true, null);
                     }
                 },
+
                 new EditOption<MovieModel>
                 {
                     Label = "Actors",
                     Display = m => m.Actors,
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new actors (leave blank to keep current): ");
-                        string newActors = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newActors))
-                            m.Actors = newActors;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        m.Actors = input;
+                        return (true, null);
                     }
                 },
+
                 new EditOption<MovieModel>
                 {
                     Label = "Duration",
                     Display = m => m.Duration,
-                    OnSelect = m =>
+                    TryApply = (m, input) =>
                     {
-                        Console.Write("Enter new duration (leave blank to keep current): ");
-                        string newDuration = Console.ReadLine();
-                        if (!string.IsNullOrWhiteSpace(newDuration))
-                            m.Duration = newDuration;
+                        if (string.IsNullOrWhiteSpace(input))
+                            return (true, null);
+
+                        m.Duration = input;
+                        return (true, null);
                     }
                 }
             }
@@ -228,24 +249,26 @@ public class Movie
         return movieEditor.Start();
     }
 
-                
-
-
-        
-
      public static void DeleteAMovie()
     {
+        var idMapper = new Dictionary<string, Func<MovieModel, string>>
+        {
+            { "GenreId", x => GenreLogic.GetGenreById((int)x.GenreId).Genre }
+        };
+
         var table = new TableUI<MovieModel>
         (
             "All movies (Select any movie to delete)", 
             new(
-                [new("MovieId", "Movie ID"),
+                [
                 new("Title", "Title"),
-                new("Genre", "Genre"),
+                new("GenreId", "Genre"),
                 new("PGRating", "PG rating")
                 ]),
                 Allmovies,
-                ["Title", "Genre"]);
+                ["Title"],
+                idMapper
+            );
         
         MovieModel? movie = table.Start();
 
@@ -264,5 +287,24 @@ public class Movie
         Console.WriteLine("Press ENTER to continue");
         Console.ReadLine();
         Console.Clear();
-    }   
+    }
+
+    public static GenreModel SelectGenreArrow()
+    {
+        List<GenreModel> genres = genreLogic.GetAllGenresObject();
+        if (genres == null || genres.Count == 0)
+            return null;
+
+        List<string> genreNames = genres.Select(g => $"{g.GenreId} - {g.Genre}").ToList();
+
+        MenuHelper menu = new MenuHelper(genreNames, "Select a genre:");
+        menu.Show();
+
+        return genres[menu.SelectedIndex];
+    }
+
+
+
+
+   
 }

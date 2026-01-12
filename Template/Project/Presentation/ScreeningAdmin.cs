@@ -66,45 +66,12 @@ static class ScreeningsAdmin
         Console.Clear();
         Console.WriteLine("Welcome to the add screening page");
 
-        foreach (MovieModel movie in allmovies)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Movie ID: {movie.MovieId}");
-            Console.WriteLine($"Movie Title: {movie.Title}");
-        }
+        MovieModel chosenmovie = SelectMovieArrow();
 
-        int chosenMovieID = 0;
-        while (true)
-        {
-            Console.WriteLine("Choose Movie ID:");
-            if (int.TryParse(Console.ReadLine(), out chosenMovieID) &&
-                allmovies.Any(m => m.MovieId == chosenMovieID))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Movie ID.");
-        }
 
-        MovieModel ChosenMovie = allmovies.Find(Movie => chosenMovieID == Movie.MovieId);
+        HallModel chosenHall = SelectHallArrow();
 
-        foreach (HallModel hall in allhalls)
-        {
-            Console.WriteLine($"Hall {hall.HallId}");
-        }
-
-        long chosenHallID = 0;
-        while (true)
-        {
-            Console.WriteLine("Choose Hall ID:");
-            if (long.TryParse(Console.ReadLine(), out chosenHallID) &&
-                allhalls.Any(h => h.HallId == chosenHallID))
-            {
-                break;
-            }
-            Console.WriteLine("Invalid Hall ID.");
-        }
-
-        HallModel ChosenHall = allhalls.Find(Hall => chosenHallID == Hall.HallId);
+        Console.Clear();
 
         string Date = "";
         while (true)
@@ -124,33 +91,39 @@ static class ScreeningsAdmin
             Console.WriteLine("Invalid time.");
         }
 
-        if (screeningLogic.CheckScreeningOverlap((int)ChosenHall.HallId, ChosenMovie.MovieId, $"{Date} {Time}"))
+        if (screeningLogic.CheckScreeningOverlap((int)chosenHall.HallId, chosenmovie.MovieId, $"{Date} {Time}"))
         {
             Console.WriteLine("Screening overlaps with existing screening in the same hall. Cannot add screening.");
             return;
         }
 
         string DateTime = $"{Date} {Time}";
-        screeningLogic.AddScreening(ChosenMovie.MovieId, ChosenHall.HallId, DateTime);
+        screeningLogic.AddScreening(chosenmovie.MovieId, chosenHall.HallId, DateTime);
 
         Console.WriteLine("Screening added!");
     }
 
     public static void EditAScreening()
     {
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings (Select any screening to edit / go back)",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
 
         ScreeningModel? chosen = table.Start();
@@ -176,88 +149,64 @@ static class ScreeningsAdmin
                     {
                         Label = "Movie ID",
                         Display = s => s.MovieId.ToString(),
-                        OnSelect = s =>
+                        TryApply = (s, input) =>
                         {
-                            while (true)
-                            {
-                                Console.Write("Enter new movie ID (leave blank to keep current): ");
-                                string input = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(input))
+                                return (true, null);
 
-                                if (string.IsNullOrWhiteSpace(input))
-                                    return;
+                            if (!long.TryParse(input, out long newMovieId))
+                                return (false, "Movie ID must be a number.");
 
-                                if (long.TryParse(input, out long newMovieId) &&
-                                    allmovies.Any(m => m.MovieId == newMovieId))
-                                {
-                                    s.MovieId = newMovieId;
-                                    return;
-                                }
+                            if (!allmovies.Any(m => m.MovieId == newMovieId))
+                                return (false, "Movie ID does not exist.");
 
-                                Console.WriteLine("Invalid Movie ID.");
-                            }
+                            s.MovieId = newMovieId;
+                            return (true, null);
                         }
                     },
-
                     new EditOption<ScreeningModel>
                     {
                         Label = "Hall ID",
                         Display = s => s.HallId.ToString(),
-                        OnSelect = s =>
+                        TryApply = (s, input) =>
                         {
-                            while (true)
-                            {
-                                Console.Write("Enter new hall ID (leave blank to keep current): ");
-                                string input = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(input))
+                                return (true, null);
 
-                                if (string.IsNullOrWhiteSpace(input))
-                                    return;
+                            if (!long.TryParse(input, out long newHallId))
+                                return (false, "Hall ID must be a number.");
 
-                                if (long.TryParse(input, out long newHallId) &&
-                                    allhalls.Any(h => h.HallId == newHallId))
-                                {
-                                    s.HallId = newHallId;
-                                    return;
-                                }
+                            if (!allhalls.Any(h => h.HallId == newHallId))
+                                return (false, "Hall ID does not exist.");
 
-                                Console.WriteLine("Invalid Hall ID.");
-                            }
+                            s.HallId = newHallId;
+                            return (true, null);
                         }
                     },
-
                     new EditOption<ScreeningModel>
                     {
                         Label = "Starting Time",
                         Display = s => s.ScreeningStartingTime,
-                        OnSelect = s =>
+                        TryApply = (s, input) =>
                         {
-                            string date;
-                            while (true)
-                            {
-                                Console.Write("Enter date (dd-MM-yyyy, leave blank to keep current): ");
-                                date = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(input))
+                                return (true, null);
 
-                                if (string.IsNullOrWhiteSpace(date))
-                                    return;
+                            var parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            if (parts.Length != 2)
+                                return (false, "Format must be: dd-MM-yyyy HH-mm");
 
-                                if (hallLogic.CheckDate(date))
-                                    break;
+                            string date = parts[0];
+                            string time = parts[1];
 
-                                Console.WriteLine("Invalid date.");
-                            }
+                            if (!hallLogic.CheckDate(date))
+                                return (false, "Invalid date.");
 
-                            string time;
-                            while (true)
-                            {
-                                Console.Write("Enter time (HH-mm): ");
-                                time = Console.ReadLine();
-
-                                if (hallLogic.CheckTime(time))
-                                    break;
-
-                                Console.WriteLine("Invalid time.");
-                            }
+                            if (!hallLogic.CheckTime(time))
+                                return (false, "Invalid time.");
 
                             s.ScreeningStartingTime = $"{date} {time}";
+                            return (true, null);
                         }
                     }
                 }
@@ -269,19 +218,26 @@ static class ScreeningsAdmin
     public static void DeleteScreening()
     {
         Console.WriteLine();
+
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings (Select any screening to delete)",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
         ScreeningModel? chosen = table.Start();
 
@@ -303,19 +259,25 @@ static class ScreeningsAdmin
 
     public static void ShowAllScreenings()
     {
+        var idMapper = new Dictionary<string, Func<ScreeningModel, string>>
+        {
+            { "MovieId", x => MovieLogic.GetById((int)x.MovieId).Title }
+        };
+
         var table = new TableUI<ScreeningModel>
         (
             "All screenings",
             new(
                 [
                     new("ScreeningId", "Screening ID"),
-                    new("MovieId", "Movie ID"),
+                    new("MovieId", "Movie"),
                     new("HallId", "Hall ID"),
                     new("ScreeningStartingTime", "Start Time")
                 ]
             ),
             allscreenings,
-            ["MovieId", "HallId"]
+            ["HallId"],
+            idMapper
         );
 
         table.Start();
@@ -328,5 +290,25 @@ static class ScreeningsAdmin
         //Console.ReadLine();
         Console.Clear();
         Menu.AdminStart();
+    }
+
+    public static MovieModel SelectMovieArrow()
+    {
+        List<string> MoviesTitles = allmovies.Select(x => $"{x.MovieId} - {x.Title}").ToList();
+
+        MenuHelper menu = new MenuHelper(MoviesTitles, "Select a Movie:");
+        menu.Show();
+
+        return allmovies[menu.SelectedIndex];
+    }
+
+    public static HallModel SelectHallArrow()
+    {
+        List<string> Halls = allhalls.Select(x => $" Hall {x.HallId}").ToList();
+
+        MenuHelper menu = new MenuHelper(Halls, "Select a Hall:");
+        menu.Show();
+
+        return allhalls[menu.SelectedIndex];
     }
 }

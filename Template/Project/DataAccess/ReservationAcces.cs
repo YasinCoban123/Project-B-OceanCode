@@ -1,10 +1,9 @@
 using Microsoft.Data.Sqlite;
 using Dapper;
 
-public class ReservationAcces
+public class ReservationAcces : DataAccess
 {
-    private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
-    private string Table = "Reservation";
+    protected override string Table => "Reservation";
 
     public long AddReservation(ReservationModel reservation)
     {
