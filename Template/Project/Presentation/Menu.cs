@@ -18,6 +18,7 @@ static class Menu
                 "View Screenings",
                 "Reservations",
                 "Send Feedback",
+                "Inspect Movies",
                 "Log out",
                 "Quit"
             },
@@ -40,9 +41,12 @@ static class Menu
                     Feedback.Start();
                     break;
                 case 4:
-                    UserLogin.Start();
+                    InspectMovie.Start();
                     break;
                 case 5:
+                    UserLogin.Start();
+                    break;
+                case 6:
                     Console.Clear();
                     Environment.Exit(0);
                     break;
