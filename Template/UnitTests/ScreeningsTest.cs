@@ -15,9 +15,9 @@ namespace UnitTests
         }
 
         [DataTestMethod]
-        [DataRow("2099-01-01 10:00")]
-        [DataRow("2099-01-01 12:00")]
-        [DataRow("2099-01-01 14:00")]
+        [DataRow("01-01-2099 10:00")]
+        [DataRow("01-02-2099 11:00")]
+        [DataRow("01-03-2099 12:00")]
         public void GetSeatStatus_ScreeningExists_ReturnsSeats(string dateTime)
         {
             ScreeningAcces sAcc = new();
@@ -34,7 +34,8 @@ namespace UnitTests
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Count >= 0);
 
-            sAcc.Delete(id);
+            var screening = sAcc.GetById((int)id);
+            sAcc.Delete(screening);
         }
 
         [DataTestMethod]
@@ -47,7 +48,7 @@ namespace UnitTests
             ScreeningLogic logic = new();
 
             long movieId = 1;
-            string dt = "2099-01-02 12:00";
+            string dt = "01-02-2099 12:00";
 
             sAcc.Add(new ScreeningModel(movieId, hallId, dt));
             long id = sAcc.GetAll().Last().ScreeningId;
@@ -56,7 +57,8 @@ namespace UnitTests
 
             Assert.AreEqual(0, result.Count);
 
-            sAcc.Delete(id);
+            var screening = sAcc.GetById((int)id);
+            sAcc.Delete(screening);
         }
 
         [TestMethod]
@@ -69,7 +71,7 @@ namespace UnitTests
 
             long hallId = 1;
             long movieId = 1;
-            string dt = "2099-01-03 12:00";
+            string dt = "01-03-2099 12:00";
 
             sAcc.Add(new ScreeningModel(movieId, hallId, dt));
             long id = sAcc.GetAll().Last().ScreeningId;
@@ -83,7 +85,8 @@ namespace UnitTests
             Assert.IsTrue(valid);
             Assert.AreEqual(0, failed.Count);
 
-            sAcc.Delete(id);
+            var screening = sAcc.GetById((int)id);
+            sAcc.Delete(screening);
         }
 
         [TestMethod]
@@ -92,11 +95,11 @@ namespace UnitTests
             ScreeningAcces sAcc = new();
             ScreeningLogic logic = new();
 
-            var user = new UserAccountModel("Test", "test@test.com", "2000-01-01", "x", false);
+            var user = new UserAccountModel("Test", "test@test.com", "01-01-2000", "x", false);
 
             long hallId = 1;
             long movieId = 1;
-            string dt = "2099-01-04 12:00";
+            string dt = "01-04-2099 12:00";
 
             sAcc.Add(new ScreeningModel(movieId, hallId, dt));
             long id = sAcc.GetAll().Last().ScreeningId;
@@ -109,7 +112,8 @@ namespace UnitTests
 
             Assert.IsFalse(valid);
 
-            sAcc.Delete(id);
+            var screening = sAcc.GetById((int)id);
+            sAcc.Delete(screening);
         }
     }
 }

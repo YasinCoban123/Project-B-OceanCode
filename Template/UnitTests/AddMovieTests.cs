@@ -4,27 +4,27 @@ namespace UnitTests
     public sealed class MovieLogicTests
     {
         [DataTestMethod]
-        [DataRow("Avatar", "SciFi", 12)]
-        [DataRow("Inception", "Thriller", 16)]
-        [DataRow("Matrix", "SciFi", 12)]
-        public void CreateMovie_ValidData_ReturnsTrue(string title, string genre, long pg)
+        [DataRow("Avatar", 3, 12, "Description", "Acotrs here", "2:45")]
+        [DataRow("Inertstellar", 3, 12, "Description", "Acotrs here", "15:45")]
+        [DataRow("Matrix", 3, 12, "Description", "Acotrs here", "15:45")]
+        public void CreateMovie_ValidData_ReturnsTrue(string title, long genre, long pg, string description, string actors, string duration)
         {
             MovieLogic logic = new();
 
-            bool result = logic.CreateMovie(title, genre, pg);
+            bool result = logic.CreateMovie(title, genre, pg, description, actors, duration);
 
             Assert.IsTrue(result);
         }
 
         [DataTestMethod]
-        [DataRow("", "SciFi", 12)]
-        [DataRow("   ", "Action", 16)]
-        [DataRow(null, "Drama", 6)]
-        public void CreateMovie_InvalidTitle_ReturnsFalse(string title, string genre, long pg)
+        [DataRow("", "SciFi", 12, "Description", "Acotrs here", "")]
+        [DataRow("   ", "Action", 16, "Description", "", "20-11-2026 15:45")]
+        [DataRow(null, "Drama", 6, "", "Acotrs here", "20-11-2026 15:45")]
+        public void CreateMovie_InvalidTitle_ReturnsFalse(string title, long genre, long pg, string desc, string actors, string date)
         {
             MovieLogic logic = new();
 
-            bool result = logic.CreateMovie(title, genre, pg);
+            bool result = logic.CreateMovie(title, genre, pg, desc, actors, date);
 
             Assert.IsFalse(result);
         }
@@ -34,8 +34,8 @@ namespace UnitTests
         {
             MovieLogic logic = new();
 
-            logic.CreateMovie("Avatar", "SciFi", 12);
-            bool result = logic.CreateMovie("Inception", "SciFi", 12);
+            logic.CreateMovie("Avatar", 3, 12, "Description", "Acotrs here", "2:45");
+            bool result = logic.CreateMovie("Inception", 3, 12,  "Description", "Acotrs here", "2:45");
 
             Assert.IsTrue(result);
         }
@@ -48,34 +48,34 @@ namespace UnitTests
         {
             MovieLogic logic = new();
 
-            logic.CreateMovie(title, "SciFi", 12);
-            bool result = logic.CreateMovie(title, "SciFi", 12);
+            logic.CreateMovie(title, 3, 12, "Description", "Acotrs here", "2:45");
+            bool result = logic.CreateMovie(title, 2, 12, "Description", "Acotrs here", "2:45");
 
             Assert.IsFalse(result);
         }
 
         [DataTestMethod]
-        [DataRow("Star Wars Episode V", "SciFi", 6)]
-        [DataRow("Interstellar Force", "SciFi", 16)]
-        [DataRow("Titanic", "Drama", 12)]
-        public void CreateMovie_Success_ReturnsTrue_MessageDisplayed(string title, string genre, long pg)
+        [DataRow("Star Wars Episode V", 6, 6,  "Description", "Acotrs here", "2:45")]
+        [DataRow("Interstellar Force", 2, 16, "Description", "Acotrs here", "2:45")]
+        [DataRow("Titanic", 4, 12, "Description", "Acotrs here", "2:45")]
+        public void CreateMovie_Success_ReturnsTrue_MessageDisplayed(string title, long genre, long pg, string description, string actors, string duration)
         {
             MovieLogic logic = new();
 
-            bool result = logic.CreateMovie(title, genre, pg);
+            bool result = logic.CreateMovie(title, genre, pg, description, actors, duration);
 
             Assert.IsTrue(result);
         }
 
         [DataTestMethod]
-        [DataRow("", "SciFi", 12)]
-        [DataRow(" ", "Action", 16)]
-        [DataRow(null, "Drama", 6)]
-        public void CreateMovie_Fail_ReturnsFalse_MessageDisplayed(string title, string genre, long pg)
+        [DataRow("", 1, 12, "Description", "Acotrs here", "2:45")]
+        [DataRow(" ", 7, 16,  "Description", "Acotrs here", "2:45")]
+        [DataRow(null, 4, 6,  "Description", "Acotrs here", "2:45")]
+        public void CreateMovie_Fail_ReturnsFalse_MessageDisplayed(string title, long genre, long pg, string description, string actors, string duration)
         {
             MovieLogic logic = new();
 
-            bool result = logic.CreateMovie(title, genre, pg);
+            bool result = logic.CreateMovie(title, genre, pg, description, actors, duration);
 
             Assert.IsFalse(result);
         }

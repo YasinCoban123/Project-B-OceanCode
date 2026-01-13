@@ -15,9 +15,14 @@ public class MovieLogic
 
     public bool CreateMovie(string title,long genre,long pgrating,string description,string actors,string duration)
     {
-        if (string.IsNullOrWhiteSpace(title)) return false;
-        if (_movieacces.ExistsByTitle(title)) return false;
-
+        if (string.IsNullOrWhiteSpace(title)) 
+        {
+            return false;
+        }
+        if (_movieacces.ExistsByTitle(title)) 
+        {
+            return false;
+        }
         MovieModel movie = new MovieModel(
             title,
             genre,
