@@ -139,10 +139,13 @@ public class SeatSelectionHelper
         Console.WriteLine("\nLegend:");
         Console.ForegroundColor = ConsoleColor.Green;
         Console.Write("Normal ");
+        Console.Write("7.5");
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write("Relax ");
+        Console.Write("Relax");
+        Console.Write("10.5");
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.Write("VIP ");
+        Console.Write("VIP");
+        Console.Write("12.5");
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("Selected");
         Console.ResetColor();
