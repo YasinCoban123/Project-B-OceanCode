@@ -116,7 +116,7 @@ public class InspectMovie
             string[] actions = new[] { "Show reviews", "Add review", "Go back" };
             int selected = 0;
             int menuTop = Console.CursorTop;
-            Console.WriteLine("Use ↑/↓ to choose and Enter to select.");
+            Console.WriteLine("Use arrow key up/down to choose and Enter to select.");
             menuTop = Console.CursorTop;
             void RenderMenu()
             {
@@ -190,9 +190,11 @@ public class InspectMovie
 
                 foreach (var r in reviews)
                 {
-                    Console.WriteLine($"Rating: {r.Rating}/5");
-                    Console.WriteLine($"Comment: {r.Comment}");
-                    Console.WriteLine(new string('-', Console.WindowWidth));
+                    var stars = new string('★', Math.Max(0, Math.Min(5, r.Rating)));
+                    var empties = new string('☆', 5 - Math.Max(0, Math.Min(5, r.Rating)));
+                    Console.WriteLine($"[{stars}{empties}] {r.Title}");
+                    if (!string.IsNullOrWhiteSpace(r.Comment)) Console.WriteLine("  " + r.Comment);
+                    Console.WriteLine();
                 }
 
                 Console.WriteLine("End of reviews. Press enter to return to movie details");

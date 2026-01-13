@@ -1,87 +1,70 @@
-using System.Text.Json;
-
 public static class ReviewMovie
 {
-    private class ReviewRecord
-    {
-        public int MovieId { get; set; }
-        public string Title { get; set; } = "";
-        public int Rating { get; set; }
-        public string Comment { get; set; } = "";
-    }
-
     public static void Start(MovieModel movie)
     {
-        int rating = 0;
-        while (rating < 1 || rating > 5)
-        {
-            Console.Clear();
-            Console.WriteLine("Review: " + (movie?.Title ?? "<unknown>"));
-            Console.Write("Enter rating (1-5): ");
-            var input = Console.ReadLine();
-            if (!int.TryParse(input, out rating) || rating < 1 || rating > 5)
-            {
-                Console.WriteLine("Please enter a number between 1 and 5. Press Enter to try again.");
-                Console.ReadLine();
-                rating = 0;
-            }
-        }
-
-        Console.WriteLine("You rated: " + new string('★', rating) + new string('☆', 5 - rating));
-        Console.Write("Add a short comment (optional, max 300 chars): ");
-        var comment = Console.ReadLine() ?? "";
-        if (comment.Length > 300) comment = comment.Substring(0, 300);
-
+        long movieId = 0;
         try
         {
-            var reviewsFile = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "reviews.json"));
-
-            int movieId = 0;
-            try
+            var t = movie?.GetType();
+            var idProp = t?.GetProperty("MovieId") ?? t?.GetProperty("Id") ?? t?.GetProperty("ID");
+            if (idProp != null)
             {
-                var idProp = movie?.GetType().GetProperty("Id");
-                if (idProp != null)
+                var idVal = idProp.GetValue(movie);
+                if (idVal != null) movieId = Convert.ToInt64(idVal);
+            }
+        }
+        catch { movieId = 0; }
+
+        var logic = new ReviewLogic();
+        List<ReviewModel> reviews = logic.GetReviewsForMovie(movieId);
+
+        Console.Clear();
+
+        {
+            int rating = 0;
+            while (rating < 1 || rating > 5)
+            {
+                Console.Write("Enter rating (1-5) or press Enter to cancel: ");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
+                    return;
+                if (!int.TryParse(input, out rating) || rating < 1 || rating > 5)
                 {
-                    var idVal = idProp.GetValue(movie);
-                    if (idVal != null) movieId = Convert.ToInt32(idVal);
+                    Console.WriteLine("Please enter a number between 1 and 5.");
                 }
             }
-            catch { movieId = 0; }
 
-            var record = new ReviewRecord
+            Console.Write("Add a short title (optional): ");
+            var title = Console.ReadLine() ?? "";
+            if (string.IsNullOrWhiteSpace(title))
+                    return;
+            Console.Write("Add a short comment (optional, max 300 chars): ");
+            var comment = Console.ReadLine() ?? "";
+            if (string.IsNullOrWhiteSpace(comment))
+                    return;
+            if (comment.Length > 300) comment = comment.Substring(0, 300);
+
+            var model = new ReviewModel
             {
                 MovieId = movieId,
-                Title = movie?.Title ?? "",
+                Title = title,
                 Rating = rating,
                 Comment = comment
             };
 
-            List<ReviewRecord> list = new();
-            if (File.Exists(reviewsFile))
+            try
             {
-                try
-                {
-                    var existing = File.ReadAllText(reviewsFile);
-                    list = JsonSerializer.Deserialize<List<ReviewRecord>>(existing) ?? new List<ReviewRecord>();
-                }
-                catch
-                {
-                    list = new List<ReviewRecord>();
-                }
+                logic.AddReview(model);
+                Console.WriteLine("Review saved.");
+            }
+            catch
+            {
+                Console.WriteLine("Failed to save review.");
             }
 
-            list.Add(record);
-            var opts = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(reviewsFile, JsonSerializer.Serialize(list, opts));
-
-            Console.WriteLine("Review saved.");
+            Console.WriteLine("Press Enter to continue...");
+            Console.ReadLine();
+            reviews = logic.GetReviewsForMovie(movieId);
         }
-        catch
-        {
-            Console.WriteLine("Failed to save review.");
-        }
-
-        Console.WriteLine("Press Enter to return.");
-        Console.ReadLine();
     }
 }
