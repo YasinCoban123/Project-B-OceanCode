@@ -36,7 +36,11 @@ public class AccountsLogic
         return null;
     }
 
-
+    public bool DeleteAccount(string email)
+    {
+        UserAccountModel user = _access.GetByEmail(email);
+        return _access.Delete(user);
+    }
 
     public UserAccountModel MakeAccount(string email, string password, string fullName, string dateOfBirth, bool notAdmin)
     {

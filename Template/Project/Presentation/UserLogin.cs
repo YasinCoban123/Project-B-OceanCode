@@ -63,6 +63,17 @@ static class UserLogin
         }
         else if (menu.SelectedIndex == 1)
         {
+            Register();
+        }
+        else
+        {
+            Console.WriteLine("Invalid choice, please type 'login' or 'register'");
+            Start();
+        }
+    }
+
+    public static void Register()
+    {
             while (true)
             {
                 Console.Clear();
@@ -150,7 +161,6 @@ static class UserLogin
 
 
                 UserAccountModel newAccount = accountsLogic.MakeAccount(email, password, fullName, dateOfBirth, false);
-                
 
                 if (newAccount != null)
                 {
@@ -162,11 +172,5 @@ static class UserLogin
                     Start();
                 }
             }
-        }
-        else
-        {
-            Console.WriteLine("Invalid choice, please type 'login' or 'register'");
-            Start();
-        }
     }
 }

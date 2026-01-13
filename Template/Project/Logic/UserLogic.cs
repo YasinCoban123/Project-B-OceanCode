@@ -20,6 +20,11 @@ public class UserLogic
         return false;
     }
 
+    public void AddReservation(ReservationModel reservation)
+    {
+        _reservationAccess.AddReservation(reservation);
+    }
+
     public string GetDateWithMostReservations()
     {
         return _reservationAccess.GetDateWithMostReservations();
