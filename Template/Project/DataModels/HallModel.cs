@@ -8,4 +8,8 @@ public class HallModel
     {
         HallId = hallid;
     }
+
+    public HallModel()
+    {
+    }
 }
