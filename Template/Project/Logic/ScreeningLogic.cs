@@ -107,7 +107,7 @@ public class ScreeningLogic
             if (seat == null || _reservedSeatAccess.IsSeatReserved(seatId, screeningId))
                 continue;
 
-            var reservation = new ReservationModel(user.AccountId, screeningId, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            var reservation = new ReservationModel(user.AccountId, screeningId, DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
             long reservationId = _reservationAccess.AddReservation(reservation);
             _reservedSeatAccess.AddReservedSeat(reservationId, seatId, screeningId);
         }

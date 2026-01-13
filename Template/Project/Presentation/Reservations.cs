@@ -71,8 +71,8 @@ static class Reservations
                     bool deleted = userLogic.DeleteReservationIfExists(chosen.ReservationId);
                     if (deleted)
                     {
+                        Console.Clear();
                         Console.WriteLine("Reservation deleted.");
-                        Console.WriteLine("Returning to main menu...");
                         Console.WriteLine("Press ENTER to continue");
                         Console.ReadLine();
                         Console.Clear();
