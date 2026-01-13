@@ -80,8 +80,8 @@ public static class BGPlayer
                     return; // exits program
             }
 
-            Console.WriteLine("\nPress any key to return to menu...");
-            Console.ReadKey();
+            //Console.WriteLine("\nPress any key to return to menu...");
+            //Console.ReadKey();
         }
     }
 
@@ -96,7 +96,7 @@ public static class BGPlayer
         outputDevice.Init(audioFile);
         outputDevice.Play();
 
-        Console.WriteLine("Now playing...");
+        //Console.WriteLine("Now playing...");
     }
 
     private static void Stop()
@@ -109,6 +109,6 @@ public static class BGPlayer
         outputDevice = null;
         audioFile = null;
 
-        Console.WriteLine("Music stopped.");
+        //Console.WriteLine("Music stopped.");
     }
 }
