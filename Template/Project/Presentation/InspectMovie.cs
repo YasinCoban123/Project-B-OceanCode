@@ -51,7 +51,7 @@ public class InspectMovie
                 ["Duration"] = chosen.Duration?.ToString(),
                 ["PG Rating"] = chosen.PGRating.ToString(),
                 ["Actors"] = chosen.Actors,
-                ["Genre ID"] = chosen.GenreId.ToString() 
+                ["Genre ID"] = GenreLogic.GetGenreById((int)chosen.GenreId).Genre.ToString() 
             };
 
             int consoleWidth = Math.Max(60, Console.WindowWidth);
