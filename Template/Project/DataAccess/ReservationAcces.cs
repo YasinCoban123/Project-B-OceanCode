@@ -91,4 +91,18 @@ public class ReservationAcces : DataAccess
         string sql = $"SELECT * FROM {Table}";
         return _connection.Query<ReservationModel>(sql).ToList();
     }
+
+    public string GetDateWithMostReservationsBetween(DateTime d1, DateTime d2)
+    {
+        string sql = @"
+            SELECT DATE(ReservationTime)
+            FROM Reservation
+            WHERE ReservationTime BETWEEN @a AND @b
+            GROUP BY DATE(ReservationTime)
+            ORDER BY COUNT(*) DESC
+            LIMIT 1;
+        ";
+        return _connection.QueryFirstOrDefault<string>(sql, new { a = d1, b = d2 });
+    }
+
 }

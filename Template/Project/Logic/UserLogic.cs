@@ -35,4 +35,44 @@ public class UserLogic
         UserAccountsAccess userAccess = new();
         return userAccess.GetAccountByID(id);
     }
+
+    public string GetDateWithMostReservationsBetween(DateTime from, DateTime to)
+    {
+        return _reservationAccess.GetDateWithMostReservationsBetween(from, to);
+    }
+
+    public bool FilterBetweenCheck(string date1, string date2)
+    {
+        if (date1.Length != 10 || date1[2] != '-' || date1[5] != '-')
+        {
+            return false;
+        }
+
+        if (date2.Length != 10 || date2[2] != '-' || date2[5] != '-')
+        {
+            return false;
+        }
+
+        if (!DateTime.TryParse(date1, out DateTime d1))
+        {
+            return false;
+        }
+
+        if (!DateTime.TryParse(date2, out DateTime d2))
+        {
+            return false;
+        }
+
+        if (d1.Date > DateTime.Today || d2.Date > DateTime.Today)
+        {
+            return false;
+        }
+
+        if (d2 < d1)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
