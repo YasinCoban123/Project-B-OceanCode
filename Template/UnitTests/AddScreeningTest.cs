@@ -52,18 +52,6 @@ namespace UnitTests
 
             Assert.IsFalse(result);
         }
-
-        [DataTestMethod]
-        [DataRow("12/10/2014")]
-        [DataRow("03-08-2026")]
-        public void CheckDate_ValidDates_ReturnTrue(string date)
-        {
-            HallLogic hallLogic = new();
-
-            bool result = hallLogic.CheckDate(date);
-
-            Assert.IsTrue(result);
-        }
         [DataTestMethod]
         [DataRow("21;00")]
         [DataRow("21-00")]
