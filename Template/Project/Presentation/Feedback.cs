@@ -35,7 +35,7 @@ static class Feedback
         else if (choice == 2)
         {
             Console.Clear();
-            Menu.Start();
+            Menu.AdminStart();
         }
     }
 
