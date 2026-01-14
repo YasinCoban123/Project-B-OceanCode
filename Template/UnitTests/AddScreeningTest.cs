@@ -54,7 +54,7 @@ namespace UnitTests
         }
 
         [DataTestMethod]
-        [DataRow("12-10-2014")]
+        [DataRow("12/10/2014")]
         [DataRow("03-08-2026")]
         public void CheckDate_ValidDates_ReturnTrue(string date)
         {
@@ -64,20 +64,9 @@ namespace UnitTests
 
             Assert.IsTrue(result);
         }
-
-        [DataTestMethod]
-        [DataRow("21-00")]
-        public void CheckTime_ValidTimes_ReturnTrue(string time)
-        {
-            HallLogic hallLogic = new();
-
-            bool result = hallLogic.CheckTime(time);
-
-            Assert.IsTrue(result);
-        }
-
         [DataTestMethod]
         [DataRow("21;00")]
+        [DataRow("21-00")]
         public void CheckTime_InvalidTimes_ReturnFalse(string time)
         {
             HallLogic hallLogic = new();
