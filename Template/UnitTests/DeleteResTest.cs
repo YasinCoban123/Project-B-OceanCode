@@ -95,23 +95,6 @@
         {
             Assert.Inconclusive("System test: verify UI shows option 'Delete' or 'Exit' under reservations list.");
         }
-
-        [TestMethod]
-        public void ConfirmationMessageDisplays_SystemTest()
-        {
-            Assert.Inconclusive("System test: verify confirmation prompt appears when user selects delete.");
-        }
-
-        [TestMethod]
-        public void UserCancelsDeletion_SystemTest()
-        {
-            Assert.Inconclusive("System test: verify reservation remains when user cancels deletion confirmation.");
-        }
-
-        [TestMethod]
-        public void SystemErrorWhenDeleting_SystemTest()
-        {
-            Assert.Inconclusive("System test: simulate backend failure during delete and verify user error notification.");
-        }
     }
 }
+        

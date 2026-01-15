@@ -106,5 +106,17 @@
             // Cleanup
             accountsLogic.DeleteAccount("user@gmail.com");
         }
+
+        [TestMethod]
+        public void Login_User_Can_Go_Back_When_Selected_SystemTest()
+        {
+            Assert.Inconclusive("System test: verify that when the user selects 'go back' (e.g. types '0') during login or registration, the UI returns to the main menu.");
+        }
+
+        [TestMethod]
+        public void Login_User_Can_Exit_MidProcess_SystemTest()
+        {
+            Assert.Inconclusive("System test: verify that a user can exit the login/registration process mid-flow (e.g. by typing '0' or closing), and that the application handles it gracefully.");
+        }
     }
 }
