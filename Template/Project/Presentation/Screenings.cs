@@ -260,7 +260,7 @@ static class Screenings
         Console.Clear();
         Console.WriteLine("=== Screenings ===\n");
         Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine("Nr  | Movie                | Day        | Time             | Hall");
+        Console.WriteLine("Nr  | Movie                     | Genre          | Time              | Hall");
         Console.ResetColor();
 
         foreach (var s in screenings)
@@ -279,7 +279,7 @@ static class Screenings
         string title = parts[3].Split(':', 2)[1];
         string genre = parts[4].Split(':', 2)[1];
 
-        return $"{id,-3} | {title,-20} | {genre,-10} | {time,-16} | Hall {hall,-2}";
+        return $"{id,-3} | {title,-25} | {genre,-14} | {time,-16} | Hall {hall,-2}";
     }
 
 
