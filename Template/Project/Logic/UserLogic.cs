@@ -5,7 +5,7 @@ public class UserLogic
 {
     private ReservationAcces _reservationAccess = new();
 
-    public IEnumerable<dynamic> GetReservationsForUser(long accountId)
+    public List<ReservationModel> GetReservationsForUser(long accountId)
     {
         return _reservationAccess.GetByAccountId(accountId);
     }

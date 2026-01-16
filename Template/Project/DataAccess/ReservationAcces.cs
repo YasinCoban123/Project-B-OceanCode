@@ -28,25 +28,27 @@ public class ReservationAcces : DataAccess
 
 
 
-    public IEnumerable<ReservationModel> GetByAccountId(long accountId)
+    public List<ReservationModel> GetByAccountId(long accountId)
     {
         string sql = @"
             SELECT 
-            r.ReservationId,
-            m.Title AS MovieTitle,
-            s.ScreeningStartingTime,
-            st.RowNumber,
-            st.SeatNumber
-        FROM Reservation r
-        JOIN Screening s       ON r.ScreeningId = s.ScreeningId
-        JOIN Movie m           ON s.MovieId = m.MovieId
-        JOIN ReservedSeat rs   ON r.ReservationId = rs.ReservationId
-        JOIN Seat st           ON rs.SeatId = st.SeatId
-        WHERE r.AccountId = @AccountId
-        ORDER BY s.ScreeningStartingTime DESC;
+                r.ReservationId,
+                m.Title AS MovieTitle,
+                s.ScreeningStartingTime,
+                st.RowNumber,
+                st.SeatNumber
+            FROM Reservation r
+            JOIN Screening s       ON r.ScreeningId = s.ScreeningId
+            JOIN Movie m           ON s.MovieId = m.MovieId
+            JOIN ReservedSeat rs   ON r.ReservationId = rs.ReservationId
+            JOIN Seat st           ON rs.SeatId = st.SeatId
+            WHERE r.AccountId = @AccountId
+            ORDER BY s.ScreeningStartingTime DESC;
         ";
 
-        return _connection.Query<ReservationModel>(sql, new { AccountId = accountId });
+        return _connection
+            .Query<ReservationModel>(sql, new { AccountId = accountId })
+            .ToList();
     }
 
 

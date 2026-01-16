@@ -17,7 +17,7 @@ static class Reservations
             return;
         }
 
-        var reservations = userLogic.GetReservationsForUser(currentUser.AccountId).ToList();
+        var reservations = userLogic.GetReservationsForUser(currentUser.AccountId);
 
         if (!reservations.Any())
         {
